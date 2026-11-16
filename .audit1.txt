@@ -1,0 +1,1043 @@
+=== lib/server/models/editorial.ts
+import 'server-only'
+import mongoose, { Schema, type Model } from 'mongoose'
+import { POST_STATES, seoSchema } from './content'
+
+function model<T>(name: string, schema: Schema): Model<T> {
+  return (mongoose.models[name] as Model<T>) ?? mongoose.model<T>(name, schema)
+}
+
+const VERTICALS = ['accommodation', 'transport', 'both', 'general']
+const status = { type: String, enum: ['draft', 'in_review', 'published', 'archived'], default: 'draft' }
+
+const authorSchema = new Schema(
+  {
+    slug: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    jobTitle: { type: String, default: '' },
+    bio: { type: String, default: '' },
+    avatar: { type: String, default: '' },
+    expertise: { type: [String], default: [] },
+    linkedin: { type: String, default: '' },
+    status: { type: String, enum: ['draft', 'published', 'archived'], default: 'published' },
+  },
+  { timestamps: true },
+)
+
+const taxonomySchema = new Schema(
+  {
+    slug: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    description: { type: String, default: '' },
+    noindex: { type: Boolean, default: false },
+    sortOrder: { type: Number, default: 0 },
+  },
+  { timestamps: true },
+)
+
+const postSchema = new Schema(
+  {
+    title: { type: String, required: true, maxlength: 200 },
+    slug: { type: String, required: true, unique: true },
+    subtitle: { type: String, default: '', maxlength: 240 },
+    excerpt: { type: String, default: '', maxlength: 500 },
+    content: { type: String, default: '' },
+    language: { type: String, default: 'en' },
+    coAuthorIds: [{ type: Schema.Types.ObjectId, ref: 'Author' }],
+    unpublishAt: { type: Date, default: null },
+    lastEditedById: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    archivedFromState: { type: String, default: '' },
+    heroImage: { type: String, default: '' },
+    heroAlt: { type: String, default: '' },
+    heroCaption: { type: String, default: '' },
+    authorId: { type: Schema.Types.ObjectId, ref: 'Author', default: null },
+    reviewerId: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    categoryIds: [{ type: Schema.Types.ObjectId, ref: 'Category' }],
+    tagIds: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
+    vertical: { type: String, enum: VERTICALS, default: 'general' },
+    industrySlugs: { type: [String], default: [] },
+    state: { type: String, enum: POST_STATES, default: 'draft' },
+    featured: { type: Boolean, default: false },
+    pinnedHome: { type: Boolean, default: false },
+    publishAt: { type: Date, default: null },
+    publishedAt: { type: Date, default: null },
+    contentUpdatedAt: { type: Date, default: null },
+    readingMinutes: { type: Number, default: 1 },
+    references: { type: [{ label: String, url: String }], default: [] },
+    cta: { label: { type: String, default: '' }, href: { type: String, default: '' } },
+    relatedPostIds: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    internalNotes: { type: String, default: '' },
+    seo: { type: seoSchema, default: () => ({}) },
+    revision: { type: Number, default: 1 },
+    isSample: { type: Boolean, default: false },
+    views: { type: Number, default: 0 },
+  },
+  { timestamps: true },
+)
+postSchema.index({ state: 1, publishedAt: -1 })
+postSchema.index({ categoryIds: 1, state: 1 })
+postSchema.index({ tagIds: 1, state: 1 })
+postSchema.index({ title: 'text', excerpt: 'text', content: 'text' }, { weights: { title: 6, excerpt: 3, content: 1 }, name: 'post_text' })
+
+const postRevisionSchema = new Schema(
+  {
+    postId: { type: Schema.Types.ObjectId, ref: 'Post', required: true },
+    version: { type: Number, required: true },
+    snapshot: { type: Schema.Types.Mixed, required: true },
+    changedById: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    changeSummary: { type: String, default: '' },
+  },
+  { timestamps: { createdAt: true, updatedAt: false } },
+)
+postRevisionSchema.index({ postId: 1, version: -1 }, { unique: true })
+
+const contentReviewSchema = new Schema(
+  {
+    postId: { type: Schema.Types.ObjectId, ref: 'Post', required: true, index: true },
+    kind: { type: String, enum: ['comment', 'submitted', 'approved', 'changes_requested', 'published', 'transition'], default: 'comment' },
+    body: { type: String, default: '', maxlength: 4000 },
+    fromState: { type: String, default: '' },
+    toState: { type: String, default: '' },
+    authorId: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+    authorEmail: { type: String, default: '' },
+  },
+  { timestamps: { createdAt: true, updatedAt: false } },
+)
+contentReviewSchema.index({ postId: 1, createdAt: -1 })
+
+const faqSchema = new Schema(
+  {
+    question: { type: String, required: true, maxlength: 300 },
+    answer: { type: String, required: true },
+    category: { type: String, required: true, default: 'general' },
+    vertical: { type: String, enum: VERTICALS, default: 'general' },
+    relatedPaths: { type: [String], default: [] },
+    keywords: { type: [String], default: [] },
+    sortOrder: { type: Number, default: 0 },
+    status,
+    reviewAt: { type: Date, default: null },
+  },
+  { timestamps: true },
+)
+faqSchema.index({ status: 1, category: 1, sortOrder: 1 })
+faqSchema.index({ question: 'text', answer: 'text', keywords: 'text' }, { name: 'faq_text' })
+
+const industrySchema = new Schema(
+  {
+    slug: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    summary: { type: String, default: '' },
+    context: { type: String, default: '' },
+    accommodationNeeds: { type: [String], default: [] },
+    mobilityNeeds: { type: [String], default: [] },
+    governance: { type: String, default: '' },
+    image: { type: String, default: '' },
+    icon: { type: String, default: 'building' },
+    faqCategory: { type: String, default: '' },
+    ctaLabel: { type: String, default: '' },
+    sortOrder: { type: Number, default: 0 },
+    status,
+    seo: { type: seoSchema, default: () => ({}) },
+  },
+  { timestamps: true },
+)
+industrySchema.index({ status: 1, sortOrder: 1 })
+industrySchema.index({ title: 'text', summary: 'text', context: 'text' }, { name: 'industry_text' })
+
+const locationSchema = new Schema(
+  {
+    country: { type: String, required: true },
+    region: { type: String, default: '' },
+    city: { type: String, default: '' },
+    vertical: { type: String, enum: ['accommodation', 'transport', 'both'], required: true },
+    serviceStatus: { type: String, enum: ['direct', 'partner_network', 'case_by_case'], required: true },
+    services: { type: [String], default: [] },
+    effectiveDate: { type: Date, default: null },
+    proofNote: { type: String, default: '' },
+    reviewedAt: { type: Date, default: null },
+    sortOrder: { type: Number, default: 0 },
+    status,
+  },
+  { timestamps: true },
+)
+locationSchema.index({ status: 1, vertical: 1, country: 1 })
+
+const caseStudySchema = new Schema(
+  {
+    slug: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    clientName: { type: String, default: '' },
+    anonymized: { type: Boolean, default: true },
+    clientApproved: { type: Boolean, default: false },
+    vertical: { type: String, enum: VERTICALS, default: 'general' },
+    industrySlugs: { type: [String], default: [] },
+    summary: { type: String, default: '' },
+    challenge: { type: String, default: '' },
+    approach: { type: String, default: '' },
+    outcome: { type: String, default: '' },
+    deliveryModel: { type: String, default: '' },
+    results: { type: [{ label: String, value: String }], default: [] },
+    evidenceNote: { type: String, default: '' },
+    disclaimer: { type: String, default: '' },
+    image: { type: String, default: '' },
+    status,
+    seo: { type: seoSchema, default: () => ({}) },
+  },
+  { timestamps: true },
+)
+
+const testimonialSchema = new Schema(
+  {
+    quote: { type: String, required: true },
+    personName: { type: String, required: true },
+    personTitle: { type: String, default: '' },
+    company: { type: String, default: '' },
+    vertical: { type: String, enum: VERTICALS, default: 'general' },
+    permissionStatus: { type: String, enum: ['pending', 'granted', 'expired', 'revoked'], default: 'pending' },
+    reviewAt: { type: Date, default: null },
+    placements: { type: [String], default: [] },
+    status,
+  },
+  { timestamps: true },
+)
+
+const clientLogoSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    logo: { type: String, required: true },
+    url: { type: String, default: '' },
+    permissionStatus: { type: String, enum: ['pending', 'granted', 'expired', 'revoked'], default: 'pending' },
+    reviewAt: { type: Date, default: null },
+    sortOrder: { type: Number, default: 0 },
+    status,
+  },
+  { timestamps: true },
+)
+
+const resourceSchema = new Schema(
+  {
+    slug: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    resourceType: { type: String, enum: ['guide', 'checklist', 'case_study', 'webinar', 'template', 'article', 'tool', 'event'], default: 'guide' },
+    summary: { type: String, default: '' },
+    body: { type: String, default: '' },
+    vertical: { type: String, enum: VERTICALS, default: 'general' },
+    category: { type: String, default: '' },
+    tags: { type: [String], default: [] },
+    fileMediaId: { type: Schema.Types.ObjectId, ref: 'MediaAsset', default: null },
+    externalUrl: { type: String, default: '' },
+    fileFormat: { type: String, default: '' },
+    fileSizeLabel: { type: String, default: '' },
+    pageCount: { type: Number, default: null },
+    version: { type: String, default: '' },
+    updateNotes: { type: String, default: '' },
+    gated: { type: Boolean, default: false },
+    image: { type: String, default: '' },
+    featured: { type: Boolean, default: false },
+    sortOrder: { type: Number, default: 0 },
+    downloadCount: { type: Number, default: 0 },
+    publishedAt: { type: Date, default: null },
+    reviewAt: { type: Date, default: null },
+    isSample: { type: Boolean, default: false },
+    status,
+    seo: { type: seoSchema, default: () => ({}) },
+  },
+  { timestamps: true },
+)
+resourceSchema.index({ status: 1, featured: -1, sortOrder: 1 })
+resourceSchema.index({ title: 'text', summary: 'text', body: 'text' }, { name: 'resource_text' })
+
+const teamMemberSchema = new Schema(
+  {
+    name: { type: String, required: true },
+    role: { type: String, default: '' },
+    bio: { type: String, default: '' },
+    photo: { type: String, default: '' },
+    linkedin: { type: String, default: '' },
+    sortOrder: { type: Number, default: 0 },
+    status,
+  },
+  { timestamps: true },
+)
+
+const jobSchema = new Schema(
+  {
+    slug: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    department: { type: String, default: '' },
+    location: { type: String, default: '' },
+    employmentType: { type: String, enum: ['full_time', 'part_time', 'contract', 'internship'], default: 'full_time' },
+    remote: { type: Boolean, default: false },
+    description: { type: String, default: '' },
+    requirements: { type: String, default: '' },
+    closeAt: { type: Date, default: null },
+    status: { type: String, enum: ['draft', 'published', 'closed', 'archived'], default: 'draft' },
+    isSample: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+)
+jobSchema.index({ status: 1, closeAt: 1 })
+
+export const Author = model<any>('Author', authorSchema)
+export const Category = model<any>('Category', taxonomySchema.clone())
+export const Tag = model<any>('Tag', taxonomySchema.clone())
+export const Post = model<any>('Post', postSchema)
+export const PostRevision = model<any>('PostRevision', postRevisionSchema)
+export const ContentReview = model<any>('ContentReview', contentReviewSchema)
+export const Faq = model<any>('Faq', faqSchema)
+export const Industry = model<any>('Industry', industrySchema)
+export const Location = model<any>('Location', locationSchema)
+export const CaseStudy = model<any>('CaseStudy', caseStudySchema)
+export const Testimonial = model<any>('Testimonial', testimonialSchema)
+export const ClientLogo = model<any>('ClientLogo', clientLogoSchema)
+export const Resource = model<any>('Resource', resourceSchema)
+export const TeamMember = model<any>('TeamMember', teamMemberSchema)
+export const Job = model<any>('Job', jobSchema)
+=== lib/server/services/blog-workflow.ts
+import 'server-only'
+import { revalidatePath } from 'next/cache'
+import { can } from '@/lib/rbac'
+import { GATED_TARGETS, LIVE_STATES, checkTransition, isPostState, availableTransitions } from '@/lib/blog/workflow'
+import { analysePost, hasBlockers } from '@/lib/blog/quality'
+import type { SessionUser } from '../auth/session'
+import { isValidObjectId } from '../db'
+import { ApiError, badRequest, conflict, forbidden, notFound } from '../http'
+import { Author, Category, ContentReview, Post, PostRevision, Tag } from '../models/editorial'
+import { audit } from '../security/guards'
+
+const plain = <T>(v: unknown): T => JSON.parse(JSON.stringify(v))
+
+const perms = (user: SessionUser) => ({ canWrite: can(user.role, 'blog.write'), canPublish: can(user.role, 'blog.publish') })
+
+function requireBlogAccess(user: SessionUser) {
+  if (!can(user.role, 'content.read') && !can(user.role, 'blog.write')) throw forbidden()
+}
+
+async function loadPost(id: string) {
+  if (!isValidObjectId(id)) throw notFound('Post')
+  const post = await Post.findById(id).lean<any>()
+  if (!post) throw notFound('Post')
+  return post
+}
+
+export function revalidateBlog(slug?: string) {
+  revalidatePath('/blog')
+  revalidatePath('/sitemap.xml')
+  if (slug) revalidatePath(`/blog/${slug}`)
+}
+
+async function snapshotRevision(post: any, userId: string | null, summary: string) {
+  await PostRevision.create({ postId: post._id, version: post.revision, snapshot: post, changedById: userId, changeSummary: summary }).catch((e) => console.error('[blog] revision failed', e))
+}
+
+export type TransitionInput = { to: string; note?: string; publishAt?: string | null; expectedRevision?: number }
+
+export async function transitionPost(user: SessionUser, id: string, input: TransitionInput) {
+  const p = perms(user)
+  if (!p.canWrite && !p.canPublish) throw forbidden()
+  const post = await loadPost(id)
+  if (input.expectedRevision !== undefined && input.expectedRevision !== post.revision) {
+    throw conflict('This post was changed by someone else. Reload to see the latest version before continuing.', { revision: post.revision })
+  }
+  const publishAt = input.publishAt ? new Date(input.publishAt) : post.publishAt ? new Date(post.publishAt) : null
+  const to = input.to
+  const check = checkTransition(post.state, to, { ...p, publishAt })
+  if (!check.ok) throw new ApiError(check.status, check.status === 403 ? 'forbidden' : 'invalid_transition', check.message)
+
+  if (['changes_requested'].includes(to) && !input.note?.trim()) throw badRequest('Explain what needs to change.', { note: 'Required when requesting changes' })
+
+  if (isPostState(to) && GATED_TARGETS.includes(to)) {
+    const populated = { ...post }
+    const issues = analysePost(populated)
+    if (hasBlockers(issues)) {
+      throw new ApiError(422, 'quality_gate', 'Resolve the blocking content issues before approving or publishing.', Object.fromEntries(issues.filter((i) => i.level === 'blocker').map((i) => [i.code, i.message])))
+    }
+  }
+  if (to === 'published' || to === 'scheduled') {
+    const [author] = await Promise.all([post.authorId ? Author.findOne({ _id: post.authorId, status: 'published' }).lean() : null])
+    if (!author) throw new ApiError(422, 'quality_gate', 'The post needs a published author profile before it goes live.', { authorId: 'Select a published author' })
+  }
+
+  const now = new Date()
+  const set: Record<string, unknown> = { state: to, lastEditedById: user.id, revision: post.revision + 1 }
+  const unset: Record<string, unknown> = {}
+  if (to === 'scheduled') set.publishAt = publishAt
+  if (to === 'published') {
+    if (!post.publishedAt) set.publishedAt = now
+    else set.contentUpdatedAt = now
+    set.publishAt = null
+  }
+  if (to === 'approved' && post.state === 'scheduled') set.publishAt = null
+  if (to === 'archived') set.archivedFromState = post.state
+  if (post.state === 'archived' && to === 'draft') set.archivedFromState = ''
+
+  const updated = await Post.findOneAndUpdate({ _id: post._id, revision: post.revision }, { $set: set, ...(Object.keys(unset).length ? { $unset: unset } : {}) }, { new: true }).lean<any>()
+  if (!updated) throw conflict('This post was changed while you were working. Reload and try again.')
+
+  await Promise.all([
+    snapshotRevision(updated, user.id, `${post.state} → ${to}`),
+    ContentReview.create({
+      postId: post._id,
+      kind: to === 'editorial_review' ? 'submitted' : to === 'approved' ? 'approved' : to === 'changes_requested' ? 'changes_requested' : to === 'published' ? 'published' : 'transition',
+      body: input.note?.trim().slice(0, 4000) ?? '',
+      fromState: post.state,
+      toState: to,
+      authorId: user.id,
+      authorEmail: user.email,
+    }),
+    audit({ actor: user, action: `blog.${to}`, entityType: 'posts', entityId: String(post._id), summary: `"${post.title}": ${post.state} → ${to}` }),
+  ])
+  if (LIVE_STATES.includes(to as any) || LIVE_STATES.includes(post.state)) revalidateBlog(post.slug)
+  return plain(updated)
+}
+
+export async function addReviewComment(user: SessionUser, id: string, body: string) {
+  requireBlogAccess(user)
+  const text = body.trim()
+  if (!text) throw badRequest('Write a comment first.', { body: 'Required' })
+  if (text.length > 4000) throw badRequest('Comments are limited to 4,000 characters.')
+  const post = await loadPost(id)
+  const doc = await ContentReview.create({ postId: post._id, kind: 'comment', body: text, authorId: user.id, authorEmail: user.email })
+  return plain(doc.toObject())
+}
+
+export async function listReviewTrail(user: SessionUser, id: string) {
+  requireBlogAccess(user)
+  const post = await loadPost(id)
+  const items = await ContentReview.find({ postId: post._id }).sort({ createdAt: -1 }).limit(100).lean()
+  return plain({ items, transitions: availableTransitions(post.state, perms(user)), state: post.state, revision: post.revision })
+}
+
+export async function listRevisions(user: SessionUser, id: string) {
+  requireBlogAccess(user)
+  const post = await loadPost(id)
+  const items = await PostRevision.find({ postId: post._id }, { version: 1, changeSummary: 1, createdAt: 1, changedById: 1, 'snapshot.title': 1, 'snapshot.state': 1 }).sort({ version: -1 }).limit(50).lean()
+  return plain({ items, current: post.revision })
+}
+
+const RESTORABLE = ['title', 'subtitle', 'excerpt', 'content', 'heroImage', 'heroAlt', 'heroCaption', 'readingMinutes', 'references', 'cta', 'seo'] as const
+
+export async function restoreRevision(user: SessionUser, id: string, version: number) {
+  const p = perms(user)
+  if (!p.canWrite && !p.canPublish) throw forbidden()
+  const post = await loadPost(id)
+  if (LIVE_STATES.includes(post.state) && !p.canPublish) throw forbidden()
+  const rev = await PostRevision.findOne({ postId: post._id, version }).lean<any>()
+  if (!rev) throw notFound('Revision')
+  const set: Record<string, unknown> = { lastEditedById: user.id, revision: post.revision + 1 }
+  for (const key of RESTORABLE) if (rev.snapshot?.[key] !== undefined) set[key] = rev.snapshot[key]
+  if (LIVE_STATES.includes(post.state)) set.contentUpdatedAt = new Date()
+  const updated = await Post.findOneAndUpdate({ _id: post._id, revision: post.revision }, { $set: set }, { new: true }).lean<any>()
+  if (!updated) throw conflict('This post changed while restoring. Reload and try again.')
+  await snapshotRevision(updated, user.id, `Restored version ${version}`)
+  await audit({ actor: user, action: 'blog.restore_revision', entityType: 'posts', entityId: String(post._id), summary: `Restored version ${version} of "${post.title}"` })
+  if (LIVE_STATES.includes(post.state)) revalidateBlog(post.slug)
+  return plain(updated)
+}
+
+export async function duplicatePost(user: SessionUser, id: string) {
+  if (!can(user.role, 'blog.write')) throw forbidden()
+  const post = await loadPost(id)
+  const base = `${post.slug}-copy`.slice(0, 90)
+  let slug = base
+  for (let n = 2; await Post.exists({ slug }); n++) slug = `${base}-${n}`
+  const { _id, createdAt, updatedAt, __v, publishedAt, publishAt, contentUpdatedAt, views, ...rest } = post
+  const copy = await Post.create({ ...rest, title: `${post.title} (copy)`.slice(0, 200), slug, state: 'draft', revision: 1, views: 0, featured: false, pinnedHome: false, publishedAt: null, publishAt: null, lastEditedById: user.id, isSample: false })
+  await snapshotRevision(copy.toObject(), user.id, `Duplicated from ${post.slug}`)
+  await audit({ actor: user, action: 'blog.duplicate', entityType: 'posts', entityId: String(copy._id), summary: `Duplicated "${post.title}"` })
+  return plain(copy.toObject())
+}
+
+export type BulkAction = 'archive' | 'restore' | 'delete' | 'flag_update'
+
+export async function bulkPostAction(user: SessionUser, ids: string[], action: BulkAction) {
+  if (!Array.isArray(ids) || ids.length === 0) throw badRequest('Select at least one post.')
+  if (ids.length > 100) throw badRequest('Bulk actions are limited to 100 posts at a time.')
+  const results: { id: string; ok: boolean; message?: string }[] = []
+  for (const id of ids) {
+    try {
+      if (action === 'delete') {
+        if (!can(user.role, 'blog.write')) throw forbidden()
+        const post = await loadPost(id)
+        if (LIVE_STATES.includes(post.state)) throw badRequest('Live posts cannot be deleted. Archive them first.')
+        await Post.deleteOne({ _id: post._id })
+        await ContentReview.deleteMany({ postId: post._id })
+        await audit({ actor: user, action: 'delete', entityType: 'posts', entityId: id, summary: `Deleted "${post.title}"` })
+      } else {
+        const to = action === 'archive' ? 'archived' : action === 'restore' ? 'draft' : 'update_needed'
+        await transitionPost(user, id, { to })
+      }
+      results.push({ id, ok: true })
+    } catch (e) {
+      results.push({ id, ok: false, message: e instanceof ApiError ? e.message : 'Failed' })
+    }
+  }
+  revalidateBlog()
+  return { results, succeeded: results.filter((r) => r.ok).length, failed: results.filter((r) => !r.ok).length }
+}
+
+/** Runs from a server cron: makes due scheduled posts public and expires posts with an unpublish time. */
+export async function runScheduledPublishing(now = new Date()) {
+  const due = await Post.find({ state: 'scheduled', publishAt: { $lte: now } }).lean<any[]>()
+  let published = 0
+  for (const post of due) {
+    const res = await Post.updateOne(
+      { _id: post._id, state: 'scheduled', revision: post.revision },
+      { $set: { state: 'published', publishedAt: post.publishedAt ?? post.publishAt ?? now, publishAt: null, revision: post.revision + 1 } },
+    )
+    if (res.modifiedCount) {
+      published++
+      await ContentReview.create({ postId: post._id, kind: 'published', fromState: 'scheduled', toState: 'published', body: 'Published by schedule', authorEmail: 'system' })
+      await audit({ action: 'blog.published', entityType: 'posts', entityId: String(post._id), summary: `Scheduled publication of "${post.title}"` })
+      revalidateBlog(post.slug)
+    }
+  }
+  const expiring = await Post.find({ state: 'published', unpublishAt: { $lte: now, $ne: null } }).lean<any[]>()
+  let archived = 0
+  for (const post of expiring) {
+    const res = await Post.updateOne({ _id: post._id, state: 'published' }, { $set: { state: 'archived', archivedFromState: 'published', revision: post.revision + 1 } })
+    if (res.modifiedCount) {
+      archived++
+      await audit({ action: 'blog.archived', entityType: 'posts', entityId: String(post._id), summary: `Scheduled unpublish of "${post.title}"` })
+      revalidateBlog(post.slug)
+    }
+  }
+  return { published, archived, checkedAt: now.toISOString() }
+}
+
+export async function blogDashboard(user: SessionUser, days = 90) {
+  requireBlogAccess(user)
+  const since = new Date(Date.now() - Math.min(Math.max(days, 7), 730) * 86400000)
+  const now = new Date()
+  const [byState, categories, tags, authors, perMonth, topViewed, recent, scheduled, review, activity, attention] = await Promise.all([
+    Post.aggregate([{ $group: { _id: '$state', n: { $sum: 1 } } }]),
+    Category.countDocuments(),
+    Tag.countDocuments(),
+    Author.countDocuments(),
+    Post.aggregate([
+      { $match: { publishedAt: { $gte: since }, state: { $in: ['published', 'update_needed'] } } },
+      { $group: { _id: { $dateToString: { format: '%Y-%m', date: '$publishedAt' } }, n: { $sum: 1 } } },
+      { $sort: { _id: 1 } },
+    ]),
+    Post.find({ state: { $in: ['published', 'update_needed'] } }, 'title slug views').sort({ views: -1 }).limit(5).lean(),
+    Post.find({}, 'title slug state updatedAt').sort({ updatedAt: -1 }).limit(6).lean(),
+    Post.find({ state: 'scheduled', publishAt: { $gt: now } }, 'title slug publishAt').sort({ publishAt: 1 }).limit(6).lean(),
+    Post.find({ state: { $in: ['editorial_review', 'seo_review', 'changes_requested'] } }, 'title slug state updatedAt').sort({ updatedAt: 1 }).limit(8).lean(),
+    ContentReview.find({}).sort({ createdAt: -1 }).limit(8).populate('postId', 'title').lean(),
+    Post.find({ state: { $in: ['published', 'update_needed'] } }, 'title slug excerpt heroImage heroAlt authorId categoryIds seo content publishedAt contentUpdatedAt updatedAt').limit(500).lean<any[]>(),
+  ])
+  const counts = Object.fromEntries(byState.map((r: any) => [r._id, r.n]))
+  const needsAttention = attention
+    .map((p) => ({ id: String(p._id), title: p.title, slug: p.slug, issues: analysePost(p).filter((i) => i.level !== 'info') }))
+    .filter((p) => p.issues.length)
+    .slice(0, 8)
+  return plain({
+    counts: { ...counts, total: byState.reduce((a: number, r: any) => a + r.n, 0) },
+    taxonomy: { categories, tags, authors },
+    perMonth: perMonth.map((r: any) => ({ month: r._id, posts: r.n })),
+    viewsNote: 'Views are an internal server-side counter, not an external analytics measurement.',
+    topViewed,
+    recent,
+    scheduled,
+    review,
+    activity,
+    needsAttention,
+    since,
+  })
+}
+=== lib/blog/workflow.ts
+/** Pure editorial workflow rules shared by the API (enforcement) and the admin UI (button visibility only). */
+
+export const POST_WORKFLOW_STATES = [
+  'idea',
+  'brief',
+  'draft',
+  'editorial_review',
+  'changes_requested',
+  'seo_review',
+  'approved',
+  'scheduled',
+  'published',
+  'update_needed',
+  'archived',
+] as const
+export type PostState = (typeof POST_WORKFLOW_STATES)[number]
+
+export const STATE_LABELS: Record<PostState, string> = {
+  idea: 'Idea',
+  brief: 'Brief',
+  draft: 'Draft',
+  editorial_review: 'In review',
+  changes_requested: 'Changes requested',
+  seo_review: 'SEO review',
+  approved: 'Approved',
+  scheduled: 'Scheduled',
+  published: 'Published',
+  update_needed: 'Update needed',
+  archived: 'Archived',
+}
+
+/** `write` = any blog author; `publish` = reviewer/publisher permission (blog.publish). */
+type Need = 'write' | 'publish'
+type Rule = { to: PostState; need: Need; label: string }
+
+export const TRANSITIONS: Record<PostState, Rule[]> = {
+  idea: [
+    { to: 'brief', need: 'write', label: 'Move to brief' },
+    { to: 'draft', need: 'write', label: 'Start draft' },
+    { to: 'archived', need: 'write', label: 'Archive' },
+  ],
+  brief: [
+    { to: 'draft', need: 'write', label: 'Start draft' },
+    { to: 'archived', need: 'write', label: 'Archive' },
+  ],
+  draft: [
+    { to: 'editorial_review', need: 'write', label: 'Submit for review' },
+    { to: 'archived', need: 'write', label: 'Archive' },
+  ],
+  editorial_review: [
+    { to: 'seo_review', need: 'publish', label: 'Pass to SEO review' },
+    { to: 'approved', need: 'publish', label: 'Approve' },
+    { to: 'changes_requested', need: 'publish', label: 'Request changes' },
+    { to: 'draft', need: 'write', label: 'Withdraw to draft' },
+  ],
+  changes_requested: [
+    { to: 'editorial_review', need: 'write', label: 'Resubmit for review' },
+    { to: 'draft', need: 'write', label: 'Back to draft' },
+  ],
+  seo_review: [
+    { to: 'approved', need: 'publish', label: 'Approve' },
+    { to: 'changes_requested', need: 'publish', label: 'Request changes' },
+  ],
+  approved: [
+    { to: 'scheduled', need: 'publish', label: 'Schedule' },
+    { to: 'published', need: 'publish', label: 'Publish now' },
+    { to: 'changes_requested', need: 'publish', label: 'Request changes' },
+  ],
+  scheduled: [
+    { to: 'approved', need: 'publish', label: 'Unschedule' },
+    { to: 'published', need: 'publish', label: 'Publish now' },
+  ],
+  published: [
+    { to: 'update_needed', need: 'write', label: 'Flag for update' },
+    { to: 'draft', need: 'publish', label: 'Unpublish to draft' },
+    { to: 'archived', need: 'publish', label: 'Archive' },
+  ],
+  update_needed: [
+    { to: 'published', need: 'publish', label: 'Mark as up to date' },
+    { to: 'editorial_review', need: 'write', label: 'Submit update for review' },
+    { to: 'archived', need: 'publish', label: 'Archive' },
+  ],
+  archived: [{ to: 'draft', need: 'publish', label: 'Restore as draft' }],
+}
+
+/** States whose content is (or will become) visible to anonymous visitors. */
+export const LIVE_STATES: PostState[] = ['published', 'scheduled', 'update_needed']
+/** States that need the publish permission to be edited because edits change live content. */
+export const LIVE_EDIT_STATES: PostState[] = ['published', 'scheduled', 'update_needed']
+/** States that run the publish quality gate before entering. */
+export const GATED_TARGETS: PostState[] = ['approved', 'scheduled', 'published']
+
+export function isPostState(value: unknown): value is PostState {
+  return typeof value === 'string' && (POST_WORKFLOW_STATES as readonly string[]).includes(value)
+}
+
+export function availableTransitions(from: string, perms: { canWrite: boolean; canPublish: boolean }): Rule[] {
+  if (!isPostState(from)) return []
+  return TRANSITIONS[from].filter((r) => (r.need === 'publish' ? perms.canPublish : perms.canWrite || perms.canPublish))
+}
+
+export type TransitionCheck = { ok: true } | { ok: false; status: number; message: string }
+
+export function checkTransition(
+  from: string,
+  to: string,
+  ctx: { canWrite: boolean; canPublish: boolean; publishAt?: Date | null; now?: Date },
+): TransitionCheck {
+  if (!isPostState(from) || !isPostState(to)) return { ok: false, status: 400, message: 'Unknown workflow state' }
+  const rule = TRANSITIONS[from].find((r) => r.to === to)
+  if (!rule) return { ok: false, status: 409, message: `A post cannot move from "${STATE_LABELS[from]}" to "${STATE_LABELS[to]}".` }
+  if (rule.need === 'publish' && !ctx.canPublish) return { ok: false, status: 403, message: 'Your role cannot perform this step. Ask a reviewer or publisher.' }
+  if (rule.need === 'write' && !ctx.canWrite && !ctx.canPublish) return { ok: false, status: 403, message: 'You do not have permission to edit posts.' }
+  if (to === 'scheduled') {
+    const now = ctx.now ?? new Date()
+    if (!ctx.publishAt || Number.isNaN(ctx.publishAt.getTime())) return { ok: false, status: 422, message: 'Choose a publish date and time to schedule this post.' }
+    if (ctx.publishAt.getTime() <= now.getTime()) return { ok: false, status: 422, message: 'The scheduled time must be in the future.' }
+  }
+  return { ok: true }
+}
+=== app/(site)/blog/page.tsx
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { PostCard } from '@/components/blocks/dynamic-blocks'
+import { EmptyState, PageIntro } from '@/components/site/primitives'
+import { listCategories, listPosts } from '@/lib/server/services/public'
+import { cn } from '@/lib/utils'
+
+export const metadata: Metadata = {
+  title: 'Insights',
+  description: 'Practical guidance on corporate accommodation, employee transportation and mobility operations.',
+  alternates: { canonical: '/blog' },
+}
+
+export default async function BlogIndex({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const sp = await searchParams
+  const page = Math.max(1, Number(sp.page) || 1)
+  const [result, categories] = await Promise.all([listPosts({ page, category: sp.category, q: sp.q, limit: 9 }), listCategories()])
+  const qs = (p: number) => `/blog?${new URLSearchParams({ ...(sp.category ? { category: sp.category } : {}), ...(sp.q ? { q: sp.q } : {}), page: String(p) })}`
+
+  return (
+    <>
+      <PageIntro eyebrow="Insights" title="Field notes on moving and housing people at work" intro="Guides, checklists and perspectives from our accommodation and transportation teams." />
+      <section className="mx-auto flex max-w-7xl flex-col gap-10 px-5 pb-24 md:px-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <nav aria-label="Categories" className="flex flex-wrap gap-2">
+            <Link href="/blog" className={cn('rounded-full border border-line px-4 py-1.5 text-sm', !sp.category ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted')}>
+              All
+            </Link>
+            {categories.map((c: any) => (
+              <Link
+                key={c._id}
+                href={`/blog?category=${c.slug}`}
+                className={cn('rounded-full border border-line px-4 py-1.5 text-sm', sp.category === c.slug ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted')}
+              >
+                {c.name}
+              </Link>
+            ))}
+          </nav>
+          <form action="/blog" role="search" className="flex gap-2">
+            <label htmlFor="blog-q" className="sr-only">
+              Search articles
+            </label>
+            <input id="blog-q" name="q" defaultValue={sp.q} placeholder="Search articles" className="h-10 w-full rounded-full border border-line bg-background px-4 text-sm md:w-64" />
+          </form>
+        </div>
+        {result.items.length ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {result.items.map((p: any) => (
+              <PostCard key={p._id} post={p} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState title="No articles found" body="Try another category or search term." />
+        )}
+        {result.pages > 1 ? (
+          <nav aria-label="Pagination" className="flex items-center justify-center gap-4 text-sm">
+            {page > 1 ? <Link href={qs(page - 1)} className="underline">Previous</Link> : null}
+            <span className="text-muted-foreground">
+              Page {page} of {result.pages}
+            </span>
+            {page < result.pages ? <Link href={qs(page + 1)} className="underline">Next</Link> : null}
+          </nav>
+        ) : null}
+      </section>
+    </>
+  )
+}
+=== app/(site)/blog/[slug]/page.tsx
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { PostCard } from '@/components/blocks/dynamic-blocks'
+import { CtaLink, Markdown, SmartImage, formatDate } from '@/components/site/primitives'
+import { JsonLd } from '@/components/site/json-ld'
+import { articleSchema, breadcrumbSchema } from '@/lib/seo/jsonld'
+import { buildMetadata, resolveEffectiveSeo } from '@/lib/seo/metadata'
+import { getPost } from '@/lib/server/services/public'
+import { getSeoSettings } from '@/lib/server/services/seo-inventory'
+
+type Props = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const data = await getPost(slug)
+  if (!data) return { robots: { index: false } }
+  const { post } = data
+  const { site } = await getSeoSettings()
+  const seo = post.seo ?? {}
+  const eff = resolveEffectiveSeo('post', site, { name: post.title, summary: post.excerpt || post.content, explicitTitle: seo.title, explicitDescription: seo.description })
+  return buildMetadata({
+    site,
+    path: `/blog/${post.slug}`,
+    title: eff.title,
+    description: eff.description,
+    canonical: seo.canonical,
+    noindex: seo.noindex,
+    nofollow: seo.nofollow,
+    ogTitle: seo.ogTitle,
+    ogDescription: seo.ogDescription,
+    ogImage: seo.ogImage || post.heroImage,
+    ogImageAlt: post.heroAlt,
+    type: 'article',
+    publishedTime: post.publishedAt,
+    modifiedTime: post.contentUpdatedAt || post.updatedAt,
+    authors: post.authorId?.name ? [post.authorId.name] : undefined,
+  })
+}
+
+export default async function PostPage({ params }: Props) {
+  const { slug } = await params
+  const data = await getPost(slug)
+  if (!data) notFound()
+  const { post, related } = data
+  const { site } = await getSeoSettings()
+  const path = `/blog/${post.slug}`
+  const jsonLd = [
+    articleSchema(site, { path, headline: post.title, description: post.excerpt, image: post.heroImage, published: post.publishedAt, modified: post.contentUpdatedAt || post.updatedAt, authorName: post.authorId?.name }),
+    breadcrumbSchema(site, [
+      { name: 'Home', path: '/' },
+      { name: 'Insights', path: '/blog' },
+      { name: post.title, path },
+    ]),
+  ]
+
+  return (
+    <article>
+      <JsonLd data={jsonLd} />
+      <header className="mx-auto flex max-w-3xl flex-col gap-5 px-5 pb-10 pt-16 md:px-8 md:pt-24">
+        <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+          <Link href="/blog" className="hover:underline">
+            Insights
+          </Link>
+          {post.categoryIds?.[0] ? (
+            <>
+              {' / '}
+              <Link href={`/blog?category=${post.categoryIds[0].slug}`} className="hover:underline">
+                {post.categoryIds[0].name}
+              </Link>
+            </>
+          ) : null}
+        </nav>
+        <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-balance md:text-5xl">{post.title}</h1>
+        {post.excerpt ? <p className="text-lg leading-relaxed text-muted-foreground text-pretty">{post.excerpt}</p> : null}
+        <p className="text-sm text-muted-foreground">
+          {post.authorId?.name ? `${post.authorId.name} · ` : ''}
+          {formatDate(post.publishedAt)}
+          {post.readingMinutes ? ` · ${post.readingMinutes} min read` : ''}
+        </p>
+      </header>
+      {post.heroImage ? (
+        <figure className="mx-auto max-w-5xl px-5 md:px-8">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-3xl bg-muted">
+            <SmartImage src={post.heroImage} alt={post.heroAlt || ''} sizes="(min-width: 1024px) 1024px, 100vw" priority className="object-cover" />
+          </div>
+          {post.heroCaption ? <figcaption className="mt-2 text-sm text-muted-foreground">{post.heroCaption}</figcaption> : null}
+        </figure>
+      ) : null}
+      <div className="mx-auto max-w-3xl px-5 py-12 md:px-8">
+        <Markdown>{post.content || ''}</Markdown>
+        {post.references?.length ? (
+          <aside className="mt-12 border-t border-line pt-6">
+            <h2 className="font-display text-lg font-semibold">References</h2>
+            <ul className="mt-3 flex flex-col gap-2 text-sm">
+              {post.references.map((r: any, i: number) => (
+                <li key={i}>
+                  {r.url ? (
+                    <a href={r.url} rel="noopener noreferrer nofollow" target="_blank" className="underline">
+                      {r.label || r.url}
+                    </a>
+                  ) : (
+                    r.label
+                  )}
+                </li>
+              ))}
+            </ul>
+          </aside>
+        ) : null}
+        {post.tagIds?.length ? (
+          <ul className="mt-8 flex flex-wrap gap-2" aria-label="Tags">
+            {post.tagIds.map((t: any) => (
+              <li key={t._id} className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
+                {t.name}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <div className="mt-12 flex flex-col items-start gap-4 rounded-3xl bg-primary p-8 text-primary-foreground">
+          <p className="font-display text-2xl font-semibold text-balance">Planning a programme like this?</p>
+          <CtaLink href={post.cta?.href || '/contact'} label={post.cta?.label || 'Talk to our team'} variant="sky" />
+        </div>
+      </div>
+      {related?.length ? (
+        <section aria-labelledby="related" className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
+          <h2 id="related" className="mb-6 font-display text-2xl font-semibold">
+            Related reading
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((p: any) => (
+              <PostCard key={p._id} post={p} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </article>
+  )
+}
+=== app/admin/(panel)/blog/page.tsx
+import { BlogDashboard } from '@/components/admin/blog-dashboard'
+import { can } from '@/lib/rbac'
+import { requirePageUser } from '@/lib/server/auth/session'
+
+export const metadata = { title: 'Blog' }
+
+export default async function BlogAdminPage() {
+  const user = await requirePageUser('content.read')
+  return <BlogDashboard canWrite={can(user.role, 'blog.write')} />
+}
+=== lib/server/admin/registry.ts
+import 'server-only'
+import type { Model } from 'mongoose'
+import { RESOURCE_MAP, type ResourceConfig } from '@/lib/admin/resources'
+import { can } from '@/lib/rbac'
+import type { SessionUser } from '../auth/session'
+import { Author, CaseStudy, Category, ClientLogo, Faq, Industry, Job, Location, Post, PostRevision, Resource, Tag, TeamMember, Testimonial } from '../models/editorial'
+import { Redirect } from '../models/content'
+import { EmailTemplate, RoutingRule } from '../models/operations'
+import { User } from '../models/identity'
+import { ApiError, badRequest, forbidden } from '../http'
+import { LIVE_EDIT_STATES } from '@/lib/blog/workflow'
+import { revalidateBlog } from '../services/blog-workflow'
+import { validateRedirectSource, validateRedirectTarget, wouldCreateLoop } from '@/lib/seo/redirects'
+import { normalizePath } from '@/lib/seo/config'
+
+type Hooks = {
+  /** Mutates the parsed payload before persistence; can throw ApiError for business-rule violations. */
+  beforeSave?: (data: Record<string, unknown>, ctx: { user: SessionUser; existing: Record<string, unknown> | null; config: ResourceConfig }) => Promise<void> | void
+  afterSave?: (doc: Record<string, unknown>, ctx: { user: SessionUser; existing: Record<string, unknown> | null }) => Promise<void>
+}
+
+const PUBLISHED_VALUES = new Set(['published', 'approved', 'scheduled'])
+
+function guardPublish(data: Record<string, unknown>, ctx: { user: SessionUser; existing: Record<string, unknown> | null; config: ResourceConfig }) {
+  const field = ctx.config.statusField
+  const perm = ctx.config.publishPermission
+  if (!field || !perm) return
+  const next = data[field] as string | undefined
+  const prev = ctx.existing?.[field] as string | undefined
+  if (next && next !== prev && PUBLISHED_VALUES.has(next) && !can(ctx.user.role, perm)) {
+    throw new ApiError(403, 'publish_forbidden', 'Your role can save drafts but cannot publish. Submit for review instead.')
+  }
+}
+
+function words(markdown: string) {
+  return markdown.replace(/[#*_>`[\]()!-]/g, ' ').split(/\s+/).filter(Boolean).length
+}
+
+const HOOKS: Record<string, Hooks> = {
+  posts: {
+    beforeSave(data, ctx) {
+      // Workflow state, schedule and publication dates are only changed through the workflow endpoint.
+      delete data.state
+      delete data.publishAt
+      delete data.publishedAt
+      delete data.unpublishAt
+      const existingState = ctx.existing?.state as string | undefined
+      if (existingState && LIVE_EDIT_STATES.includes(existingState as never) && !can(ctx.user.role, 'blog.publish')) {
+        throw new ApiError(403, 'publish_forbidden', 'This post is live. Ask a publisher to edit it, or flag it for update.')
+      }
+      if (typeof data.content === 'string') data.readingMinutes = Math.max(1, Math.round(words(data.content) / 220))
+      if (!ctx.existing) data.state = 'draft'
+      else if (existingState && LIVE_EDIT_STATES.includes(existingState as never) && typeof data.content === 'string') data.contentUpdatedAt = new Date()
+      data.cta = { label: data.ctaLabel ?? '', href: data.ctaHref ?? '' }
+      delete data.ctaLabel
+      delete data.ctaHref
+      data.lastEditedById = ctx.user.id
+      data.revision = Number(ctx.existing?.revision ?? 0) + 1
+    },
+    async afterSave(doc, ctx) {
+      await PostRevision.create({ postId: doc._id, version: doc.revision, snapshot: doc, changedById: ctx.user.id, changeSummary: ctx.existing ? 'update' : 'create' })
+      if (ctx.existing && LIVE_EDIT_STATES.includes(ctx.existing.state as never)) revalidateBlog(String(doc.slug))
+    },
+  },
+  'case-studies': {
+    beforeSave(data, ctx) {
+      guardPublish(data, ctx)
+      const status = data.status ?? ctx.existing?.status
+      const approved = data.clientApproved ?? ctx.existing?.clientApproved
+      if (status === 'published' && !approved) throw badRequest('Record client approval before publishing a case study', { clientApproved: 'Required to publish' })
+    },
+  },
+  testimonials: {
+    beforeSave(data, ctx) {
+      guardPublish(data, ctx)
+      const status = data.status ?? ctx.existing?.status
+      const perm = data.permissionStatus ?? ctx.existing?.permissionStatus
+      if (status === 'published' && perm !== 'granted') throw badRequest('Permission must be granted before publishing', { permissionStatus: 'Must be granted' })
+    },
+  },
+  'client-logos': {
+    beforeSave(data, ctx) {
+      guardPublish(data, ctx)
+      const status = data.status ?? ctx.existing?.status
+      const perm = data.permissionStatus ?? ctx.existing?.permissionStatus
+      if (status === 'published' && perm !== 'granted') throw badRequest('Logo permission must be granted before publishing', { permissionStatus: 'Must be granted' })
+    },
+  },
+  redirects: {
+    async beforeSave(data, ctx) {
+      const rawSource = String(data.sourcePath ?? ctx.existing?.sourcePath ?? '')
+      const source = validateRedirectSource(rawSource)
+      if (!source.ok) throw badRequest(source.error, { sourcePath: source.error })
+      data.sourcePath = source.source
+      const statusCode = Number(data.statusCode ?? ctx.existing?.statusCode ?? 301)
+      if (![301, 302, 410].includes(statusCode)) throw badRequest('Status must be 301, 302 or 410', { statusCode: 'Invalid status' })
+      data.statusCode = statusCode
+      if (statusCode === 410) {
+        data.targetUrl = ''
+        return
+      }
+      const target = validateRedirectTarget(String(data.targetUrl ?? ctx.existing?.targetUrl ?? ''), { allowExternal: true })
+      if (!target.ok) throw badRequest(target.error, { targetUrl: target.error })
+      data.targetUrl = target.target
+      if (target.target.startsWith('/') && normalizePath(target.target) === source.source) throw badRequest('A redirect cannot point to itself', { targetUrl: 'Loop detected' })
+      const existingId = ctx.existing?._id ? String(ctx.existing._id) : null
+      const duplicate = await Redirect.findOne({ sourcePath: source.source, ...(existingId ? { _id: { $ne: existingId } } : {}) }, '_id').lean()
+      if (duplicate) throw badRequest('Another redirect already uses this source path', { sourcePath: 'Duplicate source' })
+      const rules = (await Redirect.find({ enabled: true, ...(existingId ? { _id: { $ne: existingId } } : {}) }, 'sourcePath targetUrl statusCode enabled').lean<any[]>()).map((r) => ({ sourcePath: r.sourcePath, targetUrl: r.targetUrl ?? '', statusCode: r.statusCode, enabled: true }))
+      if (wouldCreateLoop(rules, source.source, target.target)) throw badRequest('This redirect would create a loop with existing redirects', { targetUrl: 'Loop detected' })
+    },
+  },
+  'email-templates': {
+    beforeSave(data, ctx) {
+      data.version = Number(ctx.existing?.version ?? 0) + 1
+    },
+  },
+}
+
+const MODELS: Record<string, Model<any>> = {
+  posts: Post,
+  authors: Author,
+  categories: Category,
+  tags: Tag,
+  faqs: Faq,
+  industries: Industry,
+  locations: Location,
+  'case-studies': CaseStudy,
+  testimonials: Testimonial,
+  'client-logos': ClientLogo,
+  team: TeamMember,
+  resources: Resource,
+  jobs: Job,
+  redirects: Redirect,
+  'routing-rules': RoutingRule,
+  'email-templates': EmailTemplate,
+  users: User,
+}
+
+export function getResource(key: string) {
+  const config = RESOURCE_MAP[key]
+  const model = MODELS[key]
+  if (!config || !model) throw new ApiError(404, 'not_found', 'Unknown collection')
+  return { config, model, hooks: HOOKS[key] ?? { beforeSave: guardPublish } }
+}
+
+/** Reference lookup for `ref` fields; users are exposed as name-only options to permitted admins. */
+export function getRefModel(key: string, user: SessionUser): { model: Model<any>; label: string } {
+  if (key === 'users') {
+    if (!can(user.role, 'leads.assign') && !can(user.role, 'leads.routing') && !can(user.role, 'users.manage')) throw forbidden()
+    return { model: User, label: 'name' }
+  }
+  const { config, model } = getResource(key)
+  if (!can(user.role, config.readPermission)) throw forbidden()
+  return { model, label: config.titleField }
+}

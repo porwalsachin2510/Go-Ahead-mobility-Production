@@ -1,0 +1,50 @@
+== app/(site)
+app/(site)/[[...path]]/page.tsx
+app/(site)/blog/[slug]/page.tsx
+app/(site)/blog/authors/page.tsx
+app/(site)/blog/page.tsx
+app/(site)/blog/series/page.tsx
+app/(site)/careers/[slug]/page.tsx
+app/(site)/careers/page.tsx
+app/(site)/case-studies/[slug]/page.tsx
+app/(site)/industries/[slug]/page.tsx
+app/(site)/layout.tsx
+app/(site)/newsletter/page.tsx
+app/(site)/resources/[slug]/page.tsx
+== components/site
+application-form.tsx
+breadcrumbs.tsx
+faq-list.tsx
+footer.tsx
+header.tsx
+icons.tsx
+job-alert-form.tsx
+job-view-tracker.tsx
+json-ld.tsx
+lead-form.tsx
+newsletter-form.tsx
+post-comments.tsx
+primitives.tsx
+reading-progress.tsx
+web-vitals.tsx
+== pkg
+    "lucide-react": "^0.544.0",
+    "motion": "^14.2.0",
+    "next": "16.4.0",
+    "react": "^19",
+motion
+== public imgs
+public/apple-icon.png
+public/brand/goahead-logo-original.jpg
+public/brand/goahead-logo.png
+public/brand/goahead-mark-180.png
+public/icon-dark-32x32.png
+public/icon-light-32x32.png
+public/images/accommodation-hero.webp
+public/images/employee-shuttle.webp
+public/images/event-transport.webp
+public/images/industrial-transport.webp
+public/images/project-stays.webp
+public/images/transport-hero.webp
+== globals
+243 app/globals.css

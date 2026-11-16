@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>GoAhead favicon</title>
+  <defs>
+    <linearGradient id="cyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#20C7F2"/>
+      <stop offset="1" stop-color="#08B8E8"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#354DAA"/>
+      <stop offset="1" stop-color="#245DE0"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#000000"/>
+  <!-- Forward-motion wing emblem -->
+  <path d="M183 94 L248 94 C267 94 282 102 296 116 L370 190 L293 190 C272 190 256 183 241 168 Z" fill="url(#cyan)"/>
+  <path d="M160 250 C174 213 193 194 227 194 L370 194 L313 232 C293 246 276 250 252 250 Z" fill="url(#blue)"/>
+  <!-- Compact GoA wordmark -->
+  <text x="58" y="389" font-family="Arial, Helvetica, sans-serif" font-size="172" font-weight="800" font-style="italic" letter-spacing="-14" fill="url(#blue)">Go</text>
+  <text x="264" y="389" font-family="Arial, Helvetica, sans-serif" font-size="172" font-weight="800" font-style="italic" letter-spacing="-12" fill="url(#cyan)">A</text>
+</svg>

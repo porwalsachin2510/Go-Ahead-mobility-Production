@@ -1,0 +1,411 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  GoAhead Mobility design tokens.
+  Brand colours sampled from the official logo:
+  - Royal (the "Go")     #334B93
+  - Sky   (the "Ahead")  #26ADE4
+  Ink/paper neutrals are tinted toward the royal hue so the system reads as one family.
+*/
+:root {
+  color-scheme: light;
+  --ink: #070c1f;
+  --ink-2: #0e1633;
+  --royal: #334b93;
+  --royal-deep: #22336b;
+  --sky: #26ade4;
+  --sky-soft: #d8f1fb;
+  --paper: #f4f6fb;
+  --line: #dde2ee;
+  --azure: #1a7cf5;
+  --azure-deep: #0f5fd0;
+  --night: #050b1d;
+
+  --background: #ffffff;
+  --foreground: #0b1229;
+  --card: #ffffff;
+  --card-foreground: #0b1229;
+  --popover: #ffffff;
+  --popover-foreground: #0b1229;
+  --primary: #334b93;
+  --primary-foreground: #ffffff;
+  --secondary: #eef1f8;
+  --secondary-foreground: #0b1229;
+  --muted: #f1f3f9;
+  --muted-foreground: #5a6380;
+  --accent: #d8f1fb;
+  --accent-foreground: #0b1229;
+  --destructive: #c62f3b;
+  --success: #138a5e;
+  --warning: #b26b00;
+  --border: #dde2ee;
+  --input: #cfd6e6;
+  --ring: #26ade4;
+  --chart-1: #334b93;
+  --chart-2: #26ade4;
+  --chart-3: #7f8db8;
+  --chart-4: #9fdcf3;
+  --chart-5: #0e1633;
+  --radius: 0.75rem;
+
+  --sidebar: #070c1f;
+  --sidebar-foreground: #dfe5f5;
+  --sidebar-primary: #26ade4;
+  --sidebar-primary-foreground: #070c1f;
+  --sidebar-accent: #121b3b;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1b2550;
+  --sidebar-ring: #26ade4;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@theme inline {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-body), ui-sans-serif, sans-serif;
+
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-royal: var(--royal);
+  --color-royal-deep: var(--royal-deep);
+  --color-sky: var(--sky);
+  --color-sky-soft: var(--sky-soft);
+  --color-paper: var(--paper);
+  --color-line: var(--line);
+  --color-azure: var(--azure);
+  --color-azure-deep: var(--azure-deep);
+  --color-night: var(--night);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-3xl: calc(var(--radius) * 2.5);
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-route: route 2.4s var(--ease-in-out-quart) infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes home-hero-rise {
+  from { opacity: 0; transform: translate3d(0, 22px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes home-hero-photo {
+  from { opacity: 0.45; transform: scale(1.055); }
+  to { opacity: 1; transform: scale(1.015); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero-enter {
+    opacity: 0;
+    animation: home-hero-rise 760ms var(--ease-out-expo) both;
+  }
+  .home-hero-enter--eyebrow { animation-delay: 80ms; }
+  .home-hero-enter--headline { animation-delay: 170ms; }
+  .home-hero-enter--description { animation-delay: 310ms; }
+  .home-hero-enter--actions { animation-delay: 700ms; }
+  .home-hero-parallax img {
+    animation: home-hero-photo 1400ms var(--ease-out-expo) both;
+  }
+}
+
+@keyframes route {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6rem;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: 'ss01', 'cv11';
+    text-rendering: optimizeLegibility;
+  }
+  :focus-visible {
+    outline: 2px solid var(--sky);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  ::selection {
+    background: var(--sky);
+    color: var(--ink);
+  }
+  h1, h2, h3, h4 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+}
+
+@layer components {
+  .container-x {
+    @apply mx-auto w-full max-w-[90rem] px-5 sm:px-8 lg:px-12;
+  }
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em];
+  }
+  .eyebrow::before {
+    content: '';
+    width: 1.5rem;
+    height: 2px;
+    background: currentColor;
+    transform: skewX(-24deg);
+  }
+  .display-xl {
+    @apply font-display font-extrabold leading-[0.92] tracking-[-0.035em];
+    font-size: clamp(2.75rem, 7.4vw, 7.25rem);
+  }
+  .display-lg {
+    @apply font-display font-extrabold leading-[0.98] tracking-[-0.03em];
+    font-size: clamp(2.25rem, 4.8vw, 4.5rem);
+  }
+  .display-md {
+    @apply font-display font-bold leading-[1.05] tracking-[-0.02em];
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+  }
+  .slant {
+    font-style: italic;
+  }
+  .grain {
+    position: relative;
+    isolation: isolate;
+  }
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.06;
+    z-index: -1;
+    background-image: radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px);
+    background-size: 3px 3px;
+  }
+  .route-grid {
+    background-image:
+      linear-gradient(to right, rgba(38, 173, 228, 0.07) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(38, 173, 228, 0.07) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+  .prose-ga {
+    @apply text-[1.0625rem] leading-[1.75] text-foreground/85;
+  }
+  .prose-ga > * + * { margin-top: 1.15em; }
+  .prose-ga h2 { @apply mt-12 scroll-mt-28 text-3xl font-bold tracking-tight text-foreground; }
+  .prose-ga h3 { @apply mt-9 scroll-mt-28 text-xl font-bold text-foreground; }
+  .prose-ga a { @apply font-medium text-royal underline decoration-sky decoration-2 underline-offset-4 hover:text-sky; }
+  .prose-ga ul { @apply list-disc pl-6; }
+  .prose-ga ol { @apply list-decimal pl-6; }
+  .prose-ga li + li { margin-top: 0.4em; }
+  .prose-ga blockquote { @apply border-l-4 border-sky bg-paper px-6 py-4 font-medium text-foreground; }
+  .prose-ga strong { @apply font-semibold text-foreground; }
+  .prose-ga table { @apply w-full border-collapse text-sm; }
+  .prose-ga th { @apply border-b-2 border-line bg-paper px-3 py-2 text-left font-semibold; }
+  .prose-ga td { @apply border-b border-line px-3 py-2 align-top; }
+  .prose-ga code { @apply rounded bg-paper px-1.5 py-0.5 text-[0.9em]; }
+  .prose-ga pre { @apply overflow-x-auto rounded-xl bg-ink p-5 text-sm text-white; }
+  .prose-ga pre code { @apply bg-transparent p-0; }
+  .prose-ga img { @apply rounded-xl; }
+  .prose-ga hr { @apply my-10 border-line; }
+}
+
+
+/* Homepage motion: use transforms/opacity only; reduced-motion users get a static page. */
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes homeHeroEnter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+
+.home-hero-reveal {
+  animation: homeHeroEnter 950ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.home-hero-card {
+  animation: homeHeroEnter 850ms cubic-bezier(.16, 1, .3, 1) 110ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  header, footer, nav, .no-print { display: none !important; }
+  body { color: #000; background: #fff; }
+}
+
+
+/* Six-section case-study detail experience. Animations use transforms/opacity so they stay
+   lightweight; the global reduced-motion rule below keeps this content fully static when needed. */
+.case-study-hero {
+  isolation: isolate;
+  min-height: 430px;
+}
+.case-study-hero > div:first-child img {
+  object-position: center 52%;
+}
+.case-study-hero-overlay {
+  background:
+    linear-gradient(90deg, rgba(3, 10, 27, 0.99) 0%, rgba(3, 10, 27, 0.91) 31%, rgba(3, 10, 27, 0.48) 58%, rgba(3, 10, 27, 0.10) 100%),
+    linear-gradient(0deg, rgba(3, 10, 27, 0.75) 0%, transparent 58%);
+}
+.case-study-hero .text-sky-600 {
+  color: #4bcaff;
+}
+.case-study-tabs {
+  box-shadow: 0 10px 26px rgba(4, 14, 39, 0.08);
+}
+.case-study-tab {
+  position: relative;
+}
+.case-study-tabs [role="tablist"] {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(51, 75, 147, 0.25) transparent;
+}
+.case-study-tab::after {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.2rem;
+  left: 0.75rem;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--azure);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.case-study-tab[aria-selected="true"]::after {
+  transform: scaleX(1);
+}
+.case-study-quote-mark {
+  transform-origin: center;
+}
+@keyframes caseStudyQuoteIn {
+  0% { opacity: 0; transform: translateY(8px) scale(0.72) rotate(-12deg); }
+  70% { opacity: 1; transform: translateY(-2px) scale(1.08) rotate(2deg); }
+  100% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+}
+.case-study-quote-mark {
+  animation: caseStudyQuoteIn 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.case-study-timeline-fill {
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+.case-study-detail a,
+.case-study-detail button {
+  -webkit-tap-highlight-color: transparent;
+}
+.case-study-detail button:focus-visible,
+.case-study-detail a:focus-visible {
+  outline: 2px solid var(--azure);
+  outline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .case-study-hero-overlay {
+    background:
+      linear-gradient(90deg, rgba(3, 10, 27, 0.94), rgba(3, 10, 27, 0.62)),
+      linear-gradient(0deg, rgba(3, 10, 27, 0.9), rgba(3, 10, 27, 0.10));
+  }
+  .case-study-hero > div:first-child img {
+    object-position: 64% center;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .case-study-tab::after,
+  .case-study-quote-mark {
+    animation: none !important;
+    transition: none !important;
+  }
+  .case-study-timeline-fill {
+    transform: scaleX(1);
+  }
+}
+
+/* Our Footprint — India network map */
+.india-state { transition: fill .35s ease, stroke .35s ease; }
+.india-state:hover { fill: #0a4d97; }
+.india-network-dot { animation: india-dot-twinkle 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.india-pin-pulse { animation: india-pin-pulse 2.4s ease-out infinite; }
+@keyframes india-dot-twinkle { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@keyframes india-pin-pulse { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .india-network-dot, .india-pin-pulse { animation: none; }
+}
+
+@keyframes bell-ring {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(14deg); }
+  40% { transform: rotate(-12deg); }
+  60% { transform: rotate(8deg); }
+  80% { transform: rotate(-4deg); }
+}

@@ -1,0 +1,1177 @@
+PRODUCT REQUIREMENTSSPECIFICATION
+Corporate Website Revamp + Future B2B Travel Booking Platform
+Phase 1: Premium Corporate Website, CMS, SEO, Blog & Lead OperationsPhase 2: B2B Hotels, Flights, Ground Transport & Travel Management
+Prepared: 15 October 2026  |  Version 1.1  |  Status: Updated Full-Stack Architecture Baseline
+Confidential - for business, design, engineering, SEO and delivery planning
+Document Control
+Field
+Details
+Document purpose
+Defines functional, UX, data, integration, security, SEO, admin and acceptance requirements for a two-phase GoAhead Mobility web application.
+Business owner
+GoAhead Mobility - final accountable person to be nominated by the client.
+Primary audiences
+Corporate accommodation buyers, HR/transport managers, travel managers, procurement teams, employees/travellers in Phase 2, GoAhead sales/operations/content/admin teams.
+Requested technology baseline
+Next.js (TypeScript) full-stack application; Node.js server-side backend within the same Next.js app; MongoDB Atlas database; Cloudinary media/image storage; Nodemailer-based email sending.
+Recommended implementation shape
+One Next.js App Router codebase and application deployment for the public website, CMS/admin and future portal. Node.js backend logic is implemented inside Next.js using Route Handlers and server-only modules; MongoDB Atlas, Cloudinary and SMTP/transactional email provider. No separate React SPA/frontend or standalone NestJS/Express API service.
+Source audit date
+Public website pages and supplied mobile screenshots reviewed on 14 October 2026. The live website may change after that date.
+Version policy
+Requirements should be baselined before design sign-off. Any post-baseline feature or scope change must be estimated and approved.
+How to Read This Document
+“Must” marks a launch requirement. “Should” indicates a strong recommendation. “Future” or “Phase 2” items are planned capabilities and must not be represented as delivered in Phase 1. All metrics, case studies, certifications, coverage claims and company statistics require client verification before publication. Architecture baseline: build the complete website as one full-stack Next.js application, with Node.js server-side/backend logic inside the same Next.js codebase and MongoDB Atlas as the database. Do not build a separate React frontend project or a standalone Node.js API backend.
+Contents / Navigation
+1. Executive Summary and Product Goals
+2. Current Website Audit and Migration Inventory
+3. Business Scope, Assumptions and Out-of-Scope Items
+4. Information Architecture and Sitemap
+5. Phase 1 Public Website: Page-by-Page Requirements
+6. Enquiry Forms, Conversion and Lead Management
+7. Advanced Admin Panel and CMS Requirements
+8. Premium Blog and Resource Publishing System
+9. Advanced SEO Management System
+10. UI/UX, Design System, Motion and Accessibility
+11. Technical Architecture and Stack
+12. Backend API, Database and Data Operations
+13. Email, Integrations, Analytics and Reporting
+14. Security, Privacy, Reliability and Operations
+15. Testing, Launch and Acceptance Criteria
+16. Phase 2 B2B Booking Platform Requirements
+17. Phase 2 Booking Architecture, Data Model and Operations
+18. Delivery Roadmap, Risks and Decisions Needed
+Appendix A. Functional Test Checklist
+Appendix B. Public Reference Sources
+1. Executive Summary and Product Goals
+GoAhead requires a modern, responsive and premium-quality corporate website that presents two related but distinct business verticals: Global Accommodation and Local Transportation. The experience should build trust with enterprise decision-makers, explain service capabilities, capture qualified enquiries, and give authorized staff the ability to manage website content, SEO, editorial publishing and leads through a secure admin panel.
+The application is to be built in two phases. Phase 1 is a corporate marketing and lead-generation platform. Phase 2 extends the same product foundation into a B2B travel booking platform where approved corporate users sign in, search bookable inventory, request approvals, book hotels and flights, and manage fulfilment, payments/invoicing and reporting. Phase 2 requires supplier/GDS/NDC/aggregator contracts and APIs; it cannot be delivered reliably by scraping consumer booking sites.
+1.1 Business Outcomes
+Explain the Global Accommodation proposition with clear service details, coverage, procurement benefits and dedicated accommodation enquiry forms.
+Explain Local Transportation services: corporate cab, employee transport, shuttle, industrial/workforce, event transport and transport software/ERP.
+Convert high-intent B2B visitors into traceable leads with source attribution, internal ownership, SLA reminders and email notifications.
+Allow non-technical users to safely manage pages, navigation, banners, case studies, FAQs, service areas, blog posts, SEO metadata and leads.
+Provide a search-friendly, accessible and performance-focused public site with a clear content hierarchy and maintainable page templates.
+Create a secure technical foundation that supports later company accounts, traveller profiles, travel policies, approval workflows, bookings, supplier APIs and finance operations.
+1.2 Definition of Success
+Area
+How success will be measured
+Lead generation
+Form completion rate, qualified lead volume by vertical, lead response time, sales follow-up completion and proposal conversion.
+Content operations
+Authorized admins can publish, preview, schedule, update and roll back pages/blog posts without developer involvement.
+SEO health
+Indexable priority pages, correct canonical URLs, crawlable sitemap, valid schema where eligible, no critical broken links and Search Console monitoring.
+Experience
+Usable layouts on mobile/tablet/desktop, accessible forms and menus, responsive interaction, fast loading and clear conversion actions.
+Reliability
+Form submissions persist in MongoDB, email delivery is logged/retried where supported, backups are restorable, and production errors are observable.
+Phase 2 readiness
+Stable organization/user identity model, modular APIs, versioned contracts and a documented integration boundary for inventory providers.
+SEO promise clarification
+No system can guarantee the #1 position on every search engine. The system must enable best-practice technical SEO, useful original content, structured data, measurement and continuous improvement. Rankings depend on competition, query intent, domain authority, content quality, market changes and search engine decisions.
+2. Current Website Audit and Migration Inventory
+Public pages reviewed: goaheadmobility.com home, primary solution/service pages, company pages, resources, legal pages, and the mobile navigation states shown in the supplied screenshots. The current site’s messaging is mainly transport/mobility-focused; the new website must add Global Accommodation as a first-class vertical rather than treating “Global” only as geographic footprint.
+2.1 Existing URLs to Preserve, Rebuild or Redirect
+Current URL / Page
+Observed or expected content role
+Migration requirement
+/
+Corporate mobility-led home
+Rebuild as a dual-vertical homepage. Maintain a clear, evidence-based transportation proposition and introduce Global Accommodation.
+/solutions
+Solutions overview
+Retain and reorganize into two verticals; link to appropriate detail pages.
+/corporate
+Corporate cab / corporate mobility
+Retain topic intent; decide canonical target and maintain a 301 redirect if URL changes.
+/industrial
+Industrial/workforce transport
+Retain with shift, workforce and site transport content.
+/events
+Event shuttles / event transport
+Retain with event requirements and bulk coordination enquiry.
+/employee
+Employee Transport
+Retain with commute, shift, safety and employee transport enquiry.
+/transport
+Transport SaaS ERP
+Retain software modules and demo/consultation CTA.
+/cab
+Corporate Cab Services
+Retain premium cabs, airport transfers and executive travel.
+/about
+About Us
+Retain company story, mission, team and verified operational facts.
+/why_us
+Why Choose Us
+Retain differentiators, evidence and proof points.
+/challenges
+Market Challenges
+Retain pain-point education and solution mapping.
+/safety
+Safety & Trust
+Retain only accurate, approved policies/certification claims.
+/commercial
+Commercial Models
+Retain retainer, dedicated fleet, per-trip, SaaS and hybrid engagement descriptions where offered.
+/global
+Our Footprint / geographic presence
+Retain as geographic coverage if accurate; do not reuse as the Global Accommodation product page.
+/contact
+Contact Us
+Rebuild as contact directory and routing form; show verified contact details.
+/blog
+Blog / insights listing
+Replace with premium full-featured blog listing and categories.
+/faq
+Help & FAQ
+Retain searchable FAQs and category filters.
+/learn
+Resource Center
+Retain as guides/resources hub with download and lead capture features.
+/careers
+Careers
+Retain jobs listing and application submission.
+/how-it-works
+App / process explainer
+Review whether it describes a current product; retain, merge or redirect based on verified product truth.
+/privacy
+Privacy Policy
+Update after data flow, cookies, forms, analytics and Phase 2 details are confirmed.
+/terms
+Terms of Service
+Update with legal counsel to match Phase 1 services and later booking terms.
+The homepage and screenshot navigation additionally expose links such as Corporate Shuttles, Industrial Transport, Event Shuttles, Employee Transport, Transport SaaS ERP, Corporate Cab Services, All Services, Blog, Help & FAQ, Resource Center, Careers, Why Choose Us, Market Challenges, Safety & Trust, Commercial Models, Our Footprint, About Us, Privacy Policy, Terms of Service and Get in Touch.
+2.2 Migration Rules
+Create a full URL inventory before changing slugs. For every old URL, record new target, status code, canonical target and index/noindex treatment.
+Prefer preserving proven URLs, including underscores currently present, unless an intentional URL cleanup is approved.
+Use server-side 301 redirects for permanently moved pages. Avoid redirect chains, redirect loops and broad redirects to the homepage.
+Migrate existing copy and media only after verifying factual accuracy, rights, current product availability and brand approval.
+Preserve search-relevant page titles, headings, image context and useful internal links where appropriate; improve rather than blindly copy weak content.
+Create a pre-launch crawl and a post-launch crawl, plus Search Console monitoring for 404s, indexation changes and redirect issues.
+3. Business Scope, Assumptions and Out-of-Scope Items
+3.1 Phase 1 Scope
+Public corporate website with dual-vertical homepage, complete sitemap and mobile-responsive navigation.
+Dedicated Global Accommodation and Local Transportation landing pages and service-detail pages.
+About/company pages, industries pages, locations/coverage, trust/safety, commercial model, contact and careers pages.
+Accommodation and transport enquiry workflows persisted in MongoDB, with acknowledgement email and internal sales notification.
+Secure admin login, role-based permissions, CMS/page builder, media manager, full blog and resource CMS, FAQ manager, navigation manager, SEO system, redirects, lead pipeline and reports.
+Cloudinary-managed images and documents with validations and transformations; NodeMailer integration through a production email transport.
+SEO-ready rendering, sitemap/robots/canonical/structured data, analytics integrations, consent handling, performance, security, monitoring and deployment runbooks.
+No end-user booking/payment processing in Phase 1; enquiry submission is not a confirmed accommodation reservation or vehicle booking.
+3.2 Phase 2 Scope
+Company/tenant accounts, user and traveller profiles, corporate hierarchy, travel policies and multi-level approval workflows.
+Hotel and flight search and bookings via licensed supplier, aggregator, GDS, NDC or API integrations; clear inventory/provider attribution.
+Bookings, holds where supported, booking confirmation, PNR/ticketing where supported, vouchers, changes, cancellations, refunds and customer support.
+Company billing, credit/limit management, invoices, payment reconciliation, cost centres, budgets, finance reports and audit trails.
+Admin, operations, finance, supplier and customer portals with strict permission separation.
+Future additions such as airport transfer/corporate cab reservations, rail, bus, car rental, insurance and travel add-ons through an extensible product connector model.
+3.3 Key Assumptions / Dependencies
+Dependency
+Requirement / decision
+Global accommodation operations
+Client to define what GoAhead directly contracts, brokers, manages or arranges; approved coverage, service boundaries, negotiated rates, SLAs and claims need validation.
+Brand and proof points
+Client supplies approved logo files, typography/brand rules, current company profile, team details, client logos/permission, testimonials, case studies and verified metrics.
+Lead owners
+Client nominates sales owners, routing rules, service-level targets, business email addresses and escalation rules for each vertical.
+Email transport
+Client provides an approved SMTP provider/service account and domain DNS access for SPF, DKIM and DMARC.
+Cloudinary
+Client creates production account, folders, transformation presets and access credentials. Secrets must remain server-side.
+SEO tools
+Client creates/owns Google Search Console, Analytics and any paid rank-tracking accounts.
+Phase 2 supplier access
+Hotel inventory, flight content, ticketing/servicing, payment, currency, tax and settlement capabilities depend on commercial contracts and documented APIs.
+Legal review
+Client/legal counsel approves privacy, cookies, terms, data retention, booking terms, refund conditions, payment collection, consumer/corporate disclosures and country-specific obligations.
+3.4 Not Included Unless Separately Approved
+Native iOS/Android applications; a live booking engine in Phase 1; scraping competitors or consumer booking websites; supplier API fees; payment gateway/acquirer charges; GDS/NDC and hotel aggregator commercial fees; SMS/WhatsApp fees; CRM subscription fees; custom ERP/accounting integrations; migration of data not supplied in agreed format; copywriting/translation beyond the agreed content set; paid SEO/link building; legal advice; ongoing content production; 24/7 operational staffing; and guaranteed search ranking.
+4. Information Architecture and Sitemap
+4.1 Recommended Global Navigation
+Top-level menu
+Proposed child pages
+Primary CTA
+Global Accommodation
+Overview; Hotels & Serviced Apartments; Long-Stay & Project Accommodation; Group / Crew / Relocation Stays; Locations & Coverage; Accommodation Enquiry; FAQs
+Submit Accommodation Requirement
+Local Transportation
+Overview; Corporate Cab Services; Employee Transport; Corporate Shuttles; Industrial Transport; Event Transport; Transport SaaS ERP; Safety & Compliance; Commercial Models
+Request Transport Proposal / Book a Demo
+Industries
+IT/ITES & GCCs; Manufacturing; BPO/KPO; Healthcare; Retail; Construction/Projects; Events & Conferences; Consulting/Professional Services; other approved verticals
+Discuss Industry Requirements
+Company
+About Us; Why Choose Us; Our Footprint; Safety & Trust; Market Challenges; Careers; Contact Us
+Talk to Our Team
+Resources
+Blog; Resource Center; Help & FAQ; Case Studies; Guides/Downloads; Newsletter
+Read Insights / Get a Guide
+Utility
+Search; language/currency readiness for future phase; cookie preferences; accessibility; privacy; terms; 404
+Contextual CTA
+4.2 Detailed Sitemap
+Home (/)
+Global Accommodation (/global-accommodation) - overview; /global-accommodation/hotels; /global-accommodation/serviced-apartments; /global-accommodation/long-stay; /global-accommodation/group-project-stays; /global-accommodation/locations; /global-accommodation/enquire.
+Local Transportation (/local-transportation) - overview; /cab; /employee; /corporate-shuttles; /industrial; /events; /transport; /safety; /commercial.
+Industries (/industries) - index plus editable industry detail pages.
+Company - /about; /why_us; /challenges; /global (geographic footprint); /careers; /contact.
+Resources - /blog; /blog/category/{slug}; /blog/tag/{slug}; /blog/author/{slug}; /blog/{post-slug}; /learn; /learn/{resource-slug}; /faq; /case-studies and /case-studies/{slug} if approved.
+Legal and system - /privacy; /terms; /cookie-policy or consent-preferences; /accessibility; /search; /404.
+Phase 2 portals - /login; /register/invitation; /portal; /portal/trips; /portal/hotels; /portal/flights; /portal/approvals; /portal/travellers; /portal/company; /portal/invoices; /portal/support; /portal/settings.
+Route and SEO policy
+The new accommodation URLs above are proposed. Final slugs should be agreed in the URL inventory, then frozen before launch. Do not rename existing URLs merely for stylistic consistency when retaining them avoids migration risk.
+5. Phase 1 Public Website: Page-by-Page Requirements
+5.1 Home Page
+Purpose: clearly explain the two verticals in the first screenful, give enterprise visitors a fast route to the right service, establish trust and capture qualified enquiries.
+Component
+Required behavior / content
+Premium hero
+Brand-led visual with concise headline, short proof-based subheading and two obvious route choices: Global Accommodation and Local Transportation. Primary CTA should be Request a Proposal; secondary CTA may be Explore Solutions.
+Vertical selector/cards
+Two distinct but visually related feature blocks. Accommodation copy focuses on business traveller stays, employee/project accommodation and global requirements only to the extent GoAhead can deliver. Transport block covers corporate cabs, employee commute, shuttles and enterprise software.
+Trust strip
+Approved client logos, sectors, verified coverage, measurable outcomes or certifications. Hide empty/unapproved data rather than showing fabricated metrics.
+Buyer challenges
+Accommodation: fragmented supplier/search process, inconsistent rates, duty-of-care/administration concerns. Transport: fragmented vendors, employee safety visibility, manual operations. Client must approve wording.
+Solution modules
+Cards with concise benefits, relevant icons/images and internal links; CMS-administered ordering and visibility.
+How it works
+Simple steps for enquiry, consultation, proposed solution, implementation and ongoing account service. Avoid depicting booking functionality as live before Phase 2.
+Industries served
+Editable cards linked to industry pages; no keyword-stuffed location/industry pages with duplicate copy.
+Proof and case studies
+Approved testimonials, real case studies, logos, results and quotes with permission and attribution.
+Editorial preview
+Featured blog posts, guides and resources based on CMS-pinned items or latest approved items.
+FAQ preview
+CMS-configured questions, expandable panels and link to full FAQ hub.
+Final conversion band
+Separate buttons for accommodation requirements and transportation proposal/demo.
+Footer
+Company/contact details; both verticals; service, company, industry, resource and legal links; email/phone; social links only when active; newsletter consent; copyright year dynamically generated.
+Interaction requirements: sticky or compact header behavior; accessible mobile menu; keyboard-accessible card links; reduced-motion behavior; smooth but non-blocking transitions; no forced modal that obscures primary content; track CTA clicks by CTA name, page, source and vertical.
+5.2 Global Accommodation - Overview and Detail Pages
+This is a new primary business vertical, not just a renamed footprint page. Content must be driven by verified operating capability, supplier network and commercial model. The site must not promise inventory availability, contracted rates, countries or service levels until confirmed by GoAhead.
+Page / module
+Required page content and functions
+Global Accommodation overview
+Value proposition for enterprise buyers; who it serves; types of stays; coverage model; process; governance and support; categories of accommodation; FAQs; proof points; CTA to submit a requirement.
+Hotels & serviced apartments
+Buyer scenarios; property/room type considerations; traveller profile; duration; location and budget considerations; centralized coordination; enquiry CTA. Do not show live rates or availability in Phase 1.
+Long-stay / project stays
+Project/site location; number of travellers; move-in/out dates; stay duration; occupancy pattern; meal/laundry/parking/transport requests; billing and procurement requirements.
+Group, crew and relocation stays
+Room-night estimates; group size; staggered arrival/departure; family/relocation needs; invoicing requirements; cancellation flexibility; project contact; request-for-proposal route.
+Coverage / locations
+Admin-maintained countries, regions and cities with verified service status such as Direct, Partner Network or Case-by-Case. Do not imply operational coverage solely from a general global claim.
+Accommodation process
+Enquiry, requirement clarification, sourcing/proposal, approval, stay coordination, invoice/support flow - only describe processes that GoAhead intends to provide.
+Accommodation case studies
+Approved project summary, client/sector permission, stay scale, challenge, approach, outcome and disclaimers; support anonymized cases only when approved.
+Accommodation FAQ
+Service scope, geographic coverage, minimum lead times, billing, booking support, amendments and cancellation responsibilities; answers are editable and approved by operations/legal.
+Accommodation enquiry landing
+Short conversion-focused explanation, privacy note, form progress and contact alternative.
+5.3 Local Transportation - Overview and Service Pages
+Page
+Required content / functions
+Local Transportation overview
+Enterprise mobility value proposition, service selector, coverage/service model, operational control, safety, fleet/vendor governance, reporting/ERP options, FAQs, CTA to transport requirement form.
+Corporate Cab Services (/cab)
+Airport/hotel transfers, executive/leadership journeys, client visits, chauffeur-led options, event/business travel where offered, SLA approach, vehicle classes only if factual, quote form.
+Employee Transport (/employee)
+Home-to-office, pickup/drop scheduling, shift/24x7 operations, route planning, women safety process, escalation, attendance/scheduling integrations only if available, transport requirement form.
+Corporate Shuttles
+Campus/office shuttle, route/stop planning, employee volumes, recurring schedules, accessibility/fleet requirements, implementation timeline and enquiry form.
+Industrial Transport (/industrial)
+Shift-based workforce transport, factories/sites, multi-shift schedules, access/security requirements, safety and route/dispatch process; do not imply capabilities not operating today.
+Event Transport (/events)
+Guest/attendee volumes, venue and pickup points, schedule, trip waves, VIP and accessibility needs, contingency plan and quote request.
+Transport SaaS ERP (/transport)
+Audience, operational problems, module details, booking management, trip scheduling, fleet/driver/vendor/client management, contract/SLA, expense control, billing/reconciliation, MIS and reports. Clearly distinguish current software capability from roadmap.
+Safety & Trust (/safety)
+Driver verification process, incident escalation, training, tracking, women safety and compliance practices, with approved policy statements and no unsupported “100%” guarantee.
+Commercial Models (/commercial)
+Monthly retainer, dedicated fleet, per-trip, SaaS licensing, hybrid managed services, quote assumptions, contracting workflow and procurement CTA.
+Our Footprint (/global)
+Approved cities/countries and actual service status; location details are editable and date-stamped for review.
+5.4 Industries We Serve
+Create an Industries index plus reusable detail template. Recommended initial categories: IT/ITES and Global Capability Centres; BPO/KPO and 24x7 operations; manufacturing/industrial; healthcare; retail and distributed offices; construction/infrastructure/projects; events/conferences; consulting/professional services; and other segments GoAhead confirms it serves. These are proposed categories, not a claim that every sector is already served.
+Each industry detail page includes business context, specific accommodation needs, specific mobility needs, process/governance, relevant approved case studies, FAQs and a tailored enquiry CTA.
+Admin must be able to add/disable/reorder industry pages without a developer while controlling indexing and canonical metadata.
+Do not create hundreds of thin city/industry combinations. Publish a locality page only when it adds real operational detail, proof and useful content.
+5.5 Company Pages
+Page
+Requirements
+About Us (/about)
+Approved story, mission, leadership/team profiles, operating model, milestones and verified statistics. Headshots/biographies editable with publication approval.
+Why Choose Us (/why_us)
+Differentiators mapped to evidence: single partner, operational governance, reporting visibility, service coverage, support and technology.
+Market Challenges (/challenges)
+Describe buyer problems and map each to relevant accommodation or transport solutions. Link to helpful articles and conversion pages.
+Careers (/careers)
+Active vacancies, department, location, employment type, description, requirements, close date, apply form, secure CV upload, consent, HR status and applicant acknowledgement.
+Contact Us (/contact)
+Verified office address, phone, email, business hours if applicable, map link, contact category routing and general enquiry form. Never promise 24/7 availability unless staffed.
+Case Studies / Client Stories
+Optional but strongly recommended if approved material exists. Search/filter by industry and vertical, outcome summary, challenge, delivery model, measurable result and CTA.
+Accessibility and cookie preference
+Public accessibility statement/contact route and an easy way to revisit consent settings if non-essential cookies are used.
+5.6 Resources and Support Pages
+Page
+Requirements
+Blog index (/blog)
+Search, topic/category filters, featured article, latest articles, pagination or progressive loading, author/date/read-time metadata, newsletter CTA and admin-curated content.
+Blog article (/blog/{slug})
+Semantic article structure, author profile, published/updated dates, TOC for long posts, share links, image captions/alt, related posts, citations, comments if enabled, CTA and accessible typography.
+Resource Center (/learn)
+Guides, checklists, downloadable PDFs, videos/webinars or tools; filters; resource detail pages; optional gated downloads with explicit consent and lead tracking.
+Help & FAQ (/faq)
+Category management, full-text search, accessible accordions, contact escalation and structured FAQ content for users. Do not rely on FAQ markup to guarantee enhanced Google display.
+Search results (/search)
+Search public pages/blog/resources, useful zero-results state, relevant excerpts, keyboard-operable interface and canonical/noindex policy for query parameters.
+Privacy, Terms and Cookies
+Client/legal-approved content, effective date, version history and consent preferences as applicable.
+404 / error states
+Helpful branded page, search, top routes and contact link; correct HTTP status codes and error tracking.
+6. Enquiry Forms, Conversion and Lead Management
+6.1 Accommodation Enquiry Form
+The form is an RFP-style business enquiry, not a booking confirmation. Use progressive disclosure: gather the minimum fields first, show conditionally relevant fields and let the user provide approximate information when exact details are not yet known.
+Field group
+Fields and validation
+Contact & company
+Full name (required); work email (required, syntactic validation); phone with country code; company name (required); job title/department (optional); preferred contact method; country/region.
+Requirement
+Requirement type: hotel, serviced apartment, long stay, project/site accommodation, group/crew, relocation/other; origin/buyer location; destination city/country or multiple locations; estimated travellers/rooms; check-in/start date; check-out/end date or estimated duration; flexible dates flag.
+Stay preferences
+Room/unit type; single/double occupancy; number of rooms; budget range/currency and whether per room/night or total; meal plan; accessibility needs; parking, laundry, meeting space, ground transfer or other requirements; preferred property standard if known.
+Corporate procurement
+Billing currency; invoice/legal entity; purchase order requirement; cost centre/project reference; payment/credit expectations; approval/procurement process; existing supplier contract; special compliance or duty-of-care requirements.
+Free text & documents
+Additional details; optional RFP/specification attachment restricted by type/size; security scan and private access. Sensitive traveller/passport data must not be requested in a public lead form.
+Consent & confirmation
+Required privacy acknowledgement/notice; separate optional marketing consent unchecked by default; anti-spam protection; review and submit; success reference number; expected follow-up message approved by client.
+6.2 Transportation Requirement Form
+Field group
+Fields and validation
+Contact & company
+Name, work email, company, phone with country code, role, preferred contact method.
+Service selection
+Corporate cabs; employee transport; shuttle; industrial/site transport; event movement; transport SaaS ERP; multiple services.
+Operating context
+City/cities; pickup/drop areas or sites; planned start date; recurring vs one-time; operating days; time windows/shifts; employee/guest volume; estimated trips/routes/vehicles if known.
+Service detail
+Vehicle/fleet preferences, accessibility needs, safety/compliance expectations, GPS/reporting requirements, dispatch model, integration requirements, event schedule or shift details dependent on chosen service.
+Commercial & governance
+Contract duration, budget range/currency optional, SLA expectations, procurement timeline, decision process, billing requirements and additional notes.
+Consent & confirmation
+Privacy acknowledgement, separate optional marketing consent, validation and anti-spam; success reference number and acknowledgement email.
+6.3 General Contact and Demo Forms
+General contact: reason/category, company, contact details, message, privacy notice and destination team routing.
+Demo request for transport ERP: work email, company size/vehicles/users estimate, role, operational goals, cities and preferred demonstration window.
+Careers form: role reference, candidate name/contact, CV/resume (accepted PDF/DOCX only; file limits), portfolio URL if applicable and applicant privacy notice.
+Newsletter: email, consent timestamp/source, double opt-in option, unsubscribe link and suppression list.
+Resource download: optional gated download with clear indication of what data is collected and how it will be used.
+6.4 Form Engineering and Data Handling
+Client-side validation for immediate guidance plus authoritative server-side validation for every field and file.
+Normalize email addresses, phone numbers, dates, country codes and enum values; store dates in UTC and preserve the entered local time zone when relevant.
+Protect from duplicate submissions using idempotency token/submission key; show a helpful retry state without losing filled form data.
+Create the lead record first, then queue/send emails; email failure must not discard a saved lead. Log delivery status and allow resend by an authorized admin.
+Use rate limits, bot detection/honeypot and CAPTCHA only where justified; avoid accessibility-hostile challenges.
+Limit file type/size, verify MIME and signature, rename stored assets, virus-scan where available, store non-public RFP files privately, and log every authorized download.
+Never expose MongoDB IDs or internal stack traces in public responses; return a public enquiry reference number.
+After success, show acknowledgement with next step; do not show a made-up SLA or assert a booking is confirmed.
+Use server-side attribution capture: landing page, referrer, UTM source/medium/campaign/content/term, timestamp, consent, form version, optional campaign click IDs where legal.
+6.5 Lead Management Pipeline (Phase 1)
+Status / module
+Required behavior
+New
+Created from form with vertical, source, timestamp, unique public reference, consent record and assignment rules.
+Assigned
+Sales manager or rules assign owner/team based on vertical, city, service, territory or workload; keep assignment history.
+Contacted
+Owner records first-contact date/method and next follow-up task.
+Qualified / disqualified
+Record scope, approximate scale, timeline, budget indicator, reason for disqualification and qualification notes.
+Proposal in progress / sent
+Track proposal date, version/reference, value range if used, expected decision date and next action. Proposal document storage is permission-controlled.
+Won / lost / nurture
+Record outcome, loss reason, competitor only if appropriate, converted account/contact link, nurture consent and reactivation date.
+Tasks, notes and reminders
+Dated follow-up tasks, internal notes, reminders, owner reassignment and stale-lead alerts.
+Communications log
+Audit admin actions and store safe communication metadata; avoid capturing unnecessary sensitive email content.
+Reporting
+Leads by vertical/source/campaign/industry/status/owner; response time; ageing; conversion; exports restricted by role and logged.
+7. Advanced Admin Panel and CMS Requirements
+7.1 Admin Access and Role-Based Permissions
+Role
+Permissions
+Super Admin
+All modules, settings, roles, integrations and emergency controls; protected from accidental deletion; MFA mandatory.
+Site Admin
+CMS, media, forms, leads and settings within assigned permissions; cannot modify secrets or create an equal/higher privileged role by default.
+Content Manager
+Create/edit pages, menus, FAQs, resources, industries, case studies and blog posts; publish or approve according to configured workflow.
+SEO Manager
+Metadata, redirects, canonical/noindex, sitemap controls, structured data fields and SEO reports; cannot read sensitive lead payloads unless separately granted.
+Author / Editor
+Draft content, upload permitted media, preview, submit for review, respond to editorial comments; no global settings or unrestricted publish.
+Sales Manager
+View leads for assigned team/vertical, assign owners, manage stages, create tasks, export with permission and view conversion reports.
+Sales Agent
+View/update owned leads; no bulk export or unrelated lead access unless explicitly granted.
+HR Manager
+Manage vacancies and candidate pipeline; restricted candidate file access; retention and deletion controls.
+Analyst / Read-only
+Read approved dashboards/reports without modifying data; PII masked by default.
+Auditor
+Read audit logs, permission changes and relevant records; no data editing.
+All actions must be enforced by backend authorization, not just hidden buttons in the UI. Use least-privilege permissions at module, action and where needed record/vertical scope level.
+7.2 Admin Dashboard
+Overview cards: new leads today/7/30 days, leads by vertical, unassigned/stale leads, next follow-ups, form completion trend, recent content publications, SEO issues and email failures.
+Filters by date range, vertical, team, source/campaign, location, status and owner with export permission enforcement.
+Operational alerts: email delivery failures, form API errors, expiring career listings, outdated pages/content, broken links and failed backups/monitoring alerts where integrations exist.
+Widgets configurable by role; dashboards should not expose personal data to users who only need aggregate metrics.
+7.3 CMS / Page Builder
+Page template library: home, vertical landing page, service page, industry page, company page, location page, case study, resource page, FAQ and generic landing page.
+Block library: hero with image/video; rich text; image-text split; CTA band; services grid; industry cards; icon/value blocks; metrics; testimonial; logo wall; case study preview; timeline/how-it-works; FAQ accordion; related blog; downloadable resource; team card; map/coverage; quote form; newsletter form.
+Each block supports edit, duplicate, reorder, hide/show, responsive image, padding/layout options and accessible heading/alt text. Limit free-form design controls to approved design tokens.
+Page workflow: draft, preview, submit for review, approve, schedule, publish, unpublish, archive, restore previous version. Record author, approver, revision note and timestamp.
+Preview mobile/tablet/desktop and draft previews behind signed, expiring access links; unpublished content must not be crawled or exposed publicly.
+Autosave with clear save state; conflict detection if two editors modify same page; restore version without losing audit history.
+Slug uniqueness check, current/desired canonical URL, redirects on changed slug, noindex option, publish date, update date and expiry date.
+Content blocks should be rendered server-side or statically where suitable for public SEO pages; admin preview must match public rendering closely.
+7.4 Media Library / Cloudinary
+Upload, crop, focal point, alt text, caption, copyright/licence, asset owner, language, usage, tags, date added and file dimensions.
+Folders/tags for brand, accommodation, transport, people, case studies, blog, resource downloads and private lead attachments.
+Generate responsive image variants and modern formats through Cloudinary transformations; lazy-load below the fold and preload only the true hero/LCP image.
+Video support via appropriate hosting/streaming strategy; do not embed huge autoplay video without a performance/accessibility fallback.
+Prevent deletion of in-use assets without warning and reference report; support replace asset without silently breaking current content.
+Private file storage for candidate documents and RFP attachments; use expiring signed URLs for access. Public marketing images may use public delivery URLs.
+Validate file type/size and sanitize filenames; store provider asset ID and transformation settings rather than arbitrary user-supplied remote URLs.
+7.5 Navigation and Site-Wide Content
+Admin-managed primary, secondary, footer and utility menus; order/reorder, label, destination, open-in-new-tab policy, active state, audience visibility and mobile/desktop variants.
+Header/footer settings include logo variants, contact info, social links, CTA labels, address, copyright, newsletter copy and legal links.
+Site settings include brand name, default SEO values, social sharing image, default locale/time zone, default sender identity, business vertical enablement and maintenance notice.
+Feature flags for upcoming Phase 2 portal navigation without enabling incomplete features for the public.
+7.6 Additional Admin Modules
+Module
+Functions
+Industries and services
+Create/edit service taxonomy, industries, features, card order, related pages, FAQs and CTAs.
+Locations / service coverage
+Country, region, city, service type, delivery status, effective date, proof/source note, CTA and indexation control. Require review before publishing a coverage claim.
+Testimonials / client logos
+Quote, approved name/title/company, logo file, permission status, expiry/review date, page placement and publication toggle.
+Case studies
+Draft/review/publish, client approval, anonymization flag, vertical/industry tags, outcome figures and evidence notes.
+FAQ manager
+Categories, sort order, question, answer, related page, approval status, expiry/review date and optional internal search keywords.
+Careers / applications
+Job list, close date, application pipeline, application export/retention, restricted CV download, rejection/withdrawal and deletion workflow.
+Lead routing / SLA
+Rules by vertical/service, location, campaign, work schedule, fallback queue, assignment history, reminder intervals and escalation.
+Email templates / logs
+Template editor with safe variable allow-list, test send, versioning, status, retries where supported, error details and delivery webhooks.
+Redirect manager
+Old path, destination, status code, reason, creation time, hits, conflict/loop checks and bulk import/export.
+Integrations / secrets
+Integration status, connection test, last sync, key rotation instructions. Show secret presence, never reveal existing secrets after save.
+Audit log
+User, timestamp, action, entity, entity ID, before/after diff for safe fields, reason/IP metadata as legally approved; immutable to normal admins.
+Import/export
+Validated CSV import with dry-run, field mapping and error report. Exports require permission, sensitive fields are masked, and every export is audit logged.
+8. Premium Blog and Resource Publishing System
+The blog is a first-class content product, not a simple list of hard-coded cards. It must support a repeatable editorial workflow, advanced article SEO, useful reader experience, distribution, analytics, content governance and future multi-author growth.
+8.1 Content Creation and Editorial Workflow
+Rich block editor supporting headings, paragraphs, numbered/bulleted lists, quote blocks, tables, images, image galleries, captions, video/audio embeds, downloadable files, callout boxes, buttons/CTAs, code blocks where relevant, and table of contents.
+Draft autosave, manual save, revision history/diff, version restore, preview link, editorial comments/internal notes, author and reviewer assignments, scheduled publishing, unpublish and archive.
+Workflow states: idea, brief, draft, editorial review, SEO review, approved, scheduled, published, update needed, archived. Permissions may allow simplified workflows for small teams.
+Post metadata: title, slug, excerpt, content, hero/OG image, author, reviewers, category, tags, vertical, industry, publication time, updated time, estimated reading time, source references, CTA, related posts, language, canonical and status.
+Author profiles with approved biography, avatar, job title, expertise, social/author links and author archive; no fake authors or unverified credentials.
+Content calendar/list views, filters by stage, author, category, vertical, publish date, last updated and SEO health. Warn on stale or missing content.
+Duplicate post, reusable content snippets/templates and approved campaign landing-page blocks; content reuse must not create duplicate indexable copies unintentionally.
+8.2 Reader-Facing Blog
+Featured story, latest posts, featured categories, search, filter by category/tag/vertical/industry/author, sort options and pagination.
+Article reading view with readable line length, typography, accessible heading hierarchy, auto-generated TOC for long content, progress indicator only if it does not create performance problems, copy-link/share controls and print-friendly styles.
+Related content by manual editorial pinning with safe fallback to taxonomy matches; never show empty/irrelevant cards.
+Estimated read time; publish/update dates; accurate author attribution; image alt/caption; citations/references where appropriate; download CTA; relevant accommodation or transport enquiry CTA.
+Comments are optional and disabled by default unless moderation, spam filtering, abuse reporting and retention are agreed. No open comment channel should launch without anti-spam/moderation controls.
+RSS/Atom feed, category/tag/author archive pages where useful, social metadata, and correct index/noindex strategy for search/filter query URLs.
+Newsletter subscription block with explicit consent, confirmation/unsubscribe flow, suppression list and privacy details.
+8.3 Advanced Blog SEO and Distribution
+Capability
+Requirements
+Per-post SEO
+SEO title, meta description, slug, canonical URL, index/follow directive, social title/description/image and preview.
+Structured data
+Article/BlogPosting, author/Person, publisher/Organization, BreadcrumbList and ImageObject where applicable; validate generated JSON-LD.
+Internal linking
+Related post recommendations, search over existing content, editable anchor text and link targets, outbound link attributes for sponsored/affiliate relationships where applicable.
+Image SEO
+Required alt text workflow; captions; compression/responsive sizes; descriptive but non-stuffed filenames/metadata where practical.
+Content quality checks
+Missing title/meta/alt/author/date; heading hierarchy; short/duplicate title warnings; orphaned posts; broken links; missing category; stale content reminders.
+Distribution
+Copy social snippets, canonical URL copy, email newsletter integration, RSS and publish notifications to configured internal channels.
+Analytics
+Views, engaged time where measurement supports it, CTA click/conversion, scroll depth as an optional privacy-aware event, traffic source, top landing page and conversion-assisted content.
+AI-assisted editorial features (optional)
+Draft outline/title suggestions, metadata suggestions or summaries only with human review. No auto-publishing mass-generated pages or automatic keyword stuffing.
+Localization readiness
+Locale fields, per-locale slug/metadata and hreflang when translated pages are truly equivalent; translation workflows are an approved future extension.
+Legal / content checks
+Rights and consent fields for photos/quotes, source attribution, disclosure fields, embargo/scheduled visibility and publication approval.
+8.4 Resource Center
+Resource types: PDF guide, checklist, case study, webinar/video, template, article, tool or event, with type-specific fields.
+Upload via Cloudinary or private download storage as appropriate; include file format, file size, page count/duration if known, version, publication date and update notes.
+Optional gated resources create/associate a lead and record consent and campaign attribution; access links should expire when the resource is sensitive or private.
+Admin-controlled featured order, category/tags, CTA, related posts, download count, metadata, schema eligibility and expiry/review dates.
+9. Advanced SEO Management System
+SEO controls should be embedded into the CMS and admin, but success depends on content strategy, technical quality, authority and continuous measurement. An “SEO score” may be an editorial checklist, not a prediction of search ranking.
+9.1 Global and Per-Page SEO Controls
+Control area
+Detailed requirements
+Metadata editor
+SEO title, meta description, slug, canonical URL, robots directives, open graph title/description/image, social metadata and browser preview. Enforce sensible length guidance but do not hard-reject legitimate text based on arbitrary character limits.
+Titles and descriptions
+Unique defaults and per-page override; duplicate detection; missing fields alerts; title preview; page type templates; do not autogenerate keyword-stuffed titles.
+Indexation controls
+Index/noindex and follow/nofollow; prevent staging/admin/private portal routes from indexation; protect live public pages from accidental noindex; show explicit warning before applying global settings.
+Canonical URL management
+Canonical self-reference by default, canonical override with validation, consistency with redirects and sitemap; no canonical to unrelated pages.
+URL/redirect manager
+301/302/410 options where appropriate; import/export; collision detection; loop and chain detection; hit monitoring; preserve old URLs during migration.
+Sitemap controls
+Auto-generated sitemap index and separate sitemaps if size/type warrants (pages, blog, resources, locations); publish only canonical/indexable public URLs; exclude draft/private/redirect/noindex pages.
+Robots.txt
+Managed template with safe default, production validation and warnings if important assets or public pages are blocked. Admin cannot accidentally block all search engines without explicit confirmation.
+Structured data
+Schema templates for Organization, WebSite, BreadcrumbList, Article/BlogPosting, Person, JobPosting, LocalBusiness only for genuine locations/eligibility, and service-related types where supported and accurate.
+Breadcrumbs
+Accessible visual breadcrumbs and BreadcrumbList schema aligned with true site hierarchy.
+Image SEO
+Alt text, responsive image hints, file size, LCP/hero treatment and missing-alt report.
+Internal-link analysis
+Broken internal links, orphan page discovery, redirecting targets, anchors and related-content suggestions.
+Duplicate/thin page warnings
+Duplicate title/meta/canonical, near-duplicate page review, empty indexable pages and parameter variants; admin review required rather than automatic deletion.
+International readiness
+Locale-specific URLs and hreflang only when localization is commissioned; avoid declaring global availability based solely on broad marketing copy.
+SEO audit dashboard
+Priority list of missing metadata, 404s, redirect chains, broken links, unindexable pages, schema validation errors, sitemap age and page performance indicators.
+9.2 Technical SEO Requirements
+Render primary public content through Next.js server-side rendering or static generation (SSR/SSG), not as an empty client-only shell dependent on search-engine rendering.
+Use semantic HTML, one clear primary H1 per page in the design system, logical H2/H3 hierarchy and crawlable HTML links.
+Generate XML sitemap(s) dynamically and expose them at the root. Submit and monitor through Google Search Console and supported webmaster tools.
+Normalize hostname, HTTPS, trailing slash policy and parameter behavior. Choose one canonical URL scheme and implement permanent redirects from alternatives.
+Implement 404/410 behavior correctly; monitor crawl errors and keep sitemaps free of redirects/404/noindex URLs.
+Use descriptive page names and URL slugs; breadcrumbs; meaningful internal linking; contextual anchor text; and relevant navigation hierarchy.
+Add Organization/site details on the home/about page; use LocalBusiness markup only when location data is true and eligible; Article markup for articles and JobPosting only for valid current jobs.
+Validate schema, meta tags, rendered content, canonical URLs and indexability in staging/pre-release crawl. Schema does not guarantee rich results.
+Add Open Graph and social image metadata; create an editable default social image.
+Provide secure staging with noindex plus access protection. Prevent staging hostnames/canonical URLs from leaking into production.
+9.3 SEO Reporting and External Tools
+Google Search Console: verified domain property, index coverage/URL inspection, submitted sitemap, queries/pages/clicks/impressions/CTR/position, crawl issues and security/manual action monitoring.
+Google Analytics 4 or agreed analytics platform: page views, vertical CTA clicks, form starts/submits, thank-you views, phone/email clicks, resource downloads and conversions.
+Admin dashboard should show imported/reporting data when API access is configured; otherwise link to the source system. Never invent SEO metrics.
+Optional rank tracking through a licensed SEO provider API. Do not scrape search result pages or claim exact real-time rank from a custom SEO score.
+Content reporting: top converting pages/articles, leads by landing page/UTM, organic impressions/click trends and content refresh candidates.
+9.4 SEO Content Governance
+Create a keyword/topic map around search intent: global corporate accommodation, hotel/serviced apartment programs, long-stay/project housing, corporate cabs, employee transport, corporate shuttles and transport ERP - validate actual keyword demand before prioritization.
+Use helpful, original subject-matter-led content with named/approved authors, sources, real case evidence and clear service boundaries.
+Avoid doorway pages for every city/industry, copied supplier content, mass-generated thin blogs, hidden keyword text, misleading structured data, unnatural link schemes or purchased spam links.
+Maintain editorial refresh dates and sources for factual claims; use AI only as an assistive tool with human review and original value added.
+Prioritize conversion and trust as well as search traffic. Rank is an outcome to monitor, not an admin setting.
+10. UI/UX, Design System, Motion and Accessibility
+10.1 Visual Direction
+Create a distinctive enterprise-grade visual system using the supplied GoAhead logo colors (navy/blue and cyan) with generous whitespace, confident typography, clear layouts and strong editorial art direction. The target quality is premium and expressive, but business communication, readability and conversion take priority over effects. Use Awwwards, Thirdway, Roveia and the user-mentioned design communities for broad inspiration only; do not clone layouts, source code, imagery or brand assets.
+10.2 Design System and Responsive Behavior
+Define tokens for color, typography scale, spacing, grid, border, radius, shadow, animation duration/easing, breakpoints and focus rings.
+Create components for buttons, links, cards, form controls, menus, accordions, badges, metrics, sliders, modals, toast messages, pagination, data tables, filters, breadcrumbs and content callouts.
+Breakpoints must be tested on small phones, large phones, tablets, laptops and wide desktops; avoid horizontal overflow and fixed-width content.
+Use responsive type sizing and image crops; keep form controls touch-friendly; preserve keyboard/focus visibility; avoid hover-only controls.
+Mobile navigation should follow the supplied screenshot’s compact expandable groups while improving hierarchy, scroll behavior, focus management and ability to close with Escape or the close button.
+Every important information block and CTA must remain useful with animations disabled and images unavailable.
+10.3 Animation and Interaction Policy
+Technique
+Requirement / guardrail
+Framer Motion / Motion
+Recommended for component transitions, accordions, menus, route feedback and small entrance effects where useful.
+GSAP / ScrollTrigger
+Optional for one or two intentional hero/storytelling sequences; use only where it provides clear narrative value and does not hijack scrolling.
+CSS transitions
+Default for hover, focus, button and simple visibility effects; prefer lightweight effects over extra dependencies.
+Smooth scrolling
+Optional and subtle; native scrolling must continue to work; disable or simplify under prefers-reduced-motion.
+Parallax
+Use sparingly with a reduced-motion fallback and no impact on content legibility or touch scrolling.
+Three.js / Matter.js / anime.js / Barba.js
+Do not add by default. Use only if a defined visual/product requirement justifies added bundle size, complexity and maintenance.
+Performance
+No large blocking animation library on critical rendering path; dynamically load heavy scenes; avoid CLS and excessive scroll listeners.
+Accessibility
+Honor prefers-reduced-motion, do not flash content, keep focus order stable and ensure animations never communicate meaning only through movement.
+10.4 Accessibility Requirements
+Target WCAG 2.2 AA as a design/QA baseline, subject to formal audit and client legal requirements.
+Keyboard navigation, visible focus, accessible names/labels, sufficient contrast, semantic headings, landmark regions and accessible error/success messages.
+Forms must associate labels/help/errors, announce validation to assistive tech, not rely on color alone, preserve user input after recoverable errors and provide an accessible success state.
+Images have meaningful alt text when informative and empty alt when decorative; videos require captions/transcripts where applicable.
+Carousels/accordions/modals require keyboard controls, focus management and understandable state announcements.
+No important content must be available only on hover, via animation or inside canvas/3D scenes.
+11. Technical Architecture and Stack
+11.1 Recommended Phase 1 Architecture
+Recommended implementation baseline
+Build the complete website as one full-stack Next.js (App Router) application using TypeScript. React is used as the UI component layer inside Next.js; do not create a separate React SPA/frontend project. The backend runs on the Node.js runtime within the same Next.js application, using Route Handlers under /api/v1 and server-only modules or Server Actions where appropriate; do not create a separate NestJS/Express API service. Database: MongoDB Atlas. Media: Cloudinary. Email: Nodemailer with an approved production SMTP/transactional provider. Phase 2 begins as modules in this same codebase; contracted supplier and payment systems remain external integrations.
+Browser (Public / Admin / Future Portal) - HTTPSSingle Next.js App (App Router, TypeScript)UI: public SSR/SSG, CMS/admin, future portal | Node.js APIs: /api/v1Modules: Auth/RBAC, CMS/SEO, Blog, Leads, Media, Email, ReportingData/services: MongoDB Atlas | Cloudinary | SMTP/Email | Analytics/GSCOperations: backups, monitoring, logs, alerts and restore proceduresPhase 2: booking/provider adapters in same app; supplier/payment APIs stay external.Optional durable queue/worker for critical jobs; no separate frontend/API backend.
+11.2 Next.js Application: UI and Rendering
+Use Next.js App Router with TypeScript as the sole web application framework. Build the interface with React components inside Next.js; do not create or deploy a separate React SPA/frontend or maintain a separate frontend repository.
+Use Next.js route groups for public content, admin and the future authenticated customer portal. Keep protected pages and all sensitive data access server-authorized; route grouping is not a substitute for authorization.
+Use a shared design system, accessible forms, responsive layouts and image/video optimization. Keep public-route client bundles lean and load admin-only UI code only where required.
+Use typed request/response schemas, a centralized API access pattern where needed, error boundaries, loading/empty/error states and safe environment configuration. Server components should access server-only modules directly where appropriate instead of making unnecessary HTTP requests back into the same application.
+Primary SEO HTML must include key copy and metadata from Next.js server rendering or static generation before client-side hydration; avoid client-only shells for important organic landing pages.
+11.3 Node.js Backend within the Next.js Application
+Use a supported Node.js LTS runtime for server-side logic within the same Next.js project and deployment. Organize auth, CMS, leads, SEO, media, blog, notifications, analytics and future booking as isolated server-only modules; do not build a separate Express/NestJS backend service for core website functionality.
+Implement the versioned REST API (suggested prefix /api/v1) with Next.js Route Handlers. Apply request validation, centralized error handling, structured logging, rate limits and authentication/authorization guards to every applicable endpoint.
+Maintain an OpenAPI/Swagger contract for API documentation; use consistent pagination/filter/sort rules, typed request/response contracts, validation and idempotency for submission endpoints. Keep API contracts versioned even though UI and API live in one codebase.
+Use a durable background queue and scheduled processing for email, large exports, image-processing callbacks, sitemap generation and future supplier sync. Do not depend on unawaited in-memory tasks inside a web request for critical work; a dedicated worker process may be used only when the queue/deployment model requires it, not as a separate core API backend.
+Use an outbox/retry pattern where a saved lead must trigger external notifications reliably; store delivery attempts and dead-letter failures independently of the web request lifecycle.
+11.4 Database and Infrastructure
+MongoDB Atlas with network access restrictions, least-privilege database users, automatic backups, point-in-time recovery where supported and tested restore procedures.
+Mongoose or official MongoDB driver with schema validation and explicit indexes; use transactions when a multi-document workflow truly requires atomicity and deployment tier supports them.
+Separate development, staging and production environments with distinct secrets, database clusters/credentials and Cloudinary/email configurations.
+Infrastructure-as-code is recommended. Keep secrets in a managed secret store/environment config, never in source control, client bundles or public NEXT_PUBLIC_ environment variables.
+Use a CDN/WAF and TLS; application logs, uptime checks, error monitoring, database health and backup alerts.
+11.5 Application Boundary and Module Evolution
+Start with one Next.js full-stack modular monolith for Phase 1: one source repository and one application deployment containing the UI, Node.js server-side logic and API routes. Keep module boundaries and provider interfaces clean so booking orchestration, supplier connectors, finance or messaging can be extracted into separate services later only if proven scale, team structure or operational needs justify it. Do not introduce a separate React frontend or standalone API backend for Phase 1, and do not start with unnecessary microservices or distributed transactions.
+12. Backend API, Database and Data Operations
+12.1 Core API Areas (Implemented as Next.js Route Handlers; illustrative contract)
+API group
+Illustrative endpoints
+Access / behavior
+Public pages
+GET /api/v1/public/pages/{slug}; GET /api/v1/public/navigation; GET /api/v1/public/settings
+Public, cached, published content only; no drafts or internal metadata.
+Enquiries
+POST /api/v1/public/enquiries/accommodation; POST /api/v1/public/enquiries/transport; POST /api/v1/public/enquiries/contact
+Public with validation, rate limiting, honeypot/CAPTCHA if needed, idempotency and safe responses.
+Public content
+GET /api/v1/public/blog; GET /api/v1/public/blog/{slug}; GET /api/v1/public/resources; GET /api/v1/public/faqs
+Public, published/indexable content; stable pagination/filter rules.
+Authentication
+POST /api/v1/auth/login; POST /api/v1/auth/logout; POST /api/v1/auth/forgot-password; POST /api/v1/auth/reset-password; POST /api/v1/auth/mfa/verify
+Secure sessions/tokens, expiry, lockout controls, MFA for privileged users.
+Admin CMS
+GET/POST/PATCH /api/v1/admin/pages; POST .../publish; POST .../preview; GET .../versions
+Role-guarded; validation; revision and audit log; published versions separated from drafts.
+Admin SEO
+GET/PATCH /api/v1/admin/seo/{entityType}/{id}; CRUD /api/v1/admin/redirects; POST /api/v1/admin/seo/audit
+Protect global settings, check loops/collisions, audit changes, enqueue sitemap/audit tasks.
+Admin blog
+CRUD /api/v1/admin/posts; .../review; .../schedule; .../publish; .../restore-version
+Editorial role/workflow; publish validation; versioning and scheduling.
+Admin leads
+GET /api/v1/admin/leads; PATCH /api/v1/admin/leads/{id}; POST .../assign; POST .../notes; POST .../tasks; POST .../export
+Record/field-level permission, owner scope, audit and rate-limited exports.
+Admin media
+POST /api/v1/admin/media/signature; POST /api/v1/webhooks/cloudinary; DELETE /api/v1/admin/media/{id}
+Upload authorization; private/public policy; webhook signature validation.
+Email / webhooks
+GET /api/v1/admin/email-logs; POST /api/v1/webhooks/email-provider
+Provider-signed webhook validation; deduplication; delivery/bounce/complaint state.
+Phase 2 booking
+/api/v1/portal/search/hotels; /flights; /bookings; /approvals; /invoices
+Future contract only; authenticated tenant scope, supplier adapter boundaries, idempotent booking commands.
+12.2 Core Phase 1 Collections / Entities
+Collection
+Important fields / relationships
+users
+emailNormalized, name, roleIds, team/vertical scope, status, passwordHash or identity-provider ID, MFA settings, lastLoginAt, createdAt, updatedAt.
+roles / permissions
+roleName, permission keys, scope rules, systemRole flag, createdBy, version. Avoid custom privilege escalation.
+pages
+slug, title, pageType, blocks, publicationState, publishedVersionId, seo metadata reference, author/reviewer IDs, createdAt/updatedAt.
+pageVersions
+pageId, versionNumber, snapshot/content, changeNote, authorId, createdAt, restoredFromVersionId.
+navigationMenus
+menuKey, items/order, label, href, visibility, target, parentItemId, updatedBy.
+mediaAssets
+provider, providerAssetId, publicId, deliveryUrl or private reference, assetType, altText, caption, focalPoint, tags, usageRefs, isPrivate, uploaderId.
+enquiries / leads
+publicReference, vertical, serviceType, contact and company, requirement payload, status, ownerId, source/UTM, consent, fileRefs, tasks/notes references, timestamps, retention metadata.
+leadActivities
+leadId, actionType, actorId, safe before/after change, note/task metadata, occurredAt; append-only where practical.
+blogPosts
+title, slug, excerpt, blockContent, authorId, reviewerId, categoryIds, tagIds, vertical/industry, heroMediaId, publishAt, updatedAt, state, seo, canonical, relatedPostIds.
+blogRevisions
+postId, version, content snapshot, changedBy, changeSummary, timestamp.
+authors / categories / tags
+Slug, name, description, avatar/bio or taxonomy data, index policy, metadata, status and relationship counts derived safely.
+resources
+title, slug, resourceType, summary, fileRef, gated flag, form config, category/tag, publish status, SEO and tracking settings.
+faqs
+question, answer blocks, category, sort, related pages, status, review date, publishedAt.
+industries / services / locations
+Slug, title, body/blocks, coverageStatus, proofNote, verticalLinks, related FAQs/case studies, SEO and index controls.
+jobs / applications
+Job status, department, location, type, closeAt; applications with candidate contact, secure fileRef, consent/version, state and retentionAt.
+emailTemplates / emailLogs
+Template slug/version, safe variable schema, locale, providerMessageId, recipient hash/masked address, status, attempts, timestamps and provider error code.
+subscribers / consentEvents
+Email normalized, source, consent text/version/time, status, confirmedAt, unsubscribeAt, suppression status, legal basis/notes as approved.
+redirects
+sourcePath normalized, targetUrl, statusCode, reason, creator, hitCount/lastHitAt, enabled, loop-check result.
+auditLogs
+actorId, action, entityType/id, timestamp, IP/user-agent as permitted, change diff without secrets, outcome and correlationId.
+siteSettings / integrations
+Typed configuration, feature toggles, provider status, non-secret identifiers. Actual secrets kept in secret manager, not returned by APIs.
+backgroundJobs / webhookEvents
+Job type/state/retryCount/scheduledAt; provider event ID, signature check, received/processed status, idempotency key and error.
+12.3 Database Validation, Indexing and Retention
+Add unique normalized indexes for public slugs, normalized login emails and relevant provider idempotency keys. Validate index uniqueness before migration.
+Add indexes for lead status/owner/vertical/createdAt, blog publication state/publishAt/slug, published pages by slug/status, redirects source path, email logs by message ID/status and jobs by state/scheduled time.
+Use compound indexes based on actual query patterns; verify with explain plans and production-like data. Do not index every field indiscriminately.
+Validate server-side types, enum values, text length, date ranges, relationship ownership and uploaded asset permissions.
+Store creation/update timestamps and actor IDs; use soft deletion for content when rollback/audit is needed and explicit retention/secure deletion for personal data.
+Backups must be monitored and restore-tested. A “backup enabled” checkbox is not acceptance; recovery steps and RPO/RTO must be documented.
+Database migrations/index changes must be version-controlled, tested on staging and repeatable; no manual production-only schema modifications without a recorded change.
+12.4 Recommended API Standards
+Use consistent response shapes, status codes and field-level validation errors. Never return stack traces, credentials, SMTP details or raw database errors to visitors.
+Pagination supports bounded page size; filters use allow-listed fields; sort expressions must not be arbitrary database paths.
+Use UTC timestamps in ISO 8601, currency codes as ISO 4217 and country codes as ISO 3166 where appropriate.
+Use correlation/request IDs across API, job and email logs. Redact access tokens, passwords, API secrets and unnecessary PII from logs.
+Protect write APIs against CSRF where cookie-based authentication is used; implement CORS allow-list and secure cookie attributes.
+13. Email, Integrations, Analytics and Reporting
+13.1 Nodemailer and Business Email
+Configure Nodemailer with a reliable authenticated SMTP/transactional email provider, using secret-managed credentials, TLS, connection limits and timeout handling.
+Use verified From addresses on GoAhead-controlled domain; configure SPF, DKIM and DMARC, plus a monitored Reply-To address. Test Gmail, Outlook and major corporate inbox rendering/deliverability.
+Create branded templates for accommodation enquiry acknowledgement, transport enquiry acknowledgement, general contact receipt, internal sales alert, reassignment, follow-up reminder, proposal/status reminder, career application receipt and newsletter confirmation/unsubscribe.
+Use safe template variables with escaping and fallback values; never permit arbitrary HTML or user input to control email headers.
+Persist email request/status; retry transient failures with exponential backoff and idempotency; log provider message ID; alert repeated failure. Do not retry permanent bounce/complaint errors indefinitely.
+Use provider webhooks for delivery, bounce, complaint and unsubscribe if supported. Validate signatures and deduplicate events.
+Email failure must not roll back a saved lead. Admin must be able to inspect the status and manually resend when authorized.
+Use plain-text alternatives, accessible typography, mobile-safe width and clear privacy/marketing distinction. Marketing email needs consent and unsubscribe handling.
+13.2 Integrations
+Integration
+Phase 1 requirement
+Phase 2 extension
+Cloudinary
+Secure image upload, transformations, asset metadata, public/private media policy and signed upload flow.
+Property, destination and travel document media only if business/legal approves; strict private handling for travel documents.
+Email provider
+SMTP sending using Nodemailer, templates, status/retry logs, SPF/DKIM/DMARC setup.
+Booking confirmations, change/cancel/refund notices, approval alerts and operations event notifications.
+Google Search Console
+Verification, sitemap submission/monitoring, search performance and indexing issue review.
+Separate monitoring for public pages and any permitted content portal routes.
+Analytics
+GA4 or agreed analytics with consent controls and conversion events.
+Search, booking funnel, checkout abandonment and corporate spend analytics, subject to privacy decisions.
+CRM / sales tool
+Phase 1 internal lead pipeline is minimum viable; optional sync to HubSpot/Salesforce or other approved CRM via API/webhook.
+Account/contact/opportunity sync; booking/customer service tickets and revenue analytics.
+Maps / geocoding
+Optional maps and validated coverage display; key protected server-side.
+Hotel/airport/city geocoding and location search; supplier terms/cost quotas apply.
+WhatsApp / SMS
+Not mandatory in Phase 1; optional provider integration with consent, cost and template approval.
+Booking alerts, OTP or support notifications with robust fallback to email/in-portal channels.
+Payments / finance
+Not required for public enquiry website.
+Payment gateway(s), refunds, credit/ledger, invoicing, tax handling and bank/provider reconciliation.
+Hotel / flight providers
+No booking API requirement in Phase 1.
+Use documented, contracted inventory, pricing, booking, ticketing and servicing APIs; supplier capabilities vary.
+13.3 Analytics and Conversion Event Plan
+Event
+Suggested parameters
+vertical_cta_click
+vertical, CTA label, page path, placement, device category, campaign attribution.
+enquiry_form_start
+form type, vertical, page path, form version.
+enquiry_form_submit_success
+form type, vertical, public reference hashed/opaque, attribution source; never send free-text personal data to analytics.
+contact_channel_click
+channel: phone/email/map; page path.
+blog_cta_click
+post slug, CTA ID, target vertical.
+resource_download
+resource ID/type, gated flag and consent state; do not send email address in analytics payload.
+newsletter_subscribe
+source/placement and consent event ID, never raw email.
+phase2 search_to_booking
+search type, dates/destination bands, provider/offer identifiers where allowed, policy status, price bands, conversion step; exclude passport/payment data.
+13.4 Reporting and Export
+Role-based dashboard for leads, form conversion, source attribution, sales speed, blog performance, content freshness, SEO issues and email health.
+Date filters use the configured business time zone but persist timestamps in UTC; show the time-zone context on exported reports.
+CSV exports must be column-allow-listed, sanitized against spreadsheet formula injection, and logged with requester/time/filter.
+Allow scheduled reports only after the delivery/recipient/retention policy is agreed; confidential lead exports should be encrypted or access-controlled.
+14. Security, Privacy, Reliability and Operations
+14.1 Identity and Application Security
+Strong password hashing via a current, battle-tested algorithm or use a trusted identity provider; never store plaintext passwords or send passwords by email.
+MFA mandatory for Super Admin and recommended for other privileged users; secure reset flows, short-lived reset tokens and session invalidation after credential change.
+Brute-force protection, rate limits, lockout/backoff, suspicious login alerting and admin session timeout appropriate to role/risk.
+RBAC enforced on backend for every route and object; test horizontal/vertical privilege escalation, tenant/record leakage and IDOR patterns.
+Use TLS, secure and HttpOnly cookies if cookie sessions are selected, SameSite policy, CSRF defense where needed, strict CORS, CSP/security headers and dependency scanning.
+Prevent XSS by sanitizing rich text and rendering safe blocks; prevent injection with validated queries and safe database APIs; protect against SSRF by disallowing arbitrary server-side fetches from user-controlled URLs.
+Secrets stored in managed secret store/environment; rotate API keys; restrict Cloudinary/email/database permissions; no production secret in browser bundles or source control.
+Validate all uploads and webhooks. Limit request body size and reject unexpected content types.
+14.2 Privacy and Data Governance
+Publish a privacy notice that accurately covers business enquiries, application data, analytics/cookies, email/newsletter consent, CRM exports, retention and data subject contact route.
+Collect only data needed for the current purpose. Public Phase 1 enquiry forms must not request passports, payment card data, health details or other unnecessary sensitive information.
+Marketing consent is separate, optional and unselected by default; log wording/version/time/source and provide unsubscribe/suppression logic.
+Define retention periods for leads, resumes, email logs, audit logs, inactive users, failed jobs and temporary files with legal/client approval.
+Provide authorized workflows for data access/correction/deletion requests and legal holds. Ensure backup retention and deletion exceptions are documented.
+Use consent management for non-essential cookies/analytics where required; do not fire optional tracking before consent when the chosen legal regime requires opt-in.
+Phase 2 traveller profile, passport, payment and itinerary data require data minimization, stronger access controls, retention rules and incident response; payment card details should be tokenized by a compliant provider rather than stored in MongoDB.
+14.3 Availability, Backup and Monitoring
+Control
+Acceptance expectation
+Availability
+Agree target with hosting/provider before launch; recommend 99.5%+ monthly for Phase 1 as a planning target, excluding clearly defined scheduled maintenance and third-party outages.
+Backups
+Automated database backups; point-in-time recovery when supported; access separated from production account; document retention.
+Restore drills
+At least one staging restore test before launch and periodic rehearsal thereafter; record RPO/RTO and findings.
+Monitoring
+Uptime, latency, 5xx rate, lead API failures, job backlog, email delivery errors, database health, storage quota and security alerts.
+Logging
+Structured, correlated logs with PII/secret redaction; restricted retention and searchable request/job IDs.
+Incident response
+Named owner, severity levels, alert channels, backup contact, triage steps, containment, user/client notification decision and post-incident review.
+Deployments
+Staging sign-off, automated build/test, protected production deployment, rollback plan and migration safety checklist.
+Disaster recovery
+Document dependency outage behavior. Website content and form submissions should degrade gracefully; critical leads must persist even if outbound email fails.
+15. Testing, Launch and Acceptance Criteria
+15.1 Testing Scope
+Unit tests for validation, lead qualification/status rules, permission checks, SEO helpers, redirects and key utility functions.
+Integration tests for MongoDB persistence, file upload handling, email queue/provider adapter, webhooks, authentication and authorization.
+End-to-end tests for user journeys on mobile and desktop: find vertical, submit form, receive confirmation, create lead, assign lead, move status, publish page/blog post, modify SEO, generate sitemap and redirect old URL.
+Content/SEO checks: crawl all routes, verify status/canonical/meta/noindex/schema, ensure sitemap contains only intended public indexable URLs, test 404/redirect behavior and identify missing alt/title/description.
+Security checks: access control, brute force, CSRF/XSS/upload restrictions, API limits, dependency vulnerabilities, secret leakage and export authorization.
+Performance tests: representative mobile pages, image loading, JS bundle, server rendering, API latency, database indexes and traffic spikes for form submission.
+Accessibility checks: automated scan plus keyboard/screen-reader/manual review of navigation, forms, modal/accordion, focus and reduced motion.
+Browser/device coverage: current Chrome, Safari, Firefox and Edge desktop; Android Chrome and iOS Safari where practical; verify narrow phones and landscape tablet.
+15.2 Phase 1 Definition of Done
+All approved sitemap pages are built from CMS-driven content where intended and work on mobile/tablet/desktop.
+Global Accommodation and Local Transportation have separate routes, relevant detail pages and dedicated enquiry forms.
+Form submissions persist correctly with public reference, source/consent data, role-restricted details and reliable email status tracking.
+Admin roles are enforced server-side; admin can manage pages, navigation, assets, SEO, blog, resources, FAQs, leads, redirects and settings per permissions.
+Blog supports full editorial workflow, preview/revisions, scheduling, metadata, taxonomy, related posts, author pages, RSS and analytics basics.
+SEO technical requirements are implemented, sitemap/robots/canonicals/redirects are validated and Search Console/analytics verification is completed.
+Production domain, HTTPS, backups, monitoring, email authentication and incident/rollback instructions are configured.
+No critical/high-severity defects remain open; known lower-severity issues are documented and accepted by the client.
+Client receives the single Next.js source repository, environment/config guide, deployment instructions, schema/API documentation, admin training and handover record.
+15.3 Suggested Non-Functional Targets
+Metric
+Planning target / note
+Core Web Vitals
+Aim for good field performance at the 75th percentile: LCP <= 2.5 s, INP < 200 ms, CLS < 0.1, measured over time where field data is available.
+Public pages
+SEO-critical content rendered in initial HTML; avoid unnecessary hydration and heavy scripts.
+API performance
+Agree endpoint-specific SLOs; target p95 < 500 ms for ordinary cached/read APIs and p95 < 1 s for typical database-backed admin operations, excluding external providers/heavy reports.
+Form reliability
+Submission must return success only after durable persistence; email failure must not lose submission. Test duplicate submit/retry scenarios.
+Accessibility
+WCAG 2.2 AA-aligned target plus manual verification; no keyboard-blocking critical defect at launch.
+Security
+No known critical/high issues in agreed scan scope at production launch; exceptions formally risk-accepted.
+Maintainability
+Typed API contracts, documented modules, automated tests for critical flows and no secrets committed to repository.
+16. Phase 2 B2B Booking Platform Requirements
+Phase 2 is a substantial product extension, not simply adding a search box. It requires bookable inventory, supplier APIs, corporate contracts, payment/credit rules, real-time availability/pricing, booking state orchestration, post-booking servicing, support and financial reconciliation. Phase 2 scope and commercials must be re-estimated once provider APIs and contractual models are chosen.
+16.1 Account, Organization and User Portal
+Company/tenant creation and onboarding, legal entity details, billing address, tax/GST details where applicable, contract type, allowed currencies, cost centres, department/branch, policy and account owner.
+Invitation-only or approved self-registration; domain verification and admin approval; prevent one company from seeing another company’s travellers, bookings, invoices or rates.
+Role types: Company Owner/Admin, Travel Manager, Booking Agent, Approver/Manager, Traveller, Finance/Accounts, GoAhead Operations, Supplier/Hotel Partner and Super Admin.
+User profile: name, corporate email, phone, department, cost centre, manager/approver, traveller details, preferred language, accessibility/preference fields only when necessary.
+Traveller profiles for flights: legal name matching identification, date of birth, nationality/document data only when required by supplier, passport/visa fields with masking and restricted access. Define secure encryption and retention policy.
+Company dashboard: pending approvals, upcoming trips, active bookings, spend summary, policy exceptions, invoice status, notifications and quick start actions.
+Secure password reset/MFA/SSO readiness, session history, device sign-out, account lifecycle, user deactivation and booking access retention.
+16.2 Corporate Travel Policy and Approvals
+Policy configuration by company, user role, department, location, trip type, lead time, price threshold, room category/fare class, refundable requirement and permitted supplier/provider.
+Approval chain with sequential/parallel approvers, delegation, out-of-office fallback, escalation/reminder deadlines and auditable decision comments.
+Policy validation during search/selection/checkout. Clearly label in-policy, out-of-policy and “approval required” options; do not silently remove a compliant option or hide fees.
+Approval before booking or after selection depending on configured workflow; supplier price/inventory must be revalidated at booking time.
+Budget caps, cost centre/project tagging, trip purpose, employee eligibility and exception justification.
+Policy versioning/effective dates and audit report; policy changes must not retroactively corrupt historical decision evidence.
+16.3 Hotel Search and Booking
+Capability
+Required behavior
+Search form
+Destination/city/area, check-in/out, rooms, adults/children and child ages where supplier requires, country/locale/currency, business rules and flexible-date option if supported.
+Search orchestration
+Call contracted supplier adapters; normalize offers; handle timeout/partial results; cache only within supplier terms and appropriate TTL; display last-updated/availability context.
+Filters/sort
+Price, star/category where available, property type, amenities, guest rating/review count only when licensed and fresh, cancellation/flexibility, meal plan, distance, room type, supplier and in-policy status.
+Results cards
+Property name/address area, approved photos, rating source, room/meal/cancellation summary, taxes/fees disclosure, currency, total stay price and per-night rate, supplier terms and availability caveats.
+Property detail
+Images with rights, room options, occupancy, amenities, accessibility information, location/map, house rules, taxes/fees, cancellation/deposit conditions and provider attribution.
+Room/rate selection
+Compare room types and rate plans; clearly present non-refundable/refundable deadlines, included meals, occupancy restrictions, taxes and added charges.
+Price revalidation
+Re-check price, availability, guest occupancy and terms immediately before booking/hold. Show price changes and require user acceptance before proceeding.
+Checkout
+Select traveller/guest details, company/cost centre/project, special requests where supported, guest phone/email, policy approval and terms acceptance.
+Booking creation
+Use provider-supported booking APIs; maintain idempotency and state transitions; handle pending/confirmed/failed/unknown states. Unknown outcome must trigger reconciliation rather than blind repeated booking.
+Confirmation
+Booking reference, provider confirmation, property/contact details, dates, guest names, payment/credit details, cancellation terms, voucher/PDF if supported, email and portal record.
+Post-booking service
+View details, request modification/cancellation, check eligibility/penalty and deadlines, support case, invoice/voucher download and full timeline.
+Availability failures
+Graceful no-results state, alternate dates/areas/suppliers and retry. Never fabricate a property, rate or booking confirmation.
+16.4 Flight Search and Booking
+Capability
+Required behavior
+Search criteria
+One-way/round-trip/multi-city; origin/destination; dates; traveller counts and types; cabin; direct/stop preference; time range; currency; policy profile.
+Offer normalization
+Supplier/GDS/NDC offers mapped to common model with marketing/operating carrier, segments, times/time zones, duration, stops, baggage allowance, cabin, fare family, fare rules and ticketing deadline where supplied.
+Filter/sort
+Price, duration, departure/arrival time, stops, airline, cabin, baggage, fare flexibility, refund/change conditions, policy status and departure airport.
+Fare rules
+Clearly disclose baggage, seats, change/refund restrictions, no-show penalties, ticketing deadline, taxes/fees and possible supplier charges. Store snapshot of rules/offer terms on booking.
+Traveller data
+Use saved traveller profile with permission; validate mandatory details for chosen supplier/country; protect sensitive identity data and mask where displayed.
+Approval
+Apply travel policy and configured approvals before ticketing/booking; revalidate fare before ticket issuance where provider workflow requires.
+Booking/ticketing
+Support provider flow and booking locator/PNR, ticket status, ticket numbers where issued, payment/settlement and supplier errors. Separate reservation from ticketed/confirmed state.
+Servicing
+Display status and fare rules; change/reissue/cancel/refund only where API/support channel and contract permit; otherwise create controlled operations case.
+Disruption support
+Store segment timeline, supplier notifications, traveller contact and operational case; provide status and escalation path.
+Confirmation documents
+Itinerary, provider PNR, ticket/voucher documents, receipt/invoice and clear emergency/support instructions.
+16.5 Checkout, Payments, Credit and Invoicing
+Support contractually approved payment models: company credit/ledger, prepaid wallet where legally/operationally approved, card/payment-gateway token, invoice-on-account, or provider-direct payment. Do not assume every supplier supports every model.
+Payment authorization/capture/refund states, idempotency keys, payment webhook signature validation and reconciliation with provider records.
+Never store raw payment card numbers/CVV. Use hosted fields/tokenization from a compliant payment provider; keep payment scope as small as practical.
+Company credit limit, available balance, credit period, overdue hold, invoice due date, aging buckets, approved exceptions, finance audit and account suspension logic.
+Invoice numbering, legal entity, billing address, GST/tax/VAT where applicable, tax components, currency, exchange-rate source/date, line items, fees, supplier amount, markup/service fee and amount due.
+Consolidated company invoices by trip, department, cost centre or billing cycle; credit notes, refund entries, invoice PDF, CSV/export and reconciliation report.
+Booking status and finance status must be separate so an issued booking is not mistaken for a settled payment. Refund requested is not the same as refund completed.
+Exchange rate and rounding rules must be explicit; preserve supplier currency and billing currency snapshots on the booking.
+16.6 Corporate Transportation Booking Integration
+Future local ground booking module may handle airport transfer, point-to-point corporate cab, hourly hire, scheduled employee transport, shuttle, event transport or vendor request according to the real operating model.
+Require journey date/time/time zone, pickup/drop address, flight number if relevant, traveller/passenger count, baggage, accessibility, vehicle class, company cost centre, approver and policy status.
+If GoAhead directly dispatches vehicles, include dispatch/vendor allocation, driver/vehicle assignment, status timeline, live tracking where available, cancellation rules, support, trip completion and charge reconciliation.
+If transport is brokered through a third-party supplier, booking updates, cancellations and tracking must reflect only what that supplier API actually provides.
+Do not market live GPS, SOS, route optimization or driver vetting as platform capabilities unless the connected operational systems supply those features.
+16.7 Booking Management and Customer Support
+My Trips with upcoming/past/cancelled trips, search/filter, status, itinerary, voucher/ticket, invoice, approval history, travellers and cost centre.
+Booking detail timeline with event source, actor, timestamps, supplier status, changes, payment states and support case links.
+Modification/cancellation flow first fetches current provider rules/penalty, displays price impact and requires confirmation; provider action is idempotent and reconciled.
+Support case with category, urgency, booking reference, assignment, comments, attachments, status, SLA target, escalation, resolution and feedback.
+Notifications by in-app, email and optional SMS/WhatsApp: invitation, approval needed, approved/rejected, booking confirmed, ticket issued, change, cancellation, refund, invoice and disruption.
+17. Phase 2 Booking Architecture, Data Model and Operations
+17.1 Provider Connector Architecture
+The booking engine must isolate provider-specific behavior behind adapters. Each adapter defines search, price recheck, book/hold (if supported), retrieve, cancel, change/refund/ticketing, policies, timeout/retry behavior, rate limits, credential scope, mapping and reconciliation. Provider capabilities should be explicitly declared; unsupported operations should be disabled or routed to operations support.
+Never scrape Booking.com, MakeMyTrip or airline public sites to create a commercial booking engine. Use documented APIs, authorized wholesalers/aggregators, GDS/NDC providers or direct hotel contracts.
+Normalize supplier-specific status and error codes to a documented internal model while retaining raw provider reference and safe diagnostic context.
+Use circuit breakers and bounded retries for safe read calls; booking, ticketing, cancellation and payment operations require idempotency and reconciliation before retry.
+Persist the exact quoted offer/price/terms snapshot, supplier, currency, expiry, policy result and approval evidence relevant to each booking.
+Use provider webhooks/polling only where contractually supported, with signature validation, replay protection, event deduplication and reconciliation jobs.
+17.2 Additional Phase 2 Collections
+Collection
+Key purpose / data
+organizations
+Tenant/company legal info, contract, billing entity, allowed products, currencies, credit terms, policy IDs, state.
+organizationUsers
+User-org relationship, role, department, cost centre, approver chain, activation status and access scope.
+travellerProfiles
+User linkage, required travel identity fields, emergency/contact details only where justified, encrypted/masked sensitive identifiers, profile consent and access audit.
+travelPolicies / policyVersions
+Rules, scope, limits, effective date, approver matrix, version snapshot and actor.
+searchSessions / offers
+Search parameters, normalized provider offer, price/terms, source provider, expiry time and safe attribution. Use a retention policy and supplier caching rules.
+bookings
+Public booking reference, organization, traveller/guest IDs, product type, internal status, provider status/reference, immutable price/terms snapshot, currency, approval, itinerary, timestamps.
+bookingItems / segments / rooms
+Flight segments/ticket data or hotel room/rate/guest data, per-item supplier IDs, taxes, restrictions and status.
+bookingEvents
+Append-only event timeline for search selection, approval, provider request/response status, payment, ticketing, cancellation, modification and reconciliation.
+payments / refunds / ledgerEntries
+Provider token/reference, amount/currency, authorized/captured/refunded states, ledger entries, reconciledAt and finance actor. Never raw card data.
+invoices / creditNotes
+Number, organization, entity/tax details, line items, totals/taxes/currency, issued/due/paid status, PDF reference and immutable snapshot.
+providerAccounts / supplierMappings
+Provider identifiers, capabilities, environment, key reference (not secret itself), rate limits, mapping rules, availability/status and contract date.
+supportCases
+Organization, booking reference, requester, severity, category, messages, assignments, due/escalation times, outcome and attachments.
+approvals / approvalEvents
+Booking/trip, workflow version, approvers, decision/comment, timestamps, delegation and escalation.
+reconciliationJobs
+Provider query window, batch ID, run status, booking/payment discrepancies, retry/owner/resolution and audit trail.
+17.3 Booking State Models
+Domain
+Example states (final set provider-dependent)
+Search / offer
+requested -> searching -> results/partial_results/no_results -> selected -> expired/revalidated.
+Hotel booking
+draft -> awaiting_approval -> approved -> price_recheck -> booking_pending -> confirmed / failed / unknown_outcome -> modification_pending -> modified / cancellation_pending -> cancelled / cancellation_failed.
+Flight booking
+draft -> awaiting_approval -> approved -> order_or_pnr_pending -> reserved -> ticketing_pending -> ticketed / failed / unknown_outcome -> changed/reissued/cancelled/refund_pending/refunded as permitted.
+Payment
+not_required -> pending -> authorized -> captured/settled -> partial_refund/refund_pending/refunded/failed/reversed/disputed as supported.
+Invoice
+draft -> issued -> due -> partially_paid -> paid / overdue / voided / credited.
+Support case
+open -> triaged -> assigned -> waiting_on_customer/provider -> resolved -> closed/reopened.
+State changes must be executed through server-side command handlers with allowed-transition validation. Admins should not freely set any status from a dropdown without transition checks, reason capture and audit.
+17.4 Operations, Finance and Supplier Console
+Ops dashboard for bookings awaiting provider confirmation, ticketing deadlines, price changes, failed/unknown operations, upcoming travel, supplier exceptions and support escalations.
+Finance dashboard for credit exposure, overdue invoices, refunds pending, provider statement mismatches, fee/markup reconciliation and export to accounting systems.
+Supplier configuration shows provider status, supported operations, limits, timeout/error metrics and test/live environment distinction; credentials masked and secret references rotated through secure store.
+Manual intervention must record operator, timestamp, reason, provider evidence and customer communication; privileged “force confirm/cancel” controls require elevated role and guardrails.
+Automated reconciliation for bookings/payments whose API response was ambiguous; compare provider records, webhooks and internal ledger before resolving.
+Access logs and data separation for support staff; avoid displaying full traveller sensitive details unless task requires them.
+18. Delivery Roadmap, Risks and Decisions Needed
+18.1 Suggested Delivery Sequence
+Workstream
+Main activities
+Exit gate
+0. Discovery & content audit
+Confirm business model, service catalogue, verified coverage, proof points, URL inventory, buyer personas, conversion goals, data/privacy requirements and design references.
+Approved sitemap, content matrix, URL redirect map and scope baseline.
+1. UX and design system
+User journeys, wireframes, dual-vertical home, page templates, mobile navigation, tokens, prototype, accessibility and motion specification.
+Stakeholder sign-off on core templates and CTA logic.
+2. Next.js full-stack foundation
+Single Next.js repository and application setup; Node.js runtime and /api/v1 route standards; MongoDB schema/indexes; auth/RBAC; validation; logging; media integration; durable email queue; audit.
+Security baseline and automated tests passing in staging.
+3. Phase 1 CMS / admin
+Page builder, navigation, media, blog/resource/FAQ, SEO, redirect manager, roles and admin dashboards.
+Admin role-based workflows demonstrated end-to-end.
+4. Public website and forms
+Build all approved pages, accommodation/transport forms, lead capture, email templates, analytics and migration redirects.
+Content and conversion acceptance complete.
+5. SEO/performance/UAT
+Crawl, schema and metadata checks, accessibility, mobile QA, security review, load smoke tests, redirects, backups and training.
+No critical/high issues; launch checklist signed.
+6. Production launch
+Deploy, DNS/SSL, SMTP/domain authentication, Cloudinary, analytics/GSC, sitemap, monitoring, backups, rollback.
+Smoke tests pass; owners and support path confirmed.
+7. Phase 2 discovery
+Supplier/GDS/NDC/aggregator due diligence; commercial contracts; product requirements; payment/tax/legal model; support and fulfilment processes.
+Provider capabilities and transaction model signed off before implementation estimate.
+8. Phase 2 build
+Accounts/policies, supplier connectors, hotel/flight search/booking, payment/credit, invoicing, servicing, admin ops, finance and reconciliation.
+End-to-end bookings tested with provider sandbox and controlled production pilot.
+18.2 Major Risks and Mitigations
+Risk
+Impact
+Mitigation
+Accommodation capability unclear
+Marketing may promise countries, supply or SLAs the business cannot fulfil.
+Validate service model/coverage/rate sourcing and legal wording before content approval.
+Ranking guarantee expectation
+Unrealistic acceptance criteria and pressure to use risky SEO tactics.
+Define technical/content SEO deliverables and measurement; explicitly exclude guaranteed #1 ranking.
+Legacy URL loss
+Organic traffic and backlinks may be lost or devalued.
+Maintain URL inventory, redirects, canonical plan and post-launch crawl/Search Console monitoring.
+Supplier API/contract unavailable in Phase 2
+Booking build delayed or impossible for selected product.
+Commercial/API due diligence before committing detailed scope; plan an adapter per provider.
+Incorrect pricing / duplicate bookings
+Financial and customer harm.
+Price revalidation, idempotency, booking state machine, provider reconciliation and controlled retry.
+Sensitive data exposure
+Privacy, legal and reputational impact.
+Data minimization, encryption/masking, RBAC, logging redaction, retention and incident plan.
+Animations degrade mobile performance
+Slow pages and lower usability/SEO.
+Performance budgets, reduced motion, progressive enhancement, small bundles and real-device QA.
+Admin too complex
+Poor adoption and unsafe content changes.
+Role-based dashboard, task-specific UI, preview/revision workflows, training and audit.
+Data quality and proof claims
+Trust and legal concerns.
+Evidence/source fields for metrics, approval workflow and review dates on coverage/case studies.
+18.3 Decisions Required from GoAhead
+Confirm global accommodation business model, service categories, eligible countries/cities, whether it directly contracts inventory, target buyer and service levels.
+Confirm current public facts and remove/verify all existing performance statistics, client logos, safety certifications and operating coverage claims.
+Choose primary sales routing owners, response targets, service hours, currencies, form routing and business email accounts.
+Approve initial industry list, case studies, testimonials, team profiles and resource/blog content plan.
+Choose hosting, MongoDB Atlas tier/region, transactional email provider, Cloudinary account and observability tools.
+Approve data retention, privacy/cookie policy, candidate data processing and access to personal information.
+Phase 2: choose commercial inventory partners and validate hotel/flight search, booking, modification/refund, payment/credit, invoice, tax, currency, cancellation and support capabilities.
+Choose whether Phase 2 is corporate-only, agent-assisted, supplier portal enabled, or also permits individual/public bookings; this affects pricing, legal terms, fraud and data architecture.
+Appendix A. Functional Test Checklist
+Public website and navigation
+☐ Home explains both business verticals and each CTA lands on the correct destination.
+☐ Every listed current page is retained or has an approved 301 target; no migration URL remains unreviewed.
+☐ Mobile navigation is keyboard operable, scrollable and closable; no menu content is hidden behind browser chrome.
+☐ All page templates render at mobile, tablet and desktop sizes without horizontal overflow.
+☐ All public claims, contact details, testimonials, locations and client logos are approved before publication.
+Forms and leads
+☐ Valid accommodation and transport submissions are stored durably and return unique public references.
+☐ Invalid email/date/file/payload is rejected server-side with understandable field-level feedback.
+☐ Duplicate submit/network retry does not create duplicate leads.
+☐ Email provider failure leaves the lead persisted and creates a visible log/alert.
+☐ Lead is assigned/routed correctly and visible only to authorized roles.
+☐ CSV export permissions and formula injection protections are tested.
+CMS, blog and SEO
+☐ Admin can draft, preview, review, schedule, publish, unpublish and restore a version.
+☐ Published page/post metadata, canonical, Open Graph, sitemap and structured data match CMS values.
+☐ Draft/private content is not available publicly and is not listed in sitemap/search.
+☐ Redirect manager blocks loops/collisions and emits the correct status code.
+☐ Blog search/taxonomy/author/related content/RSS and newsletter subscribe/unsubscribe work.
+☐ SEO dashboard flags missing metadata, alt text, broken links and duplicate index controls.
+Security and production
+☐ Privilege escalation/IDOR tests fail safely; a sales agent cannot access unauthorized leads.
+☐ No credentials, SMTP secrets, database connection strings or tokens appear in public JavaScript or logs.
+☐ Rate limits, CSRF/XSS, upload validation, webhook signature and admin MFA are tested.
+☐ Backups and a restore from backup have been demonstrated.
+☐ Production HTTPS, SPF, DKIM, DMARC, analytics consent and Search Console are verified.
+Phase 2 booking acceptance (future)
+☐ Company tenant isolation is verified across search, bookings, invoices, reports and traveller profiles.
+☐ Price and availability are revalidated before booking and any changes are shown before confirmation.
+☐ Repeated booking/payment requests are idempotent and unknown outcomes are reconciled.
+☐ Approval policy/version, approvers, exceptions and decisions are retained in the audit trail.
+☐ Cancellation/refund statuses reflect provider/financial confirmation, not just UI clicks.
+☐ Invoices, currency/tax/credit ledger and provider reconciliation match test fixtures.
+Appendix B. Public Reference Sources
+Sources used to map existing public pages and inform technical requirements. The sources are references, not an endorsement or a commitment that a third-party feature/API is available to GoAhead. Live content and provider capabilities must be rechecked during delivery.
+GoAhead Mobility homepage - https://www.goaheadmobility.com/ (Reviewed for current home messaging and visible navigation.)
+GoAhead Solutions overview - https://www.goaheadmobility.com/solutions (Current transport service ecosystem.)
+GoAhead Corporate mobility - https://www.goaheadmobility.com/corporate (Corporate cab/transfer content.)
+GoAhead Industrial transport - https://www.goaheadmobility.com/industrial (Industrial employee transport content.)
+GoAhead Events - https://www.goaheadmobility.com/events (Event transport page.)
+GoAhead Employee transport - https://www.goaheadmobility.com/employee (Employee transport service detail.)
+GoAhead Transport ERP - https://www.goaheadmobility.com/transport (Transport platform modules.)
+GoAhead Corporate cabs - https://www.goaheadmobility.com/cab (Cab-service detail.)
+GoAhead About Us - https://www.goaheadmobility.com/about (Company story and team.)
+GoAhead Blog - https://www.goaheadmobility.com/blog (Existing editorial hub.)
+GoAhead FAQ - https://www.goaheadmobility.com/faq (Support/FAQ hub.)
+GoAhead Resource Center - https://www.goaheadmobility.com/learn (Resource hub.)
+GoAhead Careers - https://www.goaheadmobility.com/careers (Recruitment page.)
+GoAhead Why Choose Us - https://www.goaheadmobility.com/why_us (Differentiators.)
+GoAhead Market Challenges - https://www.goaheadmobility.com/challenges (Customer pain points.)
+GoAhead Safety & Trust - https://www.goaheadmobility.com/safety (Safety messaging; claims require verification.)
+GoAhead Commercial Models - https://www.goaheadmobility.com/commercial (Commercial engagement models.)
+GoAhead Our Footprint - https://www.goaheadmobility.com/global (Geographic footprint, not accommodation product page.)
+GoAhead Contact - https://www.goaheadmobility.com/contact (Contact flow.)
+Google Search Central - Sitemaps - https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap (Sitemap implementation guidance.)
+Google Search Central - Canonicalization - https://developers.google.com/search/docs/crawling-indexing/canonicalization (Canonical URL guidance.)
+Google Search Central - Core Web Vitals - https://developers.google.com/search/docs/appearance/core-web-vitals (Performance measurement targets.)
+Google Search Central - Helpful content - https://developers.google.com/search/docs/fundamentals/creating-helpful-content (People-first content and quality guidance.)
+Google Search Central - Organization structured data - https://developers.google.com/search/docs/appearance/structured-data/organization (Organization schema guidance.)
+Google Search Central - LocalBusiness structured data - https://developers.google.com/search/docs/appearance/structured-data/local-business (Use of local business schema where accurate/eligible.)
+Google Search Central - Structured data gallery - https://developers.google.com/search/docs/appearance/structured-data/search-gallery (Supported search appearance features.)
+Google Search Central - Spam policies - https://developers.google.com/search/docs/essentials/spam-policies (Avoid scaled low-value content and manipulative tactics.)
+TravelPerk business travel platform overview - https://www.travelperk.com/ (Public feature benchmark: policy, approvals, spend/invoice/reporting patterns.)
+Design inspiration: Awwwards - https://www.awwwards.com/ (User-provided high-level creative inspiration reference.)
+Design inspiration: Thirdway - https://www.thirdway.com/ (User-provided high-level creative inspiration reference.)
+Design inspiration: Roveia - https://www.roveia.com/ (User-provided high-level creative inspiration reference.)
+Design inspiration: Sphere Digital Recruitment - https://www.spheredigitalrecruitment.com/ (User-provided high-level creative inspiration reference.)
+Final Requirement Statement
+This document defines the baseline scope for a premium GoAhead corporate website in Phase 1 and the planned B2B booking platform in Phase 2. The complete product is to be delivered as one full-stack Next.js application, with the UI and Node.js server-side/backend logic in the same codebase and MongoDB Atlas as the database. It should be used by business stakeholders, full-stack engineering, QA, SEO, content, DevOps, legal/privacy and sales/operations as a shared source of truth. Every external dependency, service capability, commercial rule, legal statement and business claim must be confirmed by the appropriate owner before implementation or publication.

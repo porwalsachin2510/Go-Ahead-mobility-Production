@@ -1,0 +1,310 @@
+== public.ts exports
+10:export function plain<T>(value: T): T {
+14:export type NavItem = { id: string; label: string; href: string; description?: string; newTab?: boolean; visible?: boolean; device?: string; children?: NavItem[] }
+16:export type Settings = {
+44:export const getSettings = cache(async (): Promise<Settings> => {
+55:export const getMenu = cache(async (menuKey: 'primary' | 'footer' | 'utility' | 'legal'): Promise<NavItem[]> => {
+67:export type PublicPage = { id: string; path: string; pageType: string; title: string; blocks: Block[]; seo: Record<string, any>; updatedAt: string }
+75:export const getPublishedPage = cache(async (rawPath: string): Promise<PublicPage | null> => {
+97:export async function getDraftPageForPreview(id: string): Promise<PublicPage | null> {
+105:export async function findRedirect(rawPath: string) {
+112:export async function listPublishedPagePaths() {
+122:export const listIndustries = cache(async (limit = 24) => {
+127:export async function getIndustry(slug: string) {
+132:export const listFaqs = cache(async (opts: { category?: string; vertical?: string; limit?: number; q?: string } = {}) => {
+140:export const listLocations = cache(async (vertical?: string) => {
+147:export const listTeam = cache(async () => {
+152:export const listProof = cache(async (vertical?: string) => {
+163:export const listLogos = cache(async () => {
+169:export async function listCaseStudies() {
+174:export async function getCaseStudy(slug: string) {
+189:export async function listPosts(opts: { page?: number; limit?: number; category?: string; tag?: string; author?: string; vertical?: string; q?: string } = {}) {
+220:export const listHomePosts = cache(async (limit = 3, vertical?: string) => {
+229:export async function getPost(slug: string) {
+278:export async function getSeries(slug: string) {
+286:export const listPublicSeries = cache(async () => {
+296:export const listPopularPosts = cache(async (limit = 5) => {
+302:export async function listFeedPosts(opts: { limit?: number; since?: Date } = {}) {
+316:export async function recordPostView(slug: string) {
+323:export async function livePostCounts(field: 'categoryIds' | 'tagIds' | 'authorId'): Promise<Map<string, number>> {
+329:export const listPublicAuthors = cache(async () => {
+335:export const listTermsWithCounts = cache(async (kind: 'category' | 'tag') => {
+342:export async function getTaxonomy(kind: 'category' | 'tag' | 'author', slug: string) {
+348:export const listCategories = cache(async () => {
+355:export async function listResources(opts: { type?: string; vertical?: string; limit?: number; q?: string } = {}) {
+363:export async function getResource(slug: string) {
+375:export async function listOpenJobs() {
+380:export async function getOpenJob(slug: string) {
+== models
+lib/server/models/content.ts:4:function model<T>(name: string, schema: Schema): Model<T> {
+lib/server/models/content.ts:5:  return (mongoose.models[name] as Model<T>) ?? mongoose.model<T>(name, schema)
+lib/server/models/content.ts:266:export const Page = model<any>('Page', pageSchema)
+lib/server/models/content.ts:267:export const PageVersion = model<any>('PageVersion', pageVersionSchema)
+lib/server/models/content.ts:268:export const Navigation = model<any>('Navigation', navigationSchema)
+lib/server/models/content.ts:269:export const SiteSettings = model<any>('SiteSettings', settingsSchema)
+lib/server/models/content.ts:270:export const MediaAsset = model<any>('MediaAsset', mediaSchema)
+lib/server/models/content.ts:271:export const Redirect = model<any>('Redirect', redirectSchema)
+lib/server/models/editorial.ts:5:function model<T>(name: string, schema: Schema): Model<T> {
+lib/server/models/editorial.ts:6:  return (mongoose.models[name] as Model<T>) ?? mongoose.model<T>(name, schema)
+lib/server/models/editorial.ts:355:export const JobAlert = model<any>('JobAlert', jobAlertSchema)
+lib/server/models/editorial.ts:370:export const PostSeries = model<any>('PostSeries', postSeriesSchema)
+lib/server/models/editorial.ts:371:export const Author = model<any>('Author', authorSchema)
+lib/server/models/editorial.ts:372:export const Category = model<any>('Category', taxonomySchema.clone())
+lib/server/models/editorial.ts:373:export const Tag = model<any>('Tag', taxonomySchema.clone())
+lib/server/models/editorial.ts:374:export const Post = model<any>('Post', postSchema)
+lib/server/models/editorial.ts:375:export const PostRevision = model<any>('PostRevision', postRevisionSchema)
+lib/server/models/editorial.ts:376:export const ContentReview = model<any>('ContentReview', contentReviewSchema)
+lib/server/models/editorial.ts:377:export const PostAutosave = model<any>('PostAutosave', postAutosaveSchema)
+lib/server/models/editorial.ts:396:export const BlogComment = model<any>('BlogComment', blogCommentSchema)
+lib/server/models/editorial.ts:397:export const Faq = model<any>('Faq', faqSchema)
+lib/server/models/editorial.ts:398:export const Industry = model<any>('Industry', industrySchema)
+lib/server/models/editorial.ts:399:export const Location = model<any>('Location', locationSchema)
+lib/server/models/editorial.ts:400:export const CaseStudy = model<any>('CaseStudy', caseStudySchema)
+lib/server/models/editorial.ts:401:export const Testimonial = model<any>('Testimonial', testimonialSchema)
+lib/server/models/editorial.ts:402:export const ClientLogo = model<any>('ClientLogo', clientLogoSchema)
+lib/server/models/editorial.ts:403:export const Resource = model<any>('Resource', resourceSchema)
+lib/server/models/editorial.ts:404:export const TeamMember = model<any>('TeamMember', teamMemberSchema)
+lib/server/models/editorial.ts:405:export const Job = model<any>('Job', jobSchema)
+lib/server/models/identity.ts:5:function model<T>(name: string, schema: Schema): Model<T> {
+lib/server/models/identity.ts:6:  return (mongoose.models[name] as Model<T>) ?? mongoose.model<T>(name, schema)
+lib/server/models/identity.ts:104:export const User = model<UserDoc>('User', userSchema)
+lib/server/models/identity.ts:105:export const Session = model<InferSchemaType<typeof sessionSchema>>('Session', sessionSchema)
+lib/server/models/identity.ts:106:export const Token = model<InferSchemaType<typeof tokenSchema>>('Token', tokenSchema)
+lib/server/models/identity.ts:107:export const AuditLog = model<InferSchemaType<typeof auditSchema>>('AuditLog', auditSchema)
+lib/server/models/identity.ts:108:export const RateLimit = model<InferSchemaType<typeof rateLimitSchema>>('RateLimit', rateLimitSchema)
+lib/server/models/identity.ts:109:export const Counter = model<{ _id: string; seq: number }>('Counter', counterSchema)
+lib/server/models/identity.ts:110:export const Idempotency = model<InferSchemaType<typeof idempotencySchema>>('Idempotency', idempotencySchema)
+lib/server/models/operations.ts:5:function model<T>(name: string, schema: Schema): Model<T> {
+lib/server/models/operations.ts:6:  return (mongoose.models[name] as Model<T>) ?? mongoose.model<T>(name, schema)
+lib/server/models/operations.ts:240:export const Lead = model<any>('Lead', leadSchema)
+lib/server/models/operations.ts:241:export const LeadActivity = model<any>('LeadActivity', leadActivitySchema)
+lib/server/models/operations.ts:242:export const LeadTask = model<any>('LeadTask', leadTaskSchema)
+lib/server/models/operations.ts:243:export const RoutingRule = model<any>('RoutingRule', routingRuleSchema)
+lib/server/models/operations.ts:244:export const Application = model<any>('Application', applicationSchema)
+lib/server/models/operations.ts:245:export const Subscriber = model<any>('Subscriber', subscriberSchema)
+lib/server/models/operations.ts:246:export const ConsentEvent = model<any>('ConsentEvent', consentEventSchema)
+lib/server/models/operations.ts:247:export const EmailTemplate = model<any>('EmailTemplate', emailTemplateSchema)
+lib/server/models/operations.ts:248:export const EmailLog = model<any>('EmailLog', emailLogSchema)
+lib/server/models/seo.ts:4:function model<T>(name: string, schema: Schema): Model<T> {
+== block types
+19:    type: 'hero',
+48:    type: 'verticals',
+73:    type: 'richText',
+85:    type: 'imageText',
+100:    type: 'features',
+122:    type: 'serviceCards',
+144:    type: 'steps',
+154:    type: 'challenges',
+175:    type: 'stats',
+183:  { type: 'industries', label: 'Industry cards', description: 'Published industries from the Industries module.', dynamic: true, fields: [...heading, { key: 'limit', label: 'Max cards', kind: 'number', min: 1, max: 24 }] },
+184:  { type: 'proof', label: 'Proof & case studies', description: 'Approved testimonials and case studies. Hidden when none are approved.', dynamic: true, fields: [...heading, { key: 'vertical', label: 'Vertical filter', kind: 'select', options: [{ value: '', label: 'All' }, ...VERTICAL_OPTIONS] }] },
+185:  { type: 'logoWall', label: 'Client logo wall', description: 'Logos with granted permission. Hidden when empty.', dynamic: true, fields: [{ key: 'heading', label: 'Heading', kind: 'text' }] },
+187:    type: 'faq',
+194:    type: 'posts',
+200:  { type: 'resources', label: 'Downloadable resources', description: 'Published resources from the Resource Center.', dynamic: true, fields: [...heading, { key: 'vertical', label: 'Vertical', kind: 'select', options: [{ value: '', label: 'Any' }, ...VERTICAL_OPTIONS] }, { key: 'limit', label: 'Max', kind: 'number', min: 1, max: 6 }] },
+201:  { type: 'coverage', label: 'Map / coverage', description: 'Published, reviewed service locations.', dynamic: true, fields: [...heading, { key: 'vertical', label: 'Vertical', kind: 'select', options: [{ value: '', label: 'Any' }, { value: 'accommodation', label: 'Accommodation' }, { value: 'transport', label: 'Transport' }] }] },
+202:  { type: 'team', label: 'Team cards', description: 'Published leadership/team profiles.', dynamic: true, fields: [...heading] },
+204:    type: 'form',
+214:  { type: 'contactDetails', label: 'Contact directory', description: 'Verified contact details from Site Settings.', dynamic: true, fields: [...heading] },
+215:  { type: 'newsletter', label: 'Newsletter form', description: 'Double opt-in newsletter sign-up.', fields: [{ key: 'heading', label: 'Heading', kind: 'text' }, { key: 'intro', label: 'Intro', kind: 'textarea' }] },
+217:    type: 'ctaBand',
+== globals
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  GoAhead Mobility design tokens.
+  Brand colours sampled from the official logo:
+  - Royal (the "Go")     #334B93
+  - Sky   (the "Ahead")  #26ADE4
+  Ink/paper neutrals are tinted toward the royal hue so the system reads as one family.
+*/
+:root {
+  color-scheme: light;
+  --ink: #070c1f;
+  --ink-2: #0e1633;
+  --royal: #334b93;
+  --royal-deep: #22336b;
+  --sky: #26ade4;
+  --sky-soft: #d8f1fb;
+  --paper: #f4f6fb;
+  --line: #dde2ee;
+
+  --background: #ffffff;
+  --foreground: #0b1229;
+  --card: #ffffff;
+  --card-foreground: #0b1229;
+  --popover: #ffffff;
+  --popover-foreground: #0b1229;
+  --primary: #334b93;
+  --primary-foreground: #ffffff;
+  --secondary: #eef1f8;
+  --secondary-foreground: #0b1229;
+  --muted: #f1f3f9;
+  --muted-foreground: #5a6380;
+  --accent: #d8f1fb;
+  --accent-foreground: #0b1229;
+  --destructive: #c62f3b;
+  --success: #138a5e;
+  --warning: #b26b00;
+  --border: #dde2ee;
+  --input: #cfd6e6;
+  --ring: #26ade4;
+  --chart-1: #334b93;
+  --chart-2: #26ade4;
+  --chart-3: #7f8db8;
+  --chart-4: #9fdcf3;
+  --chart-5: #0e1633;
+  --radius: 0.75rem;
+
+  --sidebar: #070c1f;
+  --sidebar-foreground: #dfe5f5;
+  --sidebar-primary: #26ade4;
+  --sidebar-primary-foreground: #070c1f;
+  --sidebar-accent: #121b3b;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #1b2550;
+  --sidebar-ring: #26ade4;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+@theme inline {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-body), ui-sans-serif, sans-serif;
+
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-royal: var(--royal);
+  --color-royal-deep: var(--royal-deep);
+  --color-sky: var(--sky);
+  --color-sky-soft: var(--sky-soft);
+  --color-paper: var(--paper);
+  --color-line: var(--line);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-3xl: calc(var(--radius) * 2.5);
+
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-route: route 2.4s var(--ease-in-out-quart) infinite;
+}
+== root layout
+import { Analytics } from '@vercel/analytics/next'
+import type { Metadata, Viewport } from 'next'
+import { Archivo, Inter } from 'next/font/google'
+import { absoluteUrl, toOgLocale } from '@/lib/seo/config'
+import { getSeoSettings } from '@/lib/server/services/seo-inventory'
+import './globals.css'
+
+const display = Archivo({ subsets: ['latin'], weight: ['600', '700', '800', '900'], style: ['normal', 'italic'], variable: '--font-display-face', display: 'swap' })
+const body = Inter({ subsets: ['latin'], variable: '--font-body', display: 'swap' })
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { site } = await getSeoSettings()
+  const ogImage = absoluteUrl(site.siteUrl, site.ogImage)
+  return {
+    metadataBase: new URL(site.siteUrl),
+    applicationName: site.brandName,
+    title: { default: site.defaultTitle, template: site.titleTemplate.includes('%s') ? site.titleTemplate : `%s | ${site.brandName}` },
+    description: site.defaultDescription,
+    openGraph: { type: 'website', siteName: site.brandName, locale: toOgLocale(site.locale), images: ogImage ? [{ url: ogImage }] : undefined },
+    twitter: { card: ogImage ? 'summary_large_image' : 'summary' },
+    icons: {
+      icon: [
+        { url: '/icon-light-32x32.png', media: '(prefers-color-scheme: light)' },
+        { url: '/icon-dark-32x32.png', media: '(prefers-color-scheme: dark)' },
+        { url: '/icon.svg', type: 'image/svg+xml' },
+      ],
+      apple: '/apple-icon.png',
+    },
+    formatDetection: { telephone: false, email: false, address: false },
+    verification: verificationMetadata(site.verification),
+  }
+}
+
+function verificationMetadata(v: { google: string; bing: string; yandex: string; pinterest: string; baidu: string } | undefined): Metadata['verification'] {
+  if (!v) return undefined
+  const other: Record<string, string> = {}
+  if (v.bing) other['msvalidate.01'] = v.bing
+  if (v.pinterest) other['p:domain_verify'] = v.pinterest
+  if (v.baidu) other['baidu-site-verification'] = v.baidu
+  const out = { google: v.google || undefined, yandex: v.yandex || undefined, other: Object.keys(other).length ? other : undefined }
+  return out.google || out.yandex || out.other ? out : undefined
+}
+
+export const viewport: Viewport = {
+  themeColor: '#334b93',
+  colorScheme: 'light',
+}
+
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const { site } = await getSeoSettings()
+  return (
+    <html lang={site.locale || 'en'} className={`${display.variable} ${body.variable} bg-background`}>
+      <body className="antialiased">
+        {children}
+        {process.env.NODE_ENV === 'production' && <Analytics />}
+      </body>
+    </html>
+  )
+}
+◇ injected env (16) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+◇ injected env (0) from .env.development.local // tip: ⌘ override existing { override: true }
+/vercel/share/v0-project/node_modules/.pnpm/server-only@0.0.1/node_modules/server-only/index.js:1
+throw new Error(
+      ^
+
+Error: This module cannot be imported from a Client Component module. It should only be used from a Server Component.
+    at Object.<anonymous> (/vercel/share/v0-project/node_modules/.pnpm/server-only@0.0.1/node_modules/server-only/index.js:1:7)
+    at Module._compile (node:internal/modules/cjs/loader:1854:14)
+    at Object.transformer (/vercel/share/v0-project/node_modules/.pnpm/tsx@4.23.15/node_modules/tsx/dist/register-B1c7OH6V.cjs:22:2188)
+    at Module.load (node:internal/modules/cjs/loader:1577:32)
+    at Module._load (node:internal/modules/cjs/loader:1379:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1600:12)
+    at require (node:internal/modules/helpers:153:16)
+    at mongoose (/vercel/share/v0-project/lib/server/db.ts:1:8)
+    at Object.<anonymous> (/vercel/share/v0-project/lib/server/db.ts:47:17)
+
+Node.js v24.16.0

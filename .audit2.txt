@@ -1,0 +1,362 @@
+=== article
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { PostCard } from '@/components/blocks/dynamic-blocks'
+import { CtaLink, Markdown, SmartImage, formatDate } from '@/components/site/primitives'
+import { JsonLd } from '@/components/site/json-ld'
+import { articleSchema, breadcrumbSchema } from '@/lib/seo/jsonld'
+import { buildMetadata, resolveEffectiveSeo } from '@/lib/seo/metadata'
+import { getPost } from '@/lib/server/services/public'
+import { getSeoSettings } from '@/lib/server/services/seo-inventory'
+
+type Props = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params
+  const data = await getPost(slug)
+  if (!data) return { robots: { index: false } }
+  const { post } = data
+  const { site } = await getSeoSettings()
+  const seo = post.seo ?? {}
+  const eff = resolveEffectiveSeo('post', site, { name: post.title, summary: post.excerpt || post.content, explicitTitle: seo.title, explicitDescription: seo.description })
+  return buildMetadata({
+    site,
+    path: `/blog/${post.slug}`,
+    title: eff.title,
+    description: eff.description,
+    canonical: seo.canonical,
+    noindex: seo.noindex,
+    nofollow: seo.nofollow,
+    ogTitle: seo.ogTitle,
+    ogDescription: seo.ogDescription,
+    ogImage: seo.ogImage || post.heroImage,
+    ogImageAlt: post.heroAlt,
+    type: 'article',
+    publishedTime: post.publishedAt,
+    modifiedTime: post.contentUpdatedAt || post.updatedAt,
+    authors: post.authorId?.name ? [post.authorId.name] : undefined,
+  })
+}
+
+export default async function PostPage({ params }: Props) {
+  const { slug } = await params
+  const data = await getPost(slug)
+  if (!data) notFound()
+  const { post, related } = data
+  const { site } = await getSeoSettings()
+  const path = `/blog/${post.slug}`
+  const jsonLd = [
+    articleSchema(site, { path, headline: post.title, description: post.excerpt, image: post.heroImage, published: post.publishedAt, modified: post.contentUpdatedAt || post.updatedAt, authorName: post.authorId?.name }),
+    breadcrumbSchema(site, [
+      { name: 'Home', path: '/' },
+      { name: 'Insights', path: '/blog' },
+      { name: post.title, path },
+    ]),
+  ]
+
+  return (
+    <article>
+      <JsonLd data={jsonLd} />
+      <header className="mx-auto flex max-w-3xl flex-col gap-5 px-5 pb-10 pt-16 md:px-8 md:pt-24">
+        <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+          <Link href="/blog" className="hover:underline">
+            Insights
+          </Link>
+          {post.categoryIds?.[0] ? (
+            <>
+              {' / '}
+              <Link href={`/blog?category=${post.categoryIds[0].slug}`} className="hover:underline">
+                {post.categoryIds[0].name}
+              </Link>
+            </>
+          ) : null}
+        </nav>
+        <h1 className="font-display text-4xl font-bold leading-tight tracking-tight text-balance md:text-5xl">{post.title}</h1>
+        {post.excerpt ? <p className="text-lg leading-relaxed text-muted-foreground text-pretty">{post.excerpt}</p> : null}
+        <p className="text-sm text-muted-foreground">
+          {post.authorId?.name ? `${post.authorId.name} · ` : ''}
+          {formatDate(post.publishedAt)}
+          {post.readingMinutes ? ` · ${post.readingMinutes} min read` : ''}
+        </p>
+      </header>
+      {post.heroImage ? (
+        <figure className="mx-auto max-w-5xl px-5 md:px-8">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-3xl bg-muted">
+            <SmartImage src={post.heroImage} alt={post.heroAlt || ''} sizes="(min-width: 1024px) 1024px, 100vw" priority className="object-cover" />
+          </div>
+          {post.heroCaption ? <figcaption className="mt-2 text-sm text-muted-foreground">{post.heroCaption}</figcaption> : null}
+        </figure>
+      ) : null}
+      <div className="mx-auto max-w-3xl px-5 py-12 md:px-8">
+        <Markdown>{post.content || ''}</Markdown>
+        {post.references?.length ? (
+          <aside className="mt-12 border-t border-line pt-6">
+            <h2 className="font-display text-lg font-semibold">References</h2>
+            <ul className="mt-3 flex flex-col gap-2 text-sm">
+              {post.references.map((r: any, i: number) => (
+                <li key={i}>
+                  {r.url ? (
+                    <a href={r.url} rel="noopener noreferrer nofollow" target="_blank" className="underline">
+                      {r.label || r.url}
+                    </a>
+                  ) : (
+                    r.label
+                  )}
+                </li>
+              ))}
+            </ul>
+          </aside>
+        ) : null}
+        {post.tagIds?.length ? (
+          <ul className="mt-8 flex flex-wrap gap-2" aria-label="Tags">
+            {post.tagIds.map((t: any) => (
+              <li key={t._id} className="rounded-full bg-muted px-3 py-1 text-xs text-muted-foreground">
+                {t.name}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+        <div className="mt-12 flex flex-col items-start gap-4 rounded-3xl bg-primary p-8 text-primary-foreground">
+          <p className="font-display text-2xl font-semibold text-balance">Planning a programme like this?</p>
+          <CtaLink href={post.cta?.href || '/contact'} label={post.cta?.label || 'Talk to our team'} variant="sky" />
+        </div>
+      </div>
+      {related?.length ? (
+        <section aria-labelledby="related" className="mx-auto max-w-7xl px-5 pb-24 md:px-8">
+          <h2 id="related" className="mb-6 font-display text-2xl font-semibold">
+            Related reading
+          </h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {related.map((p: any) => (
+              <PostCard key={p._id} post={p} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </article>
+  )
+}
+=== index
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { PostCard } from '@/components/blocks/dynamic-blocks'
+import { EmptyState, PageIntro } from '@/components/site/primitives'
+import { listCategories, listPosts } from '@/lib/server/services/public'
+import { cn } from '@/lib/utils'
+
+export const metadata: Metadata = {
+  title: 'Insights',
+  description: 'Practical guidance on corporate accommodation, employee transportation and mobility operations.',
+  alternates: { canonical: '/blog' },
+}
+
+export default async function BlogIndex({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const sp = await searchParams
+  const page = Math.max(1, Number(sp.page) || 1)
+  const [result, categories] = await Promise.all([listPosts({ page, category: sp.category, q: sp.q, limit: 9 }), listCategories()])
+  const qs = (p: number) => `/blog?${new URLSearchParams({ ...(sp.category ? { category: sp.category } : {}), ...(sp.q ? { q: sp.q } : {}), page: String(p) })}`
+
+  return (
+    <>
+      <PageIntro eyebrow="Insights" title="Field notes on moving and housing people at work" intro="Guides, checklists and perspectives from our accommodation and transportation teams." />
+      <section className="mx-auto flex max-w-7xl flex-col gap-10 px-5 pb-24 md:px-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <nav aria-label="Categories" className="flex flex-wrap gap-2">
+            <Link href="/blog" className={cn('rounded-full border border-line px-4 py-1.5 text-sm', !sp.category ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted')}>
+              All
+            </Link>
+            {categories.map((c: any) => (
+              <Link
+                key={c._id}
+                href={`/blog?category=${c.slug}`}
+                className={cn('rounded-full border border-line px-4 py-1.5 text-sm', sp.category === c.slug ? 'bg-primary text-primary-foreground' : 'text-foreground hover:bg-muted')}
+              >
+                {c.name}
+              </Link>
+            ))}
+          </nav>
+          <form action="/blog" role="search" className="flex gap-2">
+            <label htmlFor="blog-q" className="sr-only">
+              Search articles
+            </label>
+            <input id="blog-q" name="q" defaultValue={sp.q} placeholder="Search articles" className="h-10 w-full rounded-full border border-line bg-background px-4 text-sm md:w-64" />
+          </form>
+        </div>
+        {result.items.length ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {result.items.map((p: any) => (
+              <PostCard key={p._id} post={p} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState title="No articles found" body="Try another category or search term." />
+        )}
+        {result.pages > 1 ? (
+          <nav aria-label="Pagination" className="flex items-center justify-center gap-4 text-sm">
+            {page > 1 ? <Link href={qs(page - 1)} className="underline">Previous</Link> : null}
+            <span className="text-muted-foreground">
+              Page {page} of {result.pages}
+            </span>
+            {page < result.pages ? <Link href={qs(page + 1)} className="underline">Next</Link> : null}
+          </nav>
+        ) : null}
+      </section>
+    </>
+  )
+}
+=== markdown
+3:import ReactMarkdown from 'react-markdown'
+4-import remarkGfm from 'remark-gfm'
+5-import { ArrowRight } from 'lucide-react'
+6-import { cn } from '@/lib/utils'
+7-
+8-const OPTIMIZABLE = /^(\/images\/|\/brand\/|\/api\/v1\/media\/|https:\/\/res\.cloudinary\.com\/)/
+9-
+10-export function SmartImage({ src, alt, className, sizes = '100vw', priority }: { src: string; alt: string; className?: string; sizes?: string; priority?: boolean }) {
+11-  if (!src) return null
+12-  if (OPTIMIZABLE.test(src)) {
+13-    return <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className={cn('object-cover', className)} />
+14-  }
+15-  // eslint-disable-next-line @next/next/no-img-element
+16-  return <img src={src} alt={alt} loading={priority ? 'eager' : 'lazy'} className={cn('absolute inset-0 h-full w-full object-cover', className)} />
+17-}
+18-
+19:export function Markdown({ children, className }: { children: string; className?: string }) {
+20-  if (!children) return null
+21-  return (
+22-    <div className={cn('prose-ga', className)}>
+23:      <ReactMarkdown remarkPlugins={[remarkGfm]}>{children}</ReactMarkdown>
+24-    </div>
+25-  )
+26-}
+27-
+28-export function SectionHeading({ eyebrow, heading, intro, tone = 'light', align = 'left' }: { eyebrow?: string; heading?: string; intro?: string; tone?: 'light' | 'dark'; align?: 'left' | 'center' }) {
+29-  if (!eyebrow && !heading && !intro) return null
+30-  return (
+31-    <div className={cn('flex max-w-3xl flex-col gap-4', align === 'center' && 'mx-auto items-center text-center')}>
+32-      {eyebrow ? <span className={cn('eyebrow', tone === 'dark' ? 'text-sky' : 'text-royal')}>{eyebrow}</span> : null}
+33-      {heading ? <h2 className={cn('display-md text-balance', tone === 'dark' ? 'text-primary-foreground' : 'text-foreground')}>{heading}</h2> : null}
+34-      {intro ? <p className={cn('text-lg leading-relaxed', tone === 'dark' ? 'text-primary-foreground/75' : 'text-muted-foreground')}>{intro}</p> : null}
+35-    </div>
+36-  )
+37-}
+38-
+39-export function CtaLink({ href, label, variant = 'primary', className }: { href?: string; label?: string; variant?: 'primary' | 'secondary' | 'ghost-dark' | 'sky'; className?: string }) {
+40-  if (!href || !label) return null
+41-  const styles = {
+42-    primary: 'bg-royal text-primary-foreground hover:bg-royal-deep',
+43-    sky: 'bg-sky text-ink hover:bg-sky-soft',
+44-    secondary: 'border border-line bg-background text-foreground hover:border-royal hover:text-royal',
+45-    'ghost-dark': 'border border-primary-foreground/25 text-primary-foreground hover:border-sky hover:text-sky',
+46-  }[variant]
+47-  return (
+48-    <Link href={href} className={cn('group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors', styles, className)}>
+49-      {label}
+50-      <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />
+51-    </Link>
+52-  )
+=== jsonld
+import { absoluteUrl, canonicalUrl } from './config'
+import type { SeoSettings } from './types'
+
+export type JsonLd = Record<string, any>
+
+/** Serialises JSON-LD for a script tag, escaping characters that could close the tag or break parsers. */
+export function serializeJsonLd(data: JsonLd | JsonLd[]): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
+}
+
+const clean = <T extends JsonLd>(obj: T): T => {
+  for (const key of Object.keys(obj)) {
+    const v = obj[key]
+    if (v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0)) delete obj[key]
+  }
+  return obj
+}
+
+export const organizationId = (site: SeoSettings) => `${site.siteUrl}/#organization`
+export const websiteId = (site: SeoSettings) => `${site.siteUrl}/#website`
+
+/** Only uses details the business has actually entered in Settings. No address, rating or price is ever invented. */
+export function organizationSchema(site: SeoSettings): JsonLd {
+  return clean({
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': organizationId(site),
+    name: site.brandName,
+    legalName: site.organization.legalName,
+    url: `${site.siteUrl}/`,
+    logo: absoluteUrl(site.siteUrl, site.organization.logo),
+    description: site.tagline,
+    email: site.contact.email,
+    telephone: site.contact.phone,
+    sameAs: site.social,
+  })
+}
+
+export function websiteSchema(site: SeoSettings): JsonLd {
+  return clean({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': websiteId(site),
+    url: `${site.siteUrl}/`,
+    name: site.brandName,
+    inLanguage: site.locale,
+    publisher: { '@id': organizationId(site) },
+  })
+}
+
+export function breadcrumbSchema(site: SeoSettings, trail: { name: string; path: string }[]): JsonLd | null {
+  if (trail.length < 2) return null
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: trail.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: t.name, item: canonicalUrl(site.siteUrl, t.path) })),
+  }
+}
+
+export function articleSchema(
+  site: SeoSettings,
+  a: { path: string; headline: string; description?: string; image?: string; published?: string | null; modified?: string | null; authorName?: string; authorUrl?: string; type?: 'BlogPosting' | 'Article' },
+): JsonLd {
+  return clean({
+    '@context': 'https://schema.org',
+    '@type': a.type ?? 'BlogPosting',
+    mainEntityOfPage: { '@type': 'WebPage', '@id': canonicalUrl(site.siteUrl, a.path) },
+    headline: a.headline.slice(0, 110),
+    description: a.description,
+    image: a.image ? [absoluteUrl(site.siteUrl, a.image)] : undefined,
+    datePublished: a.published || undefined,
+    dateModified: a.modified || a.published || undefined,
+    author: a.authorName ? clean({ '@type': 'Person', name: a.authorName, url: a.authorUrl }) : { '@id': organizationId(site) },
+    publisher: { '@id': organizationId(site) },
+    inLanguage: site.locale,
+  })
+}
+
+=== author model
+280:export const Author = model<any>('Author', authorSchema)
+281-export const Category = model<any>('Category', taxonomySchema.clone())
+282-export const Tag = model<any>('Tag', taxonomySchema.clone())
+283-export const Post = model<any>('Post', postSchema)
+284-export const PostRevision = model<any>('PostRevision', postRevisionSchema)
+285-export const ContentReview = model<any>('ContentReview', contentReviewSchema)
+286-export const Faq = model<any>('Faq', faqSchema)
+287-export const Industry = model<any>('Industry', industrySchema)
+288-export const Location = model<any>('Location', locationSchema)
+289-export const CaseStudy = model<any>('CaseStudy', caseStudySchema)
+290-export const Testimonial = model<any>('Testimonial', testimonialSchema)
+291-export const ClientLogo = model<any>('ClientLogo', clientLogoSchema)
+292-export const Resource = model<any>('Resource', resourceSchema)
+293-export const TeamMember = model<any>('TeamMember', teamMemberSchema)
+294-export const Job = model<any>('Job', jobSchema)
+=== seo-page
+10:export type EntitySeo = { title?: string; description?: string; canonical?: string; noindex?: boolean; nofollow?: boolean; ogTitle?: string; ogDescription?: string; ogImage?: string }
+12:export type DetailInput = {
+30:export function thinContentReason(site: SeoSettings, wordCount: number): string {
+35:export function wordCountOf(...texts: (string | undefined | null)[]) {
+39:export async function detailMetadata(input: DetailInput): Promise<Metadata> {
+63:export type Crumb = { name: string; path: string }
+66:export async function liveHub(candidates: { name: string; path: string }[]): Promise<Crumb | null> {
+74:export async function detailJsonLd(input: { path: string; name: string; description?: string; modified?: string | null; trail: Crumb[]; extra?: (JsonLd | null)[] }) {
