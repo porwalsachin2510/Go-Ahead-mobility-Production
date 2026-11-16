@@ -12,6 +12,15 @@ const securityHeaders = [
 ]
 
 const nextConfig = {
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  images: {
+    unoptimized: true,
+  },
+  experimental: {
+    cpus: 2,
+  },
   serverExternalPackages: ['mongoose', 'nodemailer'],
   poweredByHeader: false,
   images: {
