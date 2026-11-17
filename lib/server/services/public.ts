@@ -138,7 +138,11 @@ function withWhyChooseUsCompanyLink(items: NavItem[], menuKey: 'primary' | 'foot
 /** Ensure the Newsletter destination is reachable from the Resources group in both menus. */
 function withResourcesNewsletterLink(items: NavItem[], menuKey: 'primary' | 'footer'): NavItem[] {
   const next = items.map((item) => ({ ...item, children: [...(item.children ?? [])] }))
-  const normalize = (href: string) => String(href || '').split(/[?#]/, 1)[0].replace(/\\/+$/, '').toLowerCase() || '/'
+  const normalize = (href: string) => {
+    let path = String(href || '').split(/[?#]/, 1)[0].toLowerCase()
+    while (path.length > 1 && path.endsWith('/')) path = path.slice(0, -1)
+    return path || '/'
+  }
   const isNewsletter = (item: NavItem) =>
     normalize(item.href) === NEWSLETTER_PATH || item.label.trim().toLowerCase() === 'newsletter'
 
