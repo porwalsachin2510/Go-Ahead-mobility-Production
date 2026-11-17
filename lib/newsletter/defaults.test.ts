@@ -1,7 +1,14 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { BLOCK_MAP } from '@/lib/blocks'
 import { DEFAULT_NEWSLETTER_PAGE, NEWSLETTER_PATH } from './defaults'
 import { isDedicatedPublicPath } from '@/lib/seo/route-ownership'
+import {
+  LEGACY_NEWSLETTER_ACCOMMODATION_HERO_IMAGE,
+  NEWSLETTER_ACCOMMODATION_HERO_IMAGE,
+  resolveNewsletterImagePath,
+} from './images'
 
 describe('Newsletter CMS page defaults', () => {
   const block = DEFAULT_NEWSLETTER_PAGE.blocks.find((entry) => entry.type === 'newsletterPage')
@@ -36,6 +43,16 @@ describe('Newsletter CMS page defaults', () => {
     ]) {
       expect(keys).toContain(key)
     }
+  })
+
+  it('uses an existing accommodation hero asset and resolves the old CMS filename', () => {
+    expect(resolveNewsletterImagePath(LEGACY_NEWSLETTER_ACCOMMODATION_HERO_IMAGE))
+      .toBe(NEWSLETTER_ACCOMMODATION_HERO_IMAGE)
+    expect(resolveNewsletterImagePath(NEWSLETTER_ACCOMMODATION_HERO_IMAGE))
+      .toBe(NEWSLETTER_ACCOMMODATION_HERO_IMAGE)
+    expect(existsSync(join(process.cwd(), 'public', NEWSLETTER_ACCOMMODATION_HERO_IMAGE.slice(1))))
+      .toBe(true)
+    expect(block!.data.heroSecondaryImage).toBe(NEWSLETTER_ACCOMMODATION_HERO_IMAGE)
   })
 
   it('provides accessible descriptions for every editable newsletter image', () => {
