@@ -100,7 +100,7 @@ export function WhyChooseUsPage({ content: c }: Props) {
                 initial={reduceMotion ? false : { opacity: 0, x: 22 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: reduceMotion ? 0 : 0.78, delay: reduceMotion ? 0 : 0.04, ease: 'easeOut' }}
-                className="group relative mx-5 aspect-[1.86/1] overflow-hidden rounded-l-[26px] border-l-2 border-[#24a9ef] bg-[#dce8f4] shadow-[0_12px_32px_rgba(16,36,72,.11)] sm:mx-7 md:-ml-6 md:mr-0 md:aspect-[1.86/1] md:w-[calc(100%_+_1.5rem)] md:rounded-none md:border-l-0 md:shadow-none"
+                className="group relative mx-5 aspect-[1.78/1] overflow-hidden rounded-l-[26px] border-l-2 border-[#24a9ef] bg-[#dce8f4] shadow-[0_12px_32px_rgba(16,36,72,.11)] sm:mx-7 md:-ml-6 md:mr-0 md:aspect-[1.78/1] md:w-[calc(100%_+_1.5rem_+_max(0px,_50vw_-_620px))] md:rounded-none md:border-l-0 md:shadow-none"
               >
                 <Parallax amount={4} className="absolute inset-0">
                   {c.heroImage ? (
@@ -117,17 +117,17 @@ export function WhyChooseUsPage({ content: c }: Props) {
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#06152b]/5 via-transparent to-[#06152b]/10 md:hidden" />
                 <svg
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 hidden size-full md:block"
+                  className="pointer-events-none absolute inset-0 z-10 hidden size-full md:block"
                   viewBox="0 0 1000 535"
                   fill="none"
                   preserveAspectRatio="none"
                 >
                   <path
-                    d="M0 0H375C292 48 170 76 170 144V274C170 318 146 343 99 370C46 399 24 422 24 474V535H0V0Z"
+                    d="M0 0H382C294 48 170 77 170 145V275C170 319 145 344 98 371C45 400 24 423 24 475V535H0V0Z"
                     fill="#fff"
                   />
                   <path
-                    d="M375 0C292 48 170 76 170 144V274C170 318 146 343 99 370C46 399 24 422 24 474V535"
+                    d="M382 0C294 48 170 77 170 145V275C170 319 145 344 98 371C45 400 24 423 24 475V535"
                     stroke="#24a9ef"
                     strokeWidth="3.5"
                     strokeLinecap="round"

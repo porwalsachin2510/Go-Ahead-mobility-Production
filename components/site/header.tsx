@@ -26,9 +26,10 @@ export function SiteHeader({ items, ctaLabel, ctaHref, brandName }: { items: Nav
 
   const isMarketingPath = ['/', '/global-accommodation', '/local-transportation', '/about-us', '/company/about-us', '/company/why-choose-us', '/industries', '/blog', '/resources', '/learn', '/faq', '/contact', '/case-studies'].includes(pathname) || pathname.startsWith('/industries/') || pathname.startsWith('/blog/') || pathname.startsWith('/case-studies/')
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href))
-  const shell = isMarketingPath ? 'bg-night/90 text-white' : 'bg-background/90 text-foreground'
-  const border = scrolled ? (isMarketingPath ? 'border-white/10' : 'border-line') : 'border-transparent'
-  const muted = isMarketingPath ? 'text-white/80 hover:text-white' : 'text-foreground hover:text-royal'
+  const useDarkHeader = isMarketingPath && pathname !== '/company/why-choose-us'
+  const shell = useDarkHeader ? 'bg-night/90 text-white' : 'bg-background/95 text-foreground'
+  const border = scrolled ? (useDarkHeader ? 'border-white/10' : 'border-line') : 'border-transparent'
+  const muted = useDarkHeader ? 'text-white/80 hover:text-white' : 'text-foreground hover:text-royal'
 
   return (
     <header className={cn('sticky top-0 z-50 border-b backdrop-blur transition-colors', shell, border)}>
@@ -37,7 +38,7 @@ export function SiteHeader({ items, ctaLabel, ctaHref, brandName }: { items: Nav
       </a>
       <div className={cn("container-x flex items-center justify-between gap-4", isMarketingPath ? "h-14 py-2 lg:h-16" : "h-18 gap-6 py-3")}>
         <Link href="/" className="flex shrink-0 items-center" aria-label={`${brandName} home`}>
-          <Image src="/brand/goahead-logo.png" alt={brandName} width={168} height={44} priority className={cn('w-auto', isMarketingPath ? 'h-8 brightness-0 invert' : 'h-10')} />
+          <Image src="/brand/goahead-logo.png" alt={brandName} width={168} height={44} priority className={cn('w-auto', useDarkHeader ? 'h-8 brightness-0 invert' : 'h-10')} />
         </Link>
 
         <nav aria-label="Primary" className="hidden lg:block">
@@ -77,7 +78,7 @@ export function SiteHeader({ items, ctaLabel, ctaHref, brandName }: { items: Nav
           <Link href={ctaHref} className="hidden rounded-full bg-azure px-4 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-azure-deep sm:inline-flex">
             {ctaLabel}
           </Link>
-          <button type="button" className={cn('inline-flex size-10 items-center justify-center rounded-full border lg:hidden', isMarketingPath ? 'border-white/25 text-white' : 'border-line')} aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen((v) => !v)}>
+          <button type="button" className={cn('inline-flex size-10 items-center justify-center rounded-full border lg:hidden', useDarkHeader ? 'border-white/25 text-white' : 'border-line')} aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen((v) => !v)}>
             {open ? <X aria-hidden className="size-5" /> : <Menu aria-hidden className="size-5" />}
             <span className="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
           </button>
