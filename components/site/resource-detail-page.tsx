@@ -51,7 +51,7 @@ const safeImage = (value?: string) => typeof value === 'string' && value.trim() 
 
 export function ResourceDetailPage({ resource: d }: ResourceDetailProps) {
   const reportTerms = [d.category, ...(Array.isArray(d.tags) ? d.tags : [])].filter(Boolean).join(' ').toLowerCase()
-  const isReport = d.resourceType === 'tool' || /report|insight/.test(reportTerms)
+  const isReport = ['tool', 'article'].includes(d.resourceType) || /report|insight/.test(reportTerms)
   if (isReport) return <ResourceReportDetailPage resource={d} />
   const resourceTerms = [d.resourceType, d.category, ...(Array.isArray(d.tags) ? d.tags : [])].filter(Boolean).join(' ').toLowerCase()
   const normalizedResourceTerms = resourceTerms.split(' ').join('').split('-').join('').split('_').join('')

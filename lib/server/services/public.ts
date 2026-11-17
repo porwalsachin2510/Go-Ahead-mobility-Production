@@ -641,7 +641,7 @@ export async function getResourceDetail(slug: string) {
   const normalizedTerms = terms.split(' ').join('').split('-').join('').split('_').join('')
   const isWhitePaper = normalizedTerms.includes('whitepaper')
   const isTemplate = !isWhitePaper && normalizedTerms.includes('template')
-  const isReport = !isWhitePaper && !isTemplate && (resource.resourceType === 'tool' || /report|insight/.test(normalizedTerms))
+  const isReport = !isWhitePaper && !isTemplate && (['tool', 'article'].includes(resource.resourceType) || /report|insight/.test(normalizedTerms))
   const preferredTypes = isReport ? ['tool', 'article'] : isTemplate ? ['template'] : isWhitePaper ? ['whitepaper'] : ['guide', 'checklist']
 
   if (related.length < 3) {
