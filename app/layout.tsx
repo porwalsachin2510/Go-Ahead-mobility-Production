@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/next'
+import { cookies } from 'next/headers'
 import type { Metadata, Viewport } from 'next'
 import { Archivo, Inter } from 'next/font/google'
 import { absoluteUrl, toOgLocale } from '@/lib/seo/config'
@@ -47,13 +48,20 @@ export const viewport: Viewport = {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { site } = await getSeoSettings()
+  const [{ site }, cookieStore] = await Promise.all([getSeoSettings(), cookies()])
+  let analyticsConsent = false
+  try {
+    const rawConsent = cookieStore.get('goahead_cookie_preferences')?.value
+    if (rawConsent) analyticsConsent = JSON.parse(decodeURIComponent(rawConsent)).analytics === true
+  } catch {
+    analyticsConsent = false
+  }
   return (
     <html lang={site.locale || 'en'} className={`${display.variable} ${body.variable} bg-background`} suppressHydrationWarning>
       {/* Browser extensions may add attributes before React hydrates the root shell. */}
       <body className="antialiased" suppressHydrationWarning>
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        {process.env.NODE_ENV === 'production' && analyticsConsent && <Analytics />}
       </body>
     </html>
   )
