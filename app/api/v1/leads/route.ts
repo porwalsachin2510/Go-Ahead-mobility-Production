@@ -4,6 +4,10 @@ import { createLead, leadInputSchema } from '@/lib/server/services/leads'
 
 export const POST = handler(async (req) => {
   const body = (await readJson(req)) as Record<string, unknown>
+  if (body?.type === 'webinar_registration') {
+    const { badRequest } = await import('@/lib/server/http')
+    throw badRequest('Use the webinar-specific registration endpoint')
+  }
   // Honeypot: bots fill the hidden "website" field. Pretend success without storing anything.
   if (typeof body?.website === 'string' && body.website.trim()) return ok({ reference: 'GEN-RECEIVED' }, { status: 201 })
 

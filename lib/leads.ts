@@ -1,4 +1,4 @@
-export const LEAD_TYPES = ['accommodation', 'transport', 'contact', 'demo', 'resource_download', 'newsletter'] as const
+export const LEAD_TYPES = ['accommodation', 'transport', 'contact', 'demo', 'resource_download', 'newsletter', 'webinar_registration'] as const
 export type LeadType = (typeof LEAD_TYPES)[number]
 
 export const LEAD_STATUSES = [
@@ -35,6 +35,7 @@ export const LEAD_TYPE_LABELS: Record<LeadType, string> = {
   demo: 'ERP demo request',
   resource_download: 'Resource download',
   newsletter: 'Newsletter subscription',
+  webinar_registration: 'Webinar registration',
 }
 
 export const REFERENCE_PREFIX: Record<LeadType, string> = {
@@ -44,4 +45,5 @@ export const REFERENCE_PREFIX: Record<LeadType, string> = {
   demo: 'DEM',
   resource_download: 'RES',
   newsletter: 'NWS',
+  webinar_registration: 'WEB',
 }

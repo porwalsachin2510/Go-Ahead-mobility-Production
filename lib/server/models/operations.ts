@@ -86,6 +86,7 @@ leadSchema.index({ status: 1, createdAt: -1 })
 leadSchema.index({ vertical: 1, createdAt: -1 })
 leadSchema.index({ ownerId: 1, status: 1 })
 leadSchema.index({ 'contact.emailNormalized': 1 })
+leadSchema.index({ 'contact.emailNormalized': 1, 'requirement.resourceSlug': 1 }, { unique: true, partialFilterExpression: { type: 'webinar_registration', archived: false }, name: 'webinar_registration_email_resource_unique' })
 leadSchema.index({ nextFollowUpAt: 1 })
 leadSchema.index({ 'contact.name': 'text', 'contact.company': 'text', 'contact.email': 'text', publicReference: 'text', city: 'text' }, { name: 'lead_text' })
 

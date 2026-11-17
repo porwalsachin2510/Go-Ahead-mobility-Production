@@ -10,6 +10,7 @@ import { Breadcrumbs } from '@/components/site/breadcrumbs'
 import { Markdown, SmartImage, formatDate } from '@/components/site/primitives'
 import { ResourcePreviewCarousel, type ResourcePreviewSlide } from '@/components/site/resource-preview-carousel'
 import { ResourceReportDetailPage } from '@/components/site/resource-report-detail'
+import { ResourceWebinarDetailPage } from '@/components/site/resource-webinar-detail'
 
 type ResourceDetailProps = { resource: Record<string, any> }
 
@@ -50,6 +51,7 @@ const typeLabel = (value?: string) => {
 const safeImage = (value?: string) => typeof value === 'string' && value.trim() ? value : '/images/site/planning.png'
 
 export function ResourceDetailPage({ resource: d }: ResourceDetailProps) {
+  if (d.resourceType === 'webinar') return <ResourceWebinarDetailPage resource={d} />
   const reportTerms = [d.category, ...(Array.isArray(d.tags) ? d.tags : [])].filter(Boolean).join(' ').toLowerCase()
   const isReport = ['tool', 'article'].includes(d.resourceType) || /report|insight/.test(reportTerms)
   if (isReport) return <ResourceReportDetailPage resource={d} />

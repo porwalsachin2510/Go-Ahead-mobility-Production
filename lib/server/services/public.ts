@@ -641,8 +641,9 @@ export async function getResourceDetail(slug: string) {
   const normalizedTerms = terms.split(' ').join('').split('-').join('').split('_').join('')
   const isWhitePaper = normalizedTerms.includes('whitepaper')
   const isTemplate = !isWhitePaper && normalizedTerms.includes('template')
-  const isReport = !isWhitePaper && !isTemplate && (['tool', 'article'].includes(resource.resourceType) || /report|insight/.test(normalizedTerms))
-  const preferredTypes = isReport ? ['tool', 'article'] : isTemplate ? ['template'] : isWhitePaper ? ['whitepaper'] : ['guide', 'checklist']
+  const isWebinar = resource.resourceType === 'webinar'
+  const isReport = !isWhitePaper && !isTemplate && !isWebinar && (['tool', 'article'].includes(resource.resourceType) || /report|insight/.test(normalizedTerms))
+  const preferredTypes = isWebinar ? ['webinar'] : isReport ? ['tool', 'article'] : isTemplate ? ['template'] : isWhitePaper ? ['whitepaper'] : ['guide', 'checklist']
 
   if (related.length < 3) {
     const excluded = [resource._id, ...related.map((item: any) => item._id)]
@@ -662,7 +663,7 @@ export async function getResourceDetail(slug: string) {
       .lean<any[]>()
     if (more.length < 3 - related.length) {
       const moreIds = [...excluded, ...more.map((item: any) => item._id)]
-      const fallbackTypes = isReport ? ['tool', 'article'] : isTemplate ? ['template'] : isWhitePaper ? ['whitepaper', 'guide', 'checklist'] : ['guide', 'checklist']
+      const fallbackTypes = isWebinar ? ['webinar'] : isReport ? ['tool', 'article'] : isTemplate ? ['template'] : isWhitePaper ? ['whitepaper', 'guide', 'checklist'] : ['guide', 'checklist']
       const fallback = await Resource.find({
         status: 'published',
         resourceType: { $in: fallbackTypes },
@@ -680,6 +681,8 @@ export async function getResourceDetail(slug: string) {
     navigationFilter.$or = [{ resourceType: 'whitepaper' }, { category: /white.?paper/i }, { tags: /white.?paper/i }]
   } else if (isTemplate) {
     navigationFilter.$or = [{ resourceType: 'template' }, { category: /template/i }, { tags: /template/i }]
+  } else if (isWebinar) {
+    navigationFilter.$or = [{ resourceType: 'webinar' }, { category: /video|webinar/i }, { tags: /video|webinar/i }]
   } else if (isReport) {
     navigationFilter.$or = [{ resourceType: { $in: ['tool', 'article'] } }, { category: /report|insight/i }, { tags: /report|insight/i }]
   } else if (['guide', 'checklist'].includes(resource.resourceType)) {

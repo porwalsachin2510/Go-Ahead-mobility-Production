@@ -1,6 +1,8 @@
 import 'server-only'
 import { z } from 'zod'
 import { Lead, LeadActivity, RoutingRule } from '../models/operations'
+import { Resource } from '../models/editorial'
+import { connectDb } from '../db'
 import { nextSequence } from '../security/guards'
 import { queueEmail } from './email'
 import { notifyAdmins } from './notifications'
@@ -9,7 +11,7 @@ import { LEAD_TYPE_LABELS, REFERENCE_PREFIX, type LeadType } from '@/lib/leads'
 const str = (max: number) => z.string().trim().max(max).optional().default('')
 
 export const leadInputSchema = z.object({
-  type: z.enum(['accommodation', 'transport', 'demo', 'contact']),
+  type: z.enum(['accommodation', 'transport', 'demo', 'contact', 'webinar_registration']),
   serviceType: str(120),
   city: str(160),
   contact: z.object({
@@ -44,6 +46,12 @@ export const leadInputSchema = z.object({
     .default({}),
   timezone: str(80),
 }).superRefine((input, ctx) => {
+  if (input.type === 'webinar_registration' && !input.contact.company.trim()) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['contact', 'company'], message: 'Please enter your company name' })
+  }
+  if (input.type === 'webinar_registration' && !input.requirement.resourceSlug?.trim()) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['requirement', 'resourceSlug'], message: 'The webinar resource is required' })
+  }
   if (input.type === 'contact' && !input.contact.phone.trim()) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['contact', 'phone'], message: 'Please enter your phone number' })
   }
@@ -58,6 +66,7 @@ const VERTICAL_FOR: Record<string, 'accommodation' | 'transport' | 'general'> = 
   contact: 'general',
   newsletter: 'general',
   resource_download: 'general',
+  webinar_registration: 'general',
 }
 
 async function resolveRouting(lead: { vertical: string; serviceType: string; city: string; utmCampaign?: string }) {
@@ -172,4 +181,55 @@ export async function createNewsletterLead(email: string, source: string) {
     leadType: 'newsletter',
   })
   return { id: String(lead._id), created: true }
+}
+
+
+/** Register a viewer against a published webinar using the existing CRM lead pipeline. */
+export async function registerForWebinar(input: {
+  slug: string
+  email: string
+  company: string
+  marketing: boolean
+  origin: string
+}) {
+  await connectDb()
+  const resource = await Resource.findOne({ slug: input.slug, status: 'published', resourceType: 'webinar' })
+    .select('slug title')
+    .lean<any>()
+  if (!resource) {
+    const { notFound } = await import('../http')
+    throw notFound('Webinar')
+  }
+
+  const email = input.email.trim().toLowerCase()
+  const company = input.company.trim()
+  const query = {
+    type: 'webinar_registration',
+    'contact.emailNormalized': email,
+    'requirement.resourceSlug': resource.slug,
+    archived: false,
+  }
+  const existing = await Lead.findOne(query).select('publicReference').lean<any>()
+  if (existing) return { reference: existing.publicReference, alreadyRegistered: true }
+
+  const emailName = email.split('@')[0].replace(/[._+-]+/g, ' ').trim()
+  const name = emailName.length >= 2 ? emailName.slice(0, 120) : 'Webinar guest'
+  try {
+    const result = await createLead(leadInputSchema.parse({
+      type: 'webinar_registration',
+      serviceType: 'Webinar registration',
+      contact: { name, email, company },
+      requirement: { resourceSlug: resource.slug, resourceTitle: resource.title },
+      consent: { privacyAccepted: true, marketing: input.marketing },
+      attribution: { landingPage: '/resources/' + resource.slug },
+      timezone: 'Asia/Kolkata',
+    }), input.origin)
+    return { reference: result.reference, alreadyRegistered: false }
+  } catch (error) {
+    if (error && typeof error === 'object' && 'code' in error && Number((error as {code?: unknown}).code) === 11000) {
+      const duplicate = await Lead.findOne(query).select('publicReference').lean<any>()
+      if (duplicate) return { reference: duplicate.publicReference, alreadyRegistered: true }
+    }
+    throw error
+  }
 }
