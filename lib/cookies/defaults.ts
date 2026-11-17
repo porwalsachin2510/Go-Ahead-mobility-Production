@@ -45,8 +45,8 @@ export const DEFAULT_COOKIES_POLICY_PAGE = {
         preferencesDescription: 'This is a design representation. No optional cookies are set unless you enable them.',
         cookieListLabel: 'View full cookie list',
         categories: [
-          { key: 'necessary', icon: 'shield-check', title: 'Strictly necessary', description: 'Essential for core website functions and security. These cookies cannot be disabled.', alwaysActiveLabel: 'Always active', locked: true, defaultEnabled: true, details: 'Used for core website operation, security, session handling and load balancing.' },
-          { key: 'preferences', icon: 'user-round-cog', title: 'Preferences', description: 'Store choices you make to provide enhanced and more personal features.', alwaysActiveLabel: '', locked: false, defaultEnabled: false, details: 'Preference technologies may remember settings such as language or region when enabled.' },
+          { key: 'necessary', icon: 'shield-check', title: 'Strictly necessary', description: 'Essential for core website functions and security. These cookies cannot be disabled.', alwaysActiveLabel: 'Always active', locked: true, details: 'Used for core website operation, security, session handling and load balancing.' },
+          { key: 'preferences', icon: 'user-round-cog', title: 'Preferences', description: 'Store choices you make to provide enhanced and more personal features.', alwaysActiveLabel: '', locked: false, details: 'Preference technologies may remember settings such as language or region when enabled.' },
           { key: 'analytics', icon: 'chart-no-axes-column-increasing', title: 'Analytics', description: 'Help us understand website usage so we can improve performance and content.', alwaysActiveLabel: '', locked: false, defaultEnabled: false, details: 'Analytics technologies may measure page visits, navigation and performance after consent where required.' },
           { key: 'marketing', icon: 'megaphone', title: 'Marketing / advertising', description: 'Used to deliver relevant content and measure the effectiveness of our marketing activities. Only included if such technology is actually used.', alwaysActiveLabel: '', locked: false, defaultEnabled: false, details: 'No advertising or cross-context behavioural advertising cookies are declared in this initial policy configuration. This category remains off until reviewed and enabled.' },
         ],
@@ -61,7 +61,7 @@ export const DEFAULT_COOKIES_POLICY_PAGE = {
         inventoryProviderLabel: 'Provider / cookie name',
         inventoryDurationLabel: 'Duration',
         inventoryRows: [
-          { category: 'Strictly necessary', purpose: 'Enable core website functions and security.', provider: 'To be confirmed from the production cookie scan.', duration: 'To be confirmed from the production cookie scan.' },
+          { category: 'Strictly necessary', purpose: 'Stores the cookie preference choice made on this device.', provider: 'GoAhead Mobility — goahead_cookie_preferences', duration: '180 days (Max-Age 15,552,000 seconds).' },
           { category: 'Preferences', purpose: 'Remember choices you make (language, region, etc.).', provider: 'To be confirmed from the production cookie scan.', duration: 'To be confirmed from the production cookie scan.' },
           { category: 'Analytics', purpose: 'Understand website usage and improve our services.', provider: 'To be confirmed from the production cookie scan.', duration: 'To be confirmed from the production cookie scan.' },
           { category: 'Marketing / advertising', purpose: 'Deliver relevant content and measure campaigns (only if such technology is used).', provider: 'To be confirmed from the production cookie scan.', duration: 'To be confirmed from the production cookie scan.' },
