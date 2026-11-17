@@ -7,8 +7,11 @@
 import mongoose from 'mongoose'
 import { connectDb } from '../lib/server/db'
 import { Navigation } from '../lib/server/models/content'
+import { WhyChooseUsPageContent } from '../lib/server/models/editorial'
+import { DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT } from '../lib/why-choose-us/defaults'
 
 const ROUTE = '/company/why-choose-us'
+const LEGACY_HERO_IMAGE = '/images/site/transport-hero.png'
 type MenuKey = 'primary' | 'footer'
 
 function ensureWhyChooseUs(items: any[], menuKey: MenuKey) {
@@ -78,6 +81,19 @@ async function main() {
   }
 
   console.log('[why-choose-us-page-migration] primary and footer Company links are present')
+
+  // Only replace hero media that is still the superseded default, so editor-chosen images are preserved.
+  const heroUpdate = await WhyChooseUsPageContent.updateMany(
+    { key: 'why-choose-us-page', heroImage: { $in: ['', null, LEGACY_HERO_IMAGE] } },
+    { $set: { heroImage: DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.heroImage, heroImagePosition: DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.heroImagePosition } },
+    { runValidators: true },
+  )
+  const ogUpdate = await WhyChooseUsPageContent.updateMany(
+    { key: 'why-choose-us-page', ogImage: { $in: ['', null, LEGACY_HERO_IMAGE] } },
+    { $set: { ogImage: DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.ogImage } },
+    { runValidators: true },
+  )
+  console.log('[why-choose-us-page-migration] hero image updated on ' + heroUpdate.modifiedCount + ' doc(s), og image on ' + ogUpdate.modifiedCount)
 }
 
 main()

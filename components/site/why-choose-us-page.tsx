@@ -7,9 +7,8 @@ import {
   FileSearch, Headset, MapPin, Network, Route, ShieldCheck, Users,
   Workflow, type LucideIcon,
 } from 'lucide-react'
-import { Breadcrumbs } from '@/components/site/breadcrumbs'
+import { WhyChooseUsHero } from '@/components/site/why-choose-us-hero'
 import { SmartImage } from '@/components/site/primitives'
-import { Parallax } from '@/components/motion/gsap-effects'
 
 type Props = { content: Record<string, any> }
 
@@ -44,103 +43,7 @@ export function WhyChooseUsPage({ content: c }: Props) {
 
   return (
     <article data-page="why-choose-us" className="overflow-hidden bg-white text-[#101d42]">
-      {c.showHero !== false ? (
-        <section className="relative isolate overflow-hidden bg-white">
-          <div className="relative mx-auto max-w-[1240px]">
-            <div className="relative z-20 px-5 pt-4 sm:px-7 md:absolute md:left-0 md:top-3 md:px-7 md:pt-0 lg:px-10">
-              <Breadcrumbs trail={[
-                { name: 'Home', path: '/' },
-                { name: 'Company', path: '/company/why-choose-us' },
-                { name: 'Why Choose Us', path: '/company/why-choose-us' },
-              ]} />
-            </div>
-
-            <div className="grid grid-cols-1 items-center gap-0 md:grid-cols-[41%_59%] md:pl-7 lg:pl-10">
-              <div className="relative z-10 px-5 pb-7 pt-7 sm:px-7 md:px-0 md:pr-2 md:pt-14 md:pb-0">
-                {c.heroEyebrow ? <p className="mb-3 text-[10px] font-bold uppercase tracking-[.2em] text-[#167be7]">{c.heroEyebrow}</p> : null}
-                <motion.h1
-                  initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: reduceMotion ? 0 : 0.62, ease: 'easeOut' }}
-                  className="max-w-[560px] text-balance text-[clamp(1.8rem,3.4vw,2.45rem)] font-semibold leading-[1.12] tracking-[-.045em] text-[#101d42]"
-                >
-                  <span className="block">{c.heroTitle || 'A clearer way to'}</span>
-                  {c.heroHighlight ? <span className="text-[#0863f7]">{c.heroHighlight}</span> : null}
-                </motion.h1>
-                {c.heroDescription ? (
-                  <motion.p
-                    initial={reduceMotion ? false : { opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: reduceMotion ? 0 : 0.58, delay: reduceMotion ? 0 : 0.1, ease: 'easeOut' }}
-                    className="mt-4 max-w-[340px] text-[11px] leading-[1.75] text-[#4d5a75] sm:text-[11px]"
-                  >
-                    {c.heroDescription}
-                  </motion.p>
-                ) : null}
-                <motion.div
-                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: reduceMotion ? 0 : 0.52, delay: reduceMotion ? 0 : 0.18, ease: 'easeOut' }}
-                  className="mt-5 flex flex-wrap items-center gap-3"
-                >
-                  {c.heroPrimaryLabel ? (
-                    <Link href={c.heroPrimaryHref || '/contact'} className="group inline-flex min-h-7 items-center justify-center gap-2 rounded-md bg-[#0863f7] px-3 py-1.5 text-[8px] font-semibold text-white shadow-[0_7px_20px_rgba(8,99,247,.18)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#064fca] hover:shadow-[0_10px_24px_rgba(8,99,247,.24)] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef] focus-visible:ring-offset-2">
-                      {c.heroPrimaryLabel}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
-                    </Link>
-                  ) : null}
-                  {c.heroSecondaryLabel ? (
-                    <Link href={c.heroSecondaryHref || '#how-we-work'} className="group inline-flex min-h-7 items-center gap-2 rounded-md px-2 py-1.5 text-[8px] font-semibold text-[#0863f7] transition-colors hover:bg-[#edf5ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef]">
-                      {c.heroSecondaryLabel}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
-                    </Link>
-                  ) : null}
-                </motion.div>
-              </div>
-
-              <motion.div
-                initial={reduceMotion ? false : { opacity: 0, x: 22 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: reduceMotion ? 0 : 0.78, delay: reduceMotion ? 0 : 0.04, ease: 'easeOut' }}
-                className="group relative mx-5 aspect-[1.78/1] overflow-hidden rounded-l-[26px] border-l-2 border-[#24a9ef] bg-[#dce8f4] shadow-[0_12px_32px_rgba(16,36,72,.11)] sm:mx-7 md:-ml-6 md:mr-0 md:aspect-[1.86/1] md:w-[calc(100%_+_1.5rem_+_max(0px,_50vw_-_620px))] md:rounded-none md:border-l-0 md:shadow-none"
-              >
-                <Parallax amount={2} scale={1.02} className="absolute inset-0">
-                  {c.heroImage ? (
-                    <SmartImage
-                      src={c.heroImage}
-                      alt={c.heroImageAlt || ''}
-                      sizes="(min-width: 1024px) 59vw, (min-width: 768px) 59vw, 100vw"
-                      priority
-                      objectPosition={c.heroImagePosition || '50% 50%'}
-                      className="object-cover"
-                    />
-                  ) : null}
-                </Parallax>
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#06152b]/5 via-transparent to-[#06152b]/10 md:hidden" />
-                <svg
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 z-10 hidden size-full md:block"
-                  viewBox="0 0 1000 535"
-                  fill="none"
-                  preserveAspectRatio="none"
-                >
-                  <path
-                    d="M0 0H360C280 50 130 70 130 145V318C130 360 110 382 70 410C50 430 54 455 54 490V535H0V0Z"
-                    fill="#fff"
-                  />
-                  <path
-                    d="M360 0C280 50 130 70 130 145V318C130 360 110 382 70 410C30 435 0 455 0 490V535"
-                    stroke="#24a9ef"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                </svg>
-                <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 hidden w-[2px] bg-gradient-to-b from-transparent via-[#24a9ef] to-[#24a9ef]/80 md:hidden" />
-              </motion.div>
-            </div>
-          </div>
-        </section>
-      ) : null}
+      {c.showHero !== false ? <WhyChooseUsHero content={c} /> : null}
 
       {c.showTrustStrip !== false && trustItems.length ? (
         <section aria-label="Our service commitments" className="mx-auto max-w-[1240px] px-5 py-3 sm:px-7 lg:px-10 lg:py-4">

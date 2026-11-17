@@ -346,7 +346,13 @@ export const getAboutPageContent = cache(async () => {
 export const getWhyChooseUsPageContent = cache(async () => {
   await connectDb()
   const doc = await WhyChooseUsPageContent.findOne({ key: 'why-choose-us-page', status: 'published' }).lean<any>()
-  return doc ? plain({ ...DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT, ...doc }) : plain(DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT)
+  if (!doc) return plain(DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT)
+  const legacyHero = !doc.heroImage || doc.heroImage === '/images/site/transport-hero.png'
+  return plain({
+    ...DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT,
+    ...doc,
+    ...(legacyHero ? { heroImage: DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.heroImage, heroImagePosition: DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.heroImagePosition } : {}),
+  })
 })
 
 export const listTeam = cache(async () => {
