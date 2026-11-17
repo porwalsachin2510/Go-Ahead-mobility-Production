@@ -24,43 +24,55 @@ export async function ensureSafetyTrustPage() {
     .replace(/\s+/g, ' ')
     .slice(0, 20000)
 
-  const result = await Page.updateOne(
-    { path: DEFAULT_SAFETY_TRUST_PAGE.path },
-    {
-      $setOnInsert: {
-        path: DEFAULT_SAFETY_TRUST_PAGE.path,
-        pageType: DEFAULT_SAFETY_TRUST_PAGE.pageType,
-        draft: content,
-        published: content,
-        state: 'published',
-        publishedAt: new Date(),
-        revision: 1,
-        searchText,
-        isSystem: true,
-      },
-    },
-    { upsert: true, runValidators: true, setDefaultsOnInsert: true },
-  )
-
-  // Only the request which inserted the page creates its first immutable version.
-  if (result.upsertedCount > 0) {
-    const created = await Page.findOne({ path: DEFAULT_SAFETY_TRUST_PAGE.path }).select('_id revision').lean<any>()
-    if (created?._id) {
-      await PageVersion.updateOne(
-        { pageId: created._id, versionNumber: created.revision ?? 1 },
-        {
-          $setOnInsert: {
-            pageId: created._id,
-            versionNumber: created.revision ?? 1,
-            snapshot: content,
-            kind: 'publish',
-            changeNote: 'Initial Safety & Trust page content',
-          },
+  let created = false
+  try {
+    const result = await Page.updateOne(
+      { path: DEFAULT_SAFETY_TRUST_PAGE.path },
+      {
+        $setOnInsert: {
+          path: DEFAULT_SAFETY_TRUST_PAGE.path,
+          pageType: DEFAULT_SAFETY_TRUST_PAGE.pageType,
+          draft: content,
+          published: content,
+          state: 'published',
+          publishedAt: new Date(),
+          revision: 1,
+          searchText,
+          isSystem: true,
         },
-        { upsert: true, setDefaultsOnInsert: true },
-      )
-    }
+      },
+      { upsert: true, runValidators: true, setDefaultsOnInsert: true },
+    )
+    created = result.upsertedCount > 0
+  } catch (error) {
+    // Public metadata and page rendering may request the route at the same time.
+    // The unique page-path index allows only one upsert to win; the other request
+    // should reuse the record created by its neighbour rather than return a 500.
+    if ((error as { code?: number })?.code !== 11000) throw error
+    const existing = await Page.exists({ path: DEFAULT_SAFETY_TRUST_PAGE.path })
+    if (!existing) throw error
   }
 
-  return { created: result.upsertedCount > 0 }
+  const page = await Page.findOne({ path: DEFAULT_SAFETY_TRUST_PAGE.path })
+    .select('_id revision published draft')
+    .lean<any>()
+  if (page?._id) {
+    // Repair a missing first version as well, without replacing a version an admin has created.
+    const snapshot = page.published ?? page.draft ?? content
+    await PageVersion.updateOne(
+      { pageId: page._id, versionNumber: page.revision ?? 1 },
+      {
+        $setOnInsert: {
+          pageId: page._id,
+          versionNumber: page.revision ?? 1,
+          snapshot,
+          kind: page.published ? 'publish' : 'save',
+          changeNote: created ? 'Initial Safety & Trust page content' : 'Recovered missing Safety & Trust page version',
+        },
+      },
+      { upsert: true, setDefaultsOnInsert: true },
+    )
+  }
+
+  return { created }
 }
