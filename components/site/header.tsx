@@ -38,7 +38,7 @@ export function SiteHeader({ items, ctaLabel, ctaHref, brandName }: { items: Nav
       </a>
       <div className={cn("container-x flex items-center justify-between gap-4", isMarketingPath ? "h-14 py-2 lg:h-16" : "h-18 gap-6 py-3")}>
         <Link href="/" className="flex shrink-0 items-center" aria-label={`${brandName} home`}>
-          <Image src="/brand/goahead-logo.png" alt={brandName} width={168} height={44} priority className={cn('w-auto', useDarkHeader ? 'h-8 brightness-0 invert' : 'h-10')} />
+          <Image src="/brand/goahead-logo.png" alt={brandName} width={168} height={44} priority className={cn('w-auto', useDarkHeader ? 'h-8 brightness-0 invert' : pathname === '/company/why-choose-us' ? 'h-8' : 'h-10')} />
         </Link>
 
         <nav aria-label="Primary" className="hidden lg:block">
@@ -75,7 +75,7 @@ export function SiteHeader({ items, ctaLabel, ctaHref, brandName }: { items: Nav
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link href={ctaHref} className="hidden rounded-full bg-azure px-4 py-2 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-azure-deep sm:inline-flex">
+          <Link href={ctaHref} className={cn('hidden bg-azure font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-azure-deep sm:inline-flex', pathname === '/company/why-choose-us' ? 'rounded-md px-3.5 py-1.5 text-[10px]' : 'rounded-full px-4 py-2 text-xs')}>
             {ctaLabel}
           </Link>
           <button type="button" className={cn('inline-flex size-10 items-center justify-center rounded-full border lg:hidden', useDarkHeader ? 'border-white/25 text-white' : 'border-line')} aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen((v) => !v)}>

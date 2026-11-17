@@ -26,7 +26,7 @@ export function ScrollReveal({ children, className }: { children: ReactNode; cla
 }
 
 /** Subtle scrubbed parallax. Disabled on small screens and for reduced motion to protect mobile performance. */
-export function Parallax({ children, amount = 10, className }: { children: ReactNode; amount?: number; className?: string }) {
+export function Parallax({ children, amount = 10, scale = 1.08, className }: { children: ReactNode; amount?: number; scale?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const el = ref.current
@@ -35,12 +35,12 @@ export function Parallax({ children, amount = 10, className }: { children: React
     mm.add(`${MOTION_OK} and (min-width: 768px)`, () => {
       gsap.fromTo(
         el,
-        { yPercent: -amount / 2, scale: 1.08 },
-        { yPercent: amount / 2, scale: 1.08, ease: 'none', scrollTrigger: { trigger: el.parentElement ?? el, start: 'top bottom', end: 'bottom top', scrub: true } },
+        { yPercent: -amount / 2, scale },
+        { yPercent: amount / 2, scale, ease: 'none', scrollTrigger: { trigger: el.parentElement ?? el, start: 'top bottom', end: 'bottom top', scrub: true } },
       )
     })
     return () => mm.revert()
-  }, [amount])
+  }, [amount, scale])
   return (
     <div ref={ref} className={className}>
       {children}

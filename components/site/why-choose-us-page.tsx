@@ -62,7 +62,7 @@ export function WhyChooseUsPage({ content: c }: Props) {
                   initial={reduceMotion ? false : { opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: reduceMotion ? 0 : 0.62, ease: 'easeOut' }}
-                  className="max-w-[560px] text-balance text-[clamp(1.9rem,3.55vw,2.65rem)] font-semibold leading-[1.12] tracking-[-.045em] text-[#101d42]"
+                  className="max-w-[560px] text-balance text-[clamp(1.8rem,3.4vw,2.45rem)] font-semibold leading-[1.12] tracking-[-.045em] text-[#101d42]"
                 >
                   <span className="block">{c.heroTitle || 'A clearer way to'}</span>
                   {c.heroHighlight ? <span className="text-[#0863f7]">{c.heroHighlight}</span> : null}
@@ -72,7 +72,7 @@ export function WhyChooseUsPage({ content: c }: Props) {
                     initial={reduceMotion ? false : { opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: reduceMotion ? 0 : 0.58, delay: reduceMotion ? 0 : 0.1, ease: 'easeOut' }}
-                    className="mt-4 max-w-[500px] text-[11px] leading-[1.7] text-[#4d5a75] sm:text-[12px]"
+                    className="mt-4 max-w-[340px] text-[11px] leading-[1.75] text-[#4d5a75] sm:text-[11px]"
                   >
                     {c.heroDescription}
                   </motion.p>
@@ -84,12 +84,12 @@ export function WhyChooseUsPage({ content: c }: Props) {
                   className="mt-5 flex flex-wrap items-center gap-3"
                 >
                   {c.heroPrimaryLabel ? (
-                    <Link href={c.heroPrimaryHref || '/contact'} className="group inline-flex min-h-9 items-center justify-center gap-2 rounded-md bg-[#0863f7] px-3.5 py-2.5 text-[9px] font-semibold text-white shadow-[0_7px_20px_rgba(8,99,247,.18)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#064fca] hover:shadow-[0_10px_24px_rgba(8,99,247,.24)] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef] focus-visible:ring-offset-2">
+                    <Link href={c.heroPrimaryHref || '/contact'} className="group inline-flex min-h-7 items-center justify-center gap-2 rounded-md bg-[#0863f7] px-3 py-1.5 text-[8px] font-semibold text-white shadow-[0_7px_20px_rgba(8,99,247,.18)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#064fca] hover:shadow-[0_10px_24px_rgba(8,99,247,.24)] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef] focus-visible:ring-offset-2">
                       {c.heroPrimaryLabel}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
                     </Link>
                   ) : null}
                   {c.heroSecondaryLabel ? (
-                    <Link href={c.heroSecondaryHref || '#how-we-work'} className="group inline-flex min-h-9 items-center gap-2 rounded-md px-3 py-2.5 text-[9px] font-semibold text-[#0863f7] transition-colors hover:bg-[#edf5ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef]">
+                    <Link href={c.heroSecondaryHref || '#how-we-work'} className="group inline-flex min-h-7 items-center gap-2 rounded-md px-2 py-1.5 text-[8px] font-semibold text-[#0863f7] transition-colors hover:bg-[#edf5ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef]">
                       {c.heroSecondaryLabel}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
                     </Link>
                   ) : null}
@@ -100,9 +100,9 @@ export function WhyChooseUsPage({ content: c }: Props) {
                 initial={reduceMotion ? false : { opacity: 0, x: 22 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: reduceMotion ? 0 : 0.78, delay: reduceMotion ? 0 : 0.04, ease: 'easeOut' }}
-                className="group relative mx-5 aspect-[1.78/1] overflow-hidden rounded-l-[26px] border-l-2 border-[#24a9ef] bg-[#dce8f4] shadow-[0_12px_32px_rgba(16,36,72,.11)] sm:mx-7 md:-ml-6 md:mr-0 md:aspect-[1.78/1] md:w-[calc(100%_+_1.5rem_+_max(0px,_50vw_-_620px))] md:rounded-none md:border-l-0 md:shadow-none"
+                className="group relative mx-5 aspect-[1.78/1] overflow-hidden rounded-l-[26px] border-l-2 border-[#24a9ef] bg-[#dce8f4] shadow-[0_12px_32px_rgba(16,36,72,.11)] sm:mx-7 md:-ml-6 md:mr-0 md:aspect-[1.86/1] md:w-[calc(100%_+_1.5rem_+_max(0px,_50vw_-_620px))] md:rounded-none md:border-l-0 md:shadow-none"
               >
-                <Parallax amount={4} className="absolute inset-0">
+                <Parallax amount={2} scale={1.02} className="absolute inset-0">
                   {c.heroImage ? (
                     <SmartImage
                       src={c.heroImage}
@@ -123,11 +123,11 @@ export function WhyChooseUsPage({ content: c }: Props) {
                   preserveAspectRatio="none"
                 >
                   <path
-                    d="M0 0H382C294 48 170 77 170 145V275C170 319 145 344 98 371C45 400 24 423 24 475V535H0V0Z"
+                    d="M0 0H360C280 50 130 70 130 145V318C130 360 110 382 70 410C50 430 54 455 54 490V535H0V0Z"
                     fill="#fff"
                   />
                   <path
-                    d="M382 0C294 48 170 77 170 145V275C170 319 145 344 98 371C45 400 24 423 24 475V535"
+                    d="M360 0C280 50 130 70 130 145V318C130 360 110 382 70 410C30 435 0 455 0 490V535"
                     stroke="#24a9ef"
                     strokeWidth="3.5"
                     strokeLinecap="round"
