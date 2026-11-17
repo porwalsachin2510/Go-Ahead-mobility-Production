@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'motion/react'
 import {
-  ArrowRight, ArrowUpRight, BedDouble, Building2, BusFront, ChartNoAxesCombined,
+  ArrowRight, BedDouble, Building2, BusFront, ChartNoAxesCombined,
   LockKeyhole, ShieldCheck, type LucideIcon,
 } from 'lucide-react'
 import { NewsletterForm } from '@/components/site/newsletter-form'
@@ -87,9 +87,9 @@ export function NewsletterPage({ page, status }: { page: NewsletterPageRecord | 
   const benefits = items(data, 'benefits')
   const previewCards = items(data, 'previewCards')
   const insights = items(data, 'insights')
-  const choicePoints = items(data, 'choicePoints').length
-    ? items(data, 'choicePoints').map((entry) => String(entry))
-    : Array.isArray(data.choicePoints) ? data.choicePoints.map(String) : []
+  const choicePoints: string[] = Array.isArray(data.choicePoints)
+    ? data.choicePoints.map((point: unknown) => String(point))
+    : []
   const manageLinks = items(data, 'manageLinks')
 
   const heroTitle = value(data, 'heroTitle', 'Business mobility,')
