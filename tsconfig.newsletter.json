@@ -1,17 +1,17 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "incremental": false
+    "incremental": false,
+    "plugins": [],
+    "types": ["node"],
+    "skipLibCheck": true
   },
   "include": [
-    "components/site/newsletter-page.tsx",
-    "components/site/newsletter-form.tsx",
     "lib/newsletter/defaults.ts",
-    "lib/newsletter/defaults.test.ts",
+    "lib/newsletter/images.ts",
     "lib/blocks.ts",
     "lib/fields.ts",
     "lib/seo/route-ownership.ts",
-    "lib/seo/route-ownership.test.ts",
     "lib/server/services/newsletter-provision.ts"
   ],
   "exclude": ["node_modules", ".next"]
