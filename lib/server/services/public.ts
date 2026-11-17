@@ -14,6 +14,8 @@ import { DEFAULT_INDUSTRY_PAGE_CONTENT } from '@/lib/industries/defaults'
 import { DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT } from '@/lib/why-choose-us/defaults'
 import { SAFETY_TRUST_NAV_LINK, SAFETY_TRUST_PATH } from '@/lib/safety-trust/defaults'
 import { ensureSafetyTrustPage } from './safety-trust-provision'
+import { NEWSLETTER_PATH } from '@/lib/newsletter/defaults'
+import { ensureNewsletterPage } from './newsletter-provision'
 
 /** Converts lean Mongo docs into plain JSON-safe objects for Server → Client component props. */
 export function plain<T>(value: T): T {
@@ -133,6 +135,49 @@ function withWhyChooseUsCompanyLink(items: NavItem[], menuKey: 'primary' | 'foot
   return next
 }
 
+/** Ensure the Newsletter destination is reachable from the Resources group in both menus. */
+function withResourcesNewsletterLink(items: NavItem[], menuKey: 'primary' | 'footer'): NavItem[] {
+  const next = items.map((item) => ({ ...item, children: [...(item.children ?? [])] }))
+  const normalize = (href: string) => String(href || '').split(/[?#]/, 1)[0].replace(/\\/+$/, '').toLowerCase() || '/'
+  const isNewsletter = (item: NavItem) =>
+    normalize(item.href) === NEWSLETTER_PATH || item.label.trim().toLowerCase() === 'newsletter'
+
+  const existing = [
+    ...next.filter(isNewsletter),
+    ...next.flatMap((group) => group.children ?? []).filter(isNewsletter),
+  ][0]
+
+  // Remove stale/duplicate Newsletter entries from other menu groups before adding one canonical link.
+  for (const group of next) {
+    group.children = (group.children ?? []).filter((child) => !isNewsletter(child))
+  }
+  const groups = next.filter((item) => !isNewsletter(item))
+  let resources = groups.find((item) =>
+    item.label.trim().toLowerCase() === 'resources' || normalize(item.href) === '/resources',
+  )
+  if (!resources) {
+    resources = {
+      id: menuKey === 'primary' ? 'resources-primary' : 'resources-footer',
+      label: 'Resources',
+      href: '/resources',
+      visible: true,
+      children: [],
+    }
+    groups.push(resources)
+  }
+  const link: NavItem = {
+    ...(existing ?? {}),
+    id: existing?.id || (menuKey === 'primary' ? 'resources-newsletter-primary' : 'resources-newsletter-footer'),
+    label: 'Newsletter',
+    href: NEWSLETTER_PATH,
+    description: 'Practical business mobility insights, delivered by email.',
+    visible: true,
+    children: [],
+  }
+  resources.children = [...(resources.children ?? []), link]
+  return groups
+}
+
 export const getMenu = cache(async (menuKey: 'primary' | 'footer' | 'utility' | 'legal'): Promise<NavItem[]> => {
   try {
     await connectDb()
@@ -140,7 +185,7 @@ export const getMenu = cache(async (menuKey: 'primary' | 'footer' | 'utility' | 
     const sourceItems = doc?.items ?? []
     const canonicalItems = canonicalizeNavigationItems(sourceItems) as NavItem[]
     const normalizedItems = menuKey === 'primary' || menuKey === 'footer'
-      ? withWhyChooseUsCompanyLink(canonicalItems, menuKey)
+      ? withResourcesNewsletterLink(withWhyChooseUsCompanyLink(canonicalItems, menuKey), menuKey)
       : canonicalItems
 
     // Repair legacy hrefs and ensure Why Choose Us is reachable from Company menus.
@@ -181,6 +226,7 @@ export const getPublishedPage = cache(async (rawPath: string): Promise<PublicPag
   const path = normalizePath(rawPath)
   // First public visit safely provisions the page if the deployment migration was not run.
   if (path === SAFETY_TRUST_PATH) await ensureSafetyTrustPage()
+  if (path === NEWSLETTER_PATH) await ensureNewsletterPage()
   const now = new Date()
   const doc = await Page.findOne({
     path,
