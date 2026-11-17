@@ -19,7 +19,6 @@ export const DEDICATED_PUBLIC_PATHS = [
   '/faq',
   '/careers',
   '/blog',
-  '/newsletter',
 ] as const
 
 const DEDICATED_PREFIXES = [
