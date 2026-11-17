@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -131,6 +132,7 @@ function CookieToggle({ checked, label, onChange }: { checked: boolean; label: s
 
 function CookiePreferencesPanel({ data }: { data: Data }) {
   const reduceMotion = useReducedMotion()
+  const router = useRouter()
   const categories = records(data.categories)
   const [preferences, setPreferences] = useState<CookiePreferences>(DEFAULT_PREFERENCES)
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -165,6 +167,7 @@ function CookiePreferencesPanel({ data }: { data: Data }) {
     const saved = savePreferences(next)
     setPreferences(saved)
     setSavedMessage(text(data, 'saveSuccessMessage', 'Your cookie preferences have been saved on this device.'))
+    router.refresh()
   }
 
   const acceptSelected = () => persist({ ...preferences, necessary: true })
