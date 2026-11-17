@@ -176,11 +176,11 @@ export function SafetyTrustPage({ page }: { page: SafetyTrustPageData }) {
                 initial={reduceMotion ? false : { opacity: 0, y: 12 }}
                 whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }}
                 transition={{ duration: 0.45, delay: Math.min(index % 3, 2) * 0.045 }}
-                className="grid min-h-[108px] grid-cols-[30px_42px_minmax(0,1fr)_112px] items-center gap-2 rounded-lg border border-[#e1e8f2] bg-white p-3 transition-shadow hover:shadow-md sm:grid-cols-[34px_48px_minmax(0,1fr)_140px] sm:gap-3">
+                className="grid min-h-[108px] grid-cols-[24px_36px_minmax(0,1fr)] items-center gap-2 rounded-lg border border-[#e1e8f2] bg-white p-3 transition-shadow hover:shadow-md sm:grid-cols-[34px_48px_minmax(0,1fr)_140px] sm:gap-3">
                 <span className="self-start pt-1 text-[13px] font-bold text-[#0864f7]">{str(item.number, String(index + 1).padStart(2, '0'))}</span>
                 <span className="flex size-10 items-center justify-center rounded-full bg-[#f3f7ff] text-[#0864f7] sm:size-11"><SafetyIcon name={item.icon} className="size-6" /></span>
                 <span className="min-w-0"><span className="block text-[11px] font-bold leading-snug">{str(item.title)}</span><span className="mt-1 block text-[9px] leading-[1.55] text-[#52617d] sm:text-[10px]">{str(item.body)}</span></span>
-                <span className="h-[76px] overflow-hidden rounded-md bg-[#f2f5f9]"><CMSImage src={item.image} alt={item.imageAlt} sizes="140px" /></span>
+                <span className="hidden h-[76px] overflow-hidden rounded-md bg-[#f2f5f9] sm:block"><CMSImage src={item.image} alt={item.imageAlt} sizes="140px" /></span>
               </motion.article>
             ))}
           </div>
