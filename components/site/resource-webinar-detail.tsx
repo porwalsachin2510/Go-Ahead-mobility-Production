@@ -6,12 +6,13 @@ import { motion, useReducedMotion } from 'motion/react'
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, CalendarClock, Captions, CheckCircle2,
   Clock3, FileVideo, PlayCircle, ShieldCheck, Users, UserRound, Building2, BookOpen,
-  ClipboardList, Video, Code2, Handshake, Settings, Route,
+  ClipboardList, Video, Code2, Settings, Route,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { Breadcrumbs } from '@/components/site/breadcrumbs'
 import { Markdown, SmartImage, formatDate } from '@/components/site/primitives'
 import { WebinarRegistrationForm } from '@/components/site/webinar-registration-form'
+import { Parallax } from '@/components/motion/gsap-effects'
 
 type Props = { resource: Record<string, any> }
 
@@ -187,7 +188,7 @@ export function ResourceWebinarDetailPage({ resource: d }: Props) {
               {d.webinarMetadataNote ? <p className="mt-4 rounded-lg border border-[#dce9ff] bg-[#f3f7ff] p-3 text-[10px] leading-5 text-[#5b6d89]"><ShieldCheck className="mr-2 inline size-4 text-[#1678ef]" aria-hidden="true" />{d.webinarMetadataNote}</p> : null}
             </div>
 
-            <div className="grid gap-4">
+            <Parallax amount={1} className="grid gap-4">
               <div className="relative aspect-video overflow-hidden rounded-xl border border-[#dce5f0] bg-[#07172e] shadow-[0_14px_38px_rgba(16,36,72,.16)]">{playerContent}</div>
               <div className="grid items-center gap-4 rounded-xl border border-[#e2eaf4] bg-white p-4 shadow-[0_8px_24px_rgba(16,36,72,.07)] sm:grid-cols-[1fr_auto] sm:p-5">
                 <div>
@@ -198,7 +199,7 @@ export function ResourceWebinarDetailPage({ resource: d }: Props) {
                   <Users className="size-4" aria-hidden="true" /> {d.webinarSubmitLabel || 'Register to watch'}
                 </Link>
               </div>
-            </div>
+            </Parallax>
           </div>
         </div>
       </section>

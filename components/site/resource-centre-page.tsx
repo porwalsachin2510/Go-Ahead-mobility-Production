@@ -62,7 +62,7 @@ const fallbackFaqs: FaqItem[] = [
   { _id: 'resource-faq-6', question: 'Do you offer training or webinars?', answer: 'We can discuss training and knowledge sessions based on your team’s mobility and operational requirements.' },
 ]
 
-const TYPE_LABELS: Record<string, string> = { whitepaper: 'White Paper', case_study: 'Case study', checklist: 'Checklist', webinar: 'Webinar', template: 'Template', article: 'Insight', tool: 'Report', event: 'Event', guide: 'Guide' }
+const TYPE_LABELS: Record<string, string> = { whitepaper: 'White Paper', case_study: 'Case study', checklist: 'Checklist', webinar: 'Webinar Replay', template: 'Template', article: 'Insight', tool: 'Report', event: 'Event', guide: 'Guide' }
 const typeLabel = (type?: string) => TYPE_LABELS[type || ''] || 'Resource'
 const dateLabel = (value?: string) => {
   if (!value) return 'Recently added'
