@@ -56,7 +56,7 @@ function SafetyFaq({ items }: { items: RecordValue[] }) {
         return (
           <div key={str(item.question) + '-' + index} className="border-b border-[#e6ebf3] last:border-b-0">
             <h3>
-              <button type="button" aria-expanded={expanded} aria-controls={panelId}
+              <button type="button" aria-expanded={expanded} aria-controls={expanded ? panelId : undefined} id={panelId + "-trigger"}
                 onClick={() => setOpen(expanded ? null : index)}
                 className="flex min-h-14 w-full items-center justify-between gap-4 px-4 py-3 text-left text-[13px] font-semibold text-[#14234b] transition-colors hover:bg-[#f7faff] focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-[#0864f7] sm:px-5">
                 <span>{str(item.question)}</span>
@@ -65,7 +65,7 @@ function SafetyFaq({ items }: { items: RecordValue[] }) {
             </h3>
             <AnimatePresence initial={false}>
               {expanded ? (
-                <motion.div id={panelId} key="answer"
+                <motion.div id={panelId} role="region" aria-labelledby={panelId + "-trigger"} key="answer"
                   initial={reduceMotion ? false : { height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
@@ -96,7 +96,7 @@ export function SafetyTrustPage({ page }: { page: SafetyTrustPageData }) {
   const quickLinks = records(data.quickLinks)
 
   return (
-    <div id="safety-trust-content" className="overflow-hidden bg-white text-[#14234b]" data-page="safety-trust" aria-label="Safety & Trust">
+    <div id="safety-trust-content" className="overflow-hidden bg-white text-[#14234b]" data-page="safety-trust">
       <div className="mx-auto max-w-[1320px] px-4 pb-8 pt-4 sm:px-6 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-2 text-[11px] text-[#64708b]">
           <Link href="/" className="transition-colors hover:text-[#0864f7]">Home</Link>
