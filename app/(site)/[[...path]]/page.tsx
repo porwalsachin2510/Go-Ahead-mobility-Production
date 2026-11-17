@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound, permanentRedirect, redirect } from 'next/navigation'
 import { RenderBlocks } from '@/components/blocks/render-blocks'
 import { PrivacyPolicyPage } from '@/components/site/privacy-policy-page'
+import { TermsConditionsPage } from '@/components/site/terms-conditions-page'
 import { MarketingPage } from '@/components/site/marketing-pages'
 import { ContactPage } from '@/components/site/contact-page'
 import { ResourceCentrePage } from '@/components/site/resource-centre-page'
@@ -363,6 +364,7 @@ async function CmsPageContent({ params, searchParams }: Props) {
     notFound()
   }
   if (fullPath === '/privacy') return <PrivacyPolicyPage page={page} />
+  if (fullPath === '/terms') return <TermsConditionsPage page={page} />
   const { site } = await getSeoSettings()
   return (
     <>
