@@ -125,7 +125,7 @@ function CookieToggle({ checked, label, onChange }: { checked: boolean; label: s
         checked ? 'border-[#0864f7] bg-[#0864f7]' : 'border-[#aebbd0] bg-[#e7edf5]',
       ].join(' ')}
     >
-      <span className={['inline-block size-5 rounded-full bg-white shadow-sm transition-transform duration-200', checked ? 'translate-x-[23px]' : 'translate-x-1'].join(' ')} />
+      <span className={['inline-block size-5 rounded-full bg-white shadow-sm transition-transform duration-200 motion-reduce:transition-none', checked ? 'translate-x-[23px]' : 'translate-x-1'].join(' ')} />
     </button>
   )
 }
@@ -303,7 +303,7 @@ export function CookiesPolicyPage({ page }: { page: CookiePolicyPageRecord | nul
           <span aria-hidden="true">›</span>
           <span>Legal</span>
           <span aria-hidden="true">›</span>
-          <span aria-current="page" className="font-medium text-[#14234b]">Cookies Policy</span>
+          <span aria-current="page" className="font-medium text-[#14234b]">{page?.title || text(data, "heading", "Cookies Policy")}</span>
         </nav>
 
         <div className="grid gap-5 lg:grid-cols-[132px_minmax(0,1fr)] lg:gap-6">
