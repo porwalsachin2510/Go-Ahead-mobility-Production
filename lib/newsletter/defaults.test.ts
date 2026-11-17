@@ -2,6 +2,7 @@ import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { BLOCK_MAP } from '@/lib/blocks'
+import { NewsletterPage } from '@/components/site/newsletter-page'
 import { DEFAULT_NEWSLETTER_PAGE, NEWSLETTER_PATH } from './defaults'
 import { isDedicatedPublicPath } from '@/lib/seo/route-ownership'
 import {
@@ -43,6 +44,10 @@ describe('Newsletter CMS page defaults', () => {
     ]) {
       expect(keys).toContain(key)
     }
+  })
+
+  it('loads the Newsletter page component and its TSX module', () => {
+    expect(NewsletterPage).toBeTypeOf('function')
   })
 
   it('uses an existing accommodation hero asset and resolves the old CMS filename', () => {
