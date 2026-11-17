@@ -1546,6 +1546,7 @@ export const RESOURCES: ResourceConfig[] = [
       { key: 'reportRelatedHeading', label: 'Reports & Insights — related heading', kind: 'text', max: 100 },
       { key: 'reportDownloadPanelTitle', label: 'Reports & Insights — download panel title', kind: 'text', max: 100 },
       { key: 'reportDownloadPanelBody', label: 'Reports & Insights — download panel description', kind: 'textarea', max: 300 },
+      { key: 'reportDownloadPanelNote', label: 'Reports & Insights — download panel note', kind: 'textarea', max: 240 },
       { key: 'reportDownloadButtonLabel', label: 'Reports & Insights — download button label', kind: 'text', max: 80 },
       { key: 'reportBottomCtaTitle', label: 'Reports & Insights — final CTA title', kind: 'text', max: 160 },
       { key: 'reportBottomCtaBody', label: 'Reports & Insights — final CTA description', kind: 'textarea', max: 400 },

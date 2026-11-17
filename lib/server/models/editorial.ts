@@ -702,6 +702,7 @@ const resourceSchema = new Schema(
     reportRelatedHeading: { type: String, default: 'Related reports and insights', maxlength: 100 },
     reportDownloadPanelTitle: { type: String, default: 'Access the complete report', maxlength: 100 },
     reportDownloadPanelBody: { type: String, default: 'Download the full report to explore the frameworks, insights and practical guidance.', maxlength: 300 },
+    reportDownloadPanelNote: { type: String, default: 'Details reflect the approved uploaded asset in resource settings.', maxlength: 240 },
     reportDownloadButtonLabel: { type: String, default: 'Download Report', maxlength: 80 },
     reportBottomCtaTitle: { type: String, default: 'Turn mobility insights into an operating plan', maxlength: 160 },
     reportBottomCtaBody: { type: String, default: 'Let our mobility experts help you design, implement and operate programmes that are safe, reliable and people-centric.', maxlength: 400 },

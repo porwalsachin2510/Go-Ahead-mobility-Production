@@ -169,7 +169,7 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
                   <span className="min-w-0"><strong className="block text-[10px] font-semibold text-[#27375d]">{item.label}</strong><span className="mt-0.5 block text-[10px] text-[#69758d]">{item.value}</span></span>
                 </div>)}
               </div>
-              {d.downloadPanelNote ? <p className="mt-4 border-t border-[#edf0f5] pt-3 text-[10px] leading-relaxed text-[#71809b]">{d.downloadPanelNote}</p> : null}
+              {(d.reportDownloadPanelNote || d.downloadPanelNote) ? <p className="mt-4 border-t border-[#edf0f5] pt-3 text-[10px] leading-relaxed text-[#71809b]">{d.reportDownloadPanelNote || d.downloadPanelNote}</p> : null}
             </aside>
           </div>
         </div>
@@ -245,7 +245,7 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
                   <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[#2f80f7] text-xs font-bold text-white">{index + 1}</span>
                   <h3 className="text-[12px] font-semibold text-[#18294e]">{item.title}</h3>
                 </div>
-                <div className="mx-4 mt-3 h-36 overflow-hidden rounded-lg border border-[#e4ebf4] bg-[#f5f8fd]">
+                <div className="relative mx-4 mt-3 h-36 overflow-hidden rounded-lg border border-[#e4ebf4] bg-[#f5f8fd]">
                   {item.image ? <SmartImage src={item.image} alt={item.imageAlt || item.title} sizes="(min-width: 768px) 330px, 90vw" className="object-cover"/> : <InsightArtwork index={index}/>}
                 </div>
                 {item.body ? <p className="px-4 pb-4 pt-3 text-[10px] leading-5 text-[#5e6a83]">{item.body}</p> : <div className="h-4"/>}
