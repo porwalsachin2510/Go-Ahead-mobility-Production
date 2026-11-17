@@ -52,6 +52,27 @@ function withMissingLinks(footer: NavItem[], legal: NavItem[]) {
     if (careersIndex >= 0) companyLinks.splice(careersIndex, 0, entry)
     else companyLinks.push(entry)
   }
+  // Keep Safety & Trust in the Company column even before the one-time navigation migration.
+  const safetyIndex = companyLinks.findIndex((item) =>
+    normalize(item.href) === '/company/safety-trust' ||
+    item.label.trim().toLowerCase() === 'safety & trust',
+  )
+  const safetyEntry = {
+    ...(safetyIndex >= 0 ? companyLinks[safetyIndex] : {}),
+    id: safetyIndex >= 0 ? companyLinks[safetyIndex].id : 'fb-company-safety-trust',
+    label: 'Safety & Trust',
+    href: '/company/safety-trust',
+    visible: true,
+  }
+  if (safetyIndex >= 0) {
+    companyLinks[safetyIndex] = safetyEntry
+  } else {
+    const whyIndex = companyLinks.findIndex((item) =>
+      normalize(item.href) === '/company/why-choose-us' ||
+      item.label.trim().toLowerCase() === 'why choose us',
+    )
+    companyLinks.splice(whyIndex >= 0 ? whyIndex + 1 : companyLinks.length, 0, safetyEntry)
+  }
   company.children = companyLinks
 
   const linked = new Set<string>()
