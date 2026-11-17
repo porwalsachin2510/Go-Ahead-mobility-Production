@@ -240,14 +240,14 @@ async function main() {
       { id: 'n2', label: 'Transportation', href: '/local-transportation', children: [] },
       { id: 'n3', label: 'Industries', href: '/industries', children: [] },
       { id: 'n4', label: 'Insights', href: '/blog', children: [{ id: 'n4a', label: 'Blog', href: '/blog', description: 'Articles and operating notes' }, { id: 'n4b', label: 'Resources', href: '/learn', description: 'Guides and checklists' }, { id: 'n4c', label: 'Case studies', href: '/case-studies', description: 'Programmes we run' }, { id: 'n4d', label: 'FAQ', href: '/faq', description: 'Common questions' }] },
-      { id: 'n5', label: 'Company', href: '/about-us', children: [{ id: 'n5a', label: 'About', href: '/about-us' }, { id: 'n5b', label: 'Careers', href: '/careers' }, { id: 'n5c', label: 'Contact', href: '/contact' }] },
+      { id: 'n5', label: 'Company', href: '/about-us', children: [{ id: 'n5a', label: 'About', href: '/about-us' }, { id: 'n5d', label: 'Why Choose Us', href: '/company/why-choose-us' }, { id: 'n5b', label: 'Careers', href: '/careers' }, { id: 'n5c', label: 'Contact', href: '/contact' }] },
     ],
   })
   await upsert(Navigation, { menuKey: 'footer' }, {
     items: [
       { id: 'f1', label: 'Services', href: '', children: [{ id: 'f1a', label: 'Global Accommodation', href: '/global-accommodation' }, { id: 'f1b', label: 'Local Transportation', href: '/local-transportation' }, { id: 'f1c', label: 'Industries', href: '/industries' }] },
       { id: 'f2', label: 'Insights', href: '', children: [{ id: 'f2a', label: 'Blog', href: '/blog' }, { id: 'f2b', label: 'Resources', href: '/learn' }, { id: 'f2c', label: 'Case studies', href: '/case-studies' }, { id: 'f2d', label: 'FAQ', href: '/faq' }] },
-      { id: 'f3', label: 'Company', href: '', children: [{ id: 'f3a', label: 'About', href: '/about-us' }, FOOTPRINT_FOOTER_LINK, { id: 'f3b', label: 'Careers', href: '/careers' }, { id: 'f3c', label: 'Contact', href: '/contact' }] },
+      { id: 'f3', label: 'Company', href: '', children: [{ id: 'f3a', label: 'About', href: '/about-us' }, { id: 'f3d', label: 'Why Choose Us', href: '/company/why-choose-us' }, FOOTPRINT_FOOTER_LINK, { id: 'f3b', label: 'Careers', href: '/careers' }, { id: 'f3c', label: 'Contact', href: '/contact' }] },
     ],
   })
   await upsert(Navigation, { menuKey: 'legal' }, { items: LEGAL_MENU_ITEMS })

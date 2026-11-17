@@ -241,7 +241,7 @@ export async function buildInventory(): Promise<SeoSnapshot> {
   const { site, siteUrlConfigured } = await getSeoSettings()
   const now = new Date()
   const liveFilter = { $or: [{ state: 'published' }, { state: 'scheduled', publishAt: { $lte: now } }] }
-  const [pages, posts, jobs, industries, caseStudies, resources, redirectDocs, navDocs, routeSeoDocs, homeContent, aboutContent, contactContent, faqContent, caseStudiesContent, resourceCentreContent, careersContent] = await Promise.all([
+  const [pages, posts, jobs, industries, caseStudies, resources, redirectDocs, navDocs, routeSeoDocs, homeContent, aboutContent, whyChooseUsContent, contactContent, faqContent, caseStudiesContent, resourceCentreContent, careersContent] = await Promise.all([
     Page.find({}).lean<any[]>(),
     Post.find({ state: { $nin: ['idea', 'brief', 'archived'] } }, 'title slug excerpt content heroImage heroAlt state publishAt publishedAt contentUpdatedAt updatedAt seo authorId vertical categoryIds tagIds')
       .populate('authorId', 'name slug')
@@ -255,6 +255,7 @@ export async function buildInventory(): Promise<SeoSnapshot> {
     RouteSeo.find({}).lean<any[]>(),
     HomePageContent.findOne({ key: 'home-page' }).lean<any>(),
     AboutPageContent.findOne({ key: 'about-us', status: 'published' }).lean<any>(),
+    WhyChooseUsPageContent.findOne({ key: 'why-choose-us-page', status: 'published' }).lean<any>(),
     ContactPageContent.findOne({ key: 'contact-page', status: 'published' }).lean<any>(),
     FaqPageContent.findOne({ key: 'faq-page', status: 'published' }).lean<any>(),
     CaseStudiesPageContent.findOne({ key: 'case-studies-page', status: 'published' }).lean<any>(),
@@ -575,6 +576,16 @@ export async function buildInventory(): Promise<SeoSnapshot> {
       nativeImage: aboutContent?.ogImage || aboutContent?.heroImage,
       nativeNoindex: aboutContent?.seoNoindex,
       updatedAt: aboutContent?.updatedAt,
+    },
+    {
+      path: '/company/why-choose-us',
+      label: 'Why Choose Us',
+      summary: whyChooseUsContent?.seoDescription || 'Discover how GoAhead Mobility coordinates accommodation and local transportation with clear governance, verified coverage and accountable service.',
+      nativeTitle: whyChooseUsContent?.seoTitle || 'Why Choose GoAhead Mobility | A Coordinated Mobility Partner',
+      nativeDescription: whyChooseUsContent?.seoDescription || 'Discover how GoAhead Mobility coordinates accommodation and local transportation with clear governance, verified coverage and accountable service.',
+      nativeImage: whyChooseUsContent?.ogImage || whyChooseUsContent?.heroImage || '/images/site/transport-hero.png',
+      nativeNoindex: whyChooseUsContent?.seoNoindex,
+      updatedAt: whyChooseUsContent?.updatedAt,
     },
     {
       path: '/contact',

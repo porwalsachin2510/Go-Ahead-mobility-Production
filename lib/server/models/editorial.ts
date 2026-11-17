@@ -1,6 +1,7 @@
 import 'server-only'
 import mongoose, { Schema, type Model } from 'mongoose'
 import { POST_STATES, seoSchema } from './content'
+import { DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT } from '@/lib/why-choose-us/defaults'
 
 function model<T>(name: string, schema: Schema): Model<T> {
   return (mongoose.models[name] as Model<T>) ?? mongoose.model<T>(name, schema)
@@ -856,6 +857,57 @@ const resourceCentrePageSchema = new Schema(
 resourceCentrePageSchema.index({ key: 1, status: 1 })
 
 
+const whyChooseUsPageContentSchema = new Schema(
+  {
+    key: { type: String, required: true, unique: true, default: 'why-choose-us-page', enum: ['why-choose-us-page'] },
+    status: { type: String, enum: ['draft', 'in_review', 'published', 'archived'], default: 'draft', index: true },
+    showHero: { type: Boolean, default: true },
+    showTrustStrip: { type: Boolean, default: true },
+    showDifferentiators: { type: Boolean, default: true },
+    showVerticals: { type: Boolean, default: true },
+    showProcess: { type: Boolean, default: true },
+    showEvidence: { type: Boolean, default: true },
+    showCta: { type: Boolean, default: true },
+    heroEyebrow: { type: String, default: '', maxlength: 80 },
+    heroTitle: { type: String, default: 'A clearer way to', maxlength: 160 },
+    heroHighlight: { type: String, default: 'manage business mobility.', maxlength: 100 },
+    heroDescription: { type: String, default: '', maxlength: 700 },
+    heroImage: { type: String, default: '/images/site/transport-hero.png', maxlength: 500 },
+    heroImageAlt: { type: String, default: '', maxlength: 240 },
+    heroPrimaryLabel: { type: String, default: 'Discuss Your Requirements', maxlength: 80 },
+    heroPrimaryHref: { type: String, default: '/contact', maxlength: 500 },
+    heroSecondaryLabel: { type: String, default: 'Explore Our Approach', maxlength: 80 },
+    heroSecondaryHref: { type: String, default: '#how-we-work', maxlength: 500 },
+    trustItems: { type: [Schema.Types.Mixed], default: () => DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.trustItems.map((item) => ({ ...item })) },
+    differentiatorsEyebrow: { type: String, default: '', maxlength: 80 },
+    differentiatorsTitle: { type: String, default: 'Why organizations choose GoAhead', maxlength: 140 },
+    differentiatorsDescription: { type: String, default: '', maxlength: 400 },
+    differentiators: { type: [Schema.Types.Mixed], default: () => DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.differentiators.map((item) => ({ ...item })) },
+    verticalsTitle: { type: String, default: 'Two service verticals, one coordinated conversation', maxlength: 160 },
+    verticalsDescription: { type: String, default: 'Different needs. One accountable partner.', maxlength: 300 },
+    verticals: { type: [Schema.Types.Mixed], default: () => DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.verticals.map((item) => ({ ...item })) },
+    processTitle: { type: String, default: 'How we work', maxlength: 140 },
+    workSteps: { type: [Schema.Types.Mixed], default: () => DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.workSteps.map((item) => ({ ...item })) },
+    evidenceEyebrow: { type: String, default: '', maxlength: 80 },
+    evidenceTitle: { type: String, default: 'Show the evidence, not just the promise', maxlength: 160 },
+    evidenceCards: { type: [Schema.Types.Mixed], default: () => DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT.evidenceCards.map((item) => ({ ...item })) },
+    evidenceNote: { type: String, default: '', maxlength: 400 },
+    ctaTitle: { type: String, default: '', maxlength: 180 },
+    ctaBody: { type: String, default: '', maxlength: 500 },
+    ctaPrimaryLabel: { type: String, default: 'Request a Proposal', maxlength: 80 },
+    ctaPrimaryHref: { type: String, default: '/contact', maxlength: 500 },
+    ctaSecondaryLabel: { type: String, default: 'Talk to Our Team', maxlength: 80 },
+    ctaSecondaryHref: { type: String, default: '/contact', maxlength: 500 },
+    seoTitle: { type: String, default: 'Why Choose GoAhead Mobility | A Coordinated Mobility Partner', maxlength: 70 },
+    seoDescription: { type: String, default: 'Discover how GoAhead Mobility coordinates accommodation and local transportation with clear governance, verified coverage and accountable service.', maxlength: 170 },
+    ogImage: { type: String, default: '/images/site/transport-hero.png', maxlength: 500 },
+    seoNoindex: { type: Boolean, default: false },
+    updatedById: { type: Schema.Types.ObjectId, ref: 'User', default: null },
+  },
+  { timestamps: true },
+)
+whyChooseUsPageContentSchema.index({ key: 1, status: 1 })
+
 const aboutFeatureSchema = new Schema(
   {
     icon: { type: String, default: 'globe', maxlength: 40 },
@@ -1451,6 +1503,7 @@ export const ClientLogo = model<any>('ClientLogo', clientLogoSchema)
 export const Resource = model<any>('Resource', resourceSchema)
 export const ResourceCentrePageContent = model<any>('ResourceCentrePageContent', resourceCentrePageSchema)
 export const TeamMember = model<any>('TeamMember', teamMemberSchema)
+export const WhyChooseUsPageContent = model<any>('WhyChooseUsPageContent', whyChooseUsPageContentSchema)
 export const AboutPageContent = model<any>('AboutPageContent', aboutPageContentSchema)
 export const CareersPageContent = model<any>('CareersPageContent', careersPageContentSchema)
 export const HomePageContent = model<any>('HomePageContent', homePageContentSchema)

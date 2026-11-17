@@ -7,11 +7,12 @@ import { ResourceCentrePage } from '@/components/site/resource-centre-page'
 import { CaseStudiesPage } from '@/components/site/case-studies-page'
 import { FaqPage } from '@/components/site/faq-page'
 import { OurFootprintPage } from '@/components/site/our-footprint-page'
+import { WhyChooseUsPage } from '@/components/site/why-choose-us-page'
 import { JsonLd } from '@/components/site/json-ld'
 import { entitySchemaNodes } from '@/lib/seo/entity-schema'
 import { logNotFound } from '@/lib/server/services/seo-monitor'
 import { buildMetadata, resolveEffectiveSeo } from '@/lib/seo/metadata'
-import { findRedirect, getPublishedPage, getHomePageContent, listFaqs, listHomePosts, listResources, listProof, listLogos, listLocations, listTeam, listIndustries, listCaseStudies, getSettings, listOfficeLocations, listResourceCentreItems, getResourceCentrePageContent, getAccommodationPageContent, getTransportationPageContent, getAboutPageContent, getFaqPageContent, getFaqPageData, getContactPageContent, getCaseStudiesPageContent, getFootprintPageContent } from '@/lib/server/services/public'
+import { findRedirect, getPublishedPage, getHomePageContent, listFaqs, listHomePosts, listResources, listProof, listLogos, listLocations, listTeam, listIndustries, listCaseStudies, getSettings, listOfficeLocations, listResourceCentreItems, getResourceCentrePageContent, getAccommodationPageContent, getTransportationPageContent, getAboutPageContent, getFaqPageContent, getFaqPageData, getContactPageContent, getCaseStudiesPageContent, getFootprintPageContent, getWhyChooseUsPageContent } from '@/lib/server/services/public'
 import { getSeoSettings } from '@/lib/server/services/seo-inventory'
 import { applyRouteSeoMetadata, routeSeoJsonLd } from '@/lib/server/services/seo-page'
 import { isDedicatedPublicPath } from '@/lib/seo/route-ownership'
@@ -123,6 +124,22 @@ async function generateBaseMetadata({ params, searchParams }: Props): Promise<Me
       },
     }
   }
+  if (requestedPath === '/company/why-choose-us') {
+    const content = await getWhyChooseUsPageContent()
+    const title = content.seoTitle || 'Why Choose GoAhead Mobility | A Coordinated Mobility Partner'
+    const description = content.seoDescription || 'Discover how GoAhead Mobility coordinates accommodation and local transportation with clear governance, verified coverage and accountable service.'
+    return {
+      title,
+      description,
+      alternates: { canonical: '/company/why-choose-us' },
+      robots: content.seoNoindex ? { index: false, follow: true } : undefined,
+      openGraph: {
+        title,
+        description,
+        images: [{ url: content.ogImage || content.heroImage || '/images/site/transport-hero.png', alt: content.heroImageAlt || 'GoAhead Mobility business transport campus' }],
+      },
+    }
+  }
   if (requestedPath === '/about-us' || requestedPath === '/company/about-us') {
     const about = await getAboutPageContent()
     const title = about?.seoTitle || 'About GoAhead Mobility | Moving Businesses Forward, Together'
@@ -217,7 +234,7 @@ async function CmsPageContent({ params, searchParams }: Props) {
     permanentRedirect('/about-us')
   }
   const queryParams = (await searchParams) ?? {}
-  const redesignedPaths = new Set(['/', '/our-footprint', '/global-accommodation', '/local-transportation', '/about-us', '/company/about-us', '/industries', '/case-studies', '/contact', '/resources', '/learn', '/faq'])
+  const redesignedPaths = new Set(['/', '/company/why-choose-us', '/our-footprint', '/global-accommodation', '/local-transportation', '/about-us', '/company/about-us', '/industries', '/case-studies', '/contact', '/resources', '/learn', '/faq'])
   if (redesignedPaths.has(fullPath)) {
     if (fullPath === '/') {
       const [page, faqs, posts, resources, content] = await Promise.all([
@@ -228,6 +245,10 @@ async function CmsPageContent({ params, searchParams }: Props) {
         getHomePageContent(),
       ])
       return <MarketingPage path={fullPath} cmsPage={page} homeData={{ faqs, posts, resources, content }} />
+    }
+    if (fullPath === '/company/why-choose-us') {
+      const content = await getWhyChooseUsPageContent()
+      return <WhyChooseUsPage content={content} />
     }
     if (fullPath === '/our-footprint') {
       const [content, settings] = await Promise.all([getFootprintPageContent(), getSettings()])

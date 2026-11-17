@@ -12,6 +12,7 @@ import { DEFAULT_ACCOMMODATION_PAGE_CONTENT } from '@/lib/accommodation/defaults
 import { DEFAULT_TRANSPORTATION_PAGE_CONTENT } from '@/lib/transportation/defaults'
 import { DEFAULT_FOOTPRINT_PAGE_CONTENT } from '@/lib/footprint/defaults'
 import { DEFAULT_INDUSTRY_PAGE_CONTENT } from '@/lib/industries/defaults'
+import { DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT } from '@/lib/why-choose-us/defaults'
 
 const plain = <T>(v: unknown): T => JSON.parse(JSON.stringify(v))
 
@@ -55,6 +56,9 @@ function publicPathsForResource(key: string, doc: Record<string, unknown>, confi
       break
     case 'footprint-page':
       paths.add('/our-footprint')
+      break
+    case 'why-choose-us-page':
+      paths.add('/company/why-choose-us')
       break
     case 'about-page':
       paths.add('/about-us')
@@ -184,6 +188,14 @@ export async function listResource(key: string, user: SessionUser, sp: URLSearch
       { returnDocument: 'after', upsert: true, setDefaultsOnInsert: true },
     ).lean()
     return { items: [withResourceDefaults(key, plain<Record<string, unknown>>(doc))], total: 1, page: 1, limit }
+  }
+  if (key === 'why-choose-us-page') {
+    const doc = await model.findOneAndUpdate(
+      { key: 'why-choose-us-page' },
+      { $setOnInsert: DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT },
+      { returnDocument: 'after', upsert: true, setDefaultsOnInsert: true },
+    ).lean()
+    return { items: [plain<Record<string, unknown>>(doc)], total: 1, page: 1, limit }
   }
   if (key === 'footprint-page') {
     const doc = await model.findOneAndUpdate(
@@ -408,7 +420,7 @@ export async function getResourceDoc(key: string, user: SessionUser, id: string)
 export async function saveResource(key: string, user: SessionUser, body: unknown, id?: string) {
   const { config, model, hooks } = getResource(key)
   if (!can(user.role, config.writePermission)) throw forbidden()
-  const singletonKey = key === 'footprint-page' ? 'footprint-page' : key === 'transportation-page' ? 'transportation-page' : key === 'accommodation-page' ? 'accommodation-page' : key === 'home-page' ? 'home-page' : key === 'about-page' ? 'about-us' : key === 'resource-centre-page' ? 'resource-centre' : key === 'faq-page' ? 'faq-page' : key === 'contact-page' ? 'contact-page' : key === 'careers-page' ? 'careers-page' : key === 'case-studies-page' ? 'case-studies-page' : ''
+  const singletonKey = key === 'footprint-page' ? 'footprint-page' : key === 'transportation-page' ? 'transportation-page' : key === 'accommodation-page' ? 'accommodation-page' : key === 'home-page' ? 'home-page' : key === 'about-page' ? 'about-us' : key === 'why-choose-us-page' ? 'why-choose-us-page' : key === 'resource-centre-page' ? 'resource-centre' : key === 'faq-page' ? 'faq-page' : key === 'contact-page' ? 'contact-page' : key === 'careers-page' ? 'careers-page' : key === 'case-studies-page' ? 'case-studies-page' : ''
   const singletonId = !id && singletonKey
     ? String((await model.findOne({ key: singletonKey }, '_id').lean<any>())?._id ?? '')
     : ''
@@ -452,6 +464,7 @@ export async function deleteResource(key: string, user: SessionUser, id: string)
   if (key === 'contact-page') throw badRequest('The Contact Us page is a singleton record and cannot be deleted. Archive it instead.')
   if (key === 'faq-page') throw badRequest('The FAQ page is a singleton record and cannot be deleted. Archive it instead.')
   if (key === 'about-page') throw badRequest('The About Us page is a singleton record and cannot be deleted. Archive it instead.')
+  if (key === 'why-choose-us-page') throw badRequest('The Why Choose Us page is a singleton record and cannot be deleted. Archive it instead.')
   if (key === 'resource-centre-page') throw badRequest('The Resource Centre page is a singleton record and cannot be deleted. Archive it instead.')
   if (key === 'careers-page') throw badRequest('The Careers page is a singleton record and cannot be deleted. Archive it instead.')
   if (key === 'case-studies-page') throw badRequest('The Case Studies page is a singleton record and cannot be deleted. Archive it instead.')

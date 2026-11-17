@@ -2,7 +2,7 @@ import 'server-only'
 import { cache } from 'react'
 import { connectDb, isValidObjectId } from '../db'
 import { Navigation, Page, Redirect, SiteSettings } from '../models/content'
-import { AboutPageContent, AccommodationPageContent, TransportationPageContent, FootprintPageContent, Author, CareersPageContent, CaseStudiesPageContent, HomePageContent, CaseStudy, Category, ClientLogo, ContactPageContent, Faq, FaqPageContent, Industry, Job, Location, Post, PostSeries, Resource, ResourceCentrePageContent, Tag, TeamMember, Testimonial } from '../models/editorial'
+import { AboutPageContent, WhyChooseUsPageContent, AccommodationPageContent, TransportationPageContent, FootprintPageContent, Author, CareersPageContent, CaseStudiesPageContent, HomePageContent, CaseStudy, Category, ClientLogo, ContactPageContent, Faq, FaqPageContent, Industry, Job, Location, Post, PostSeries, Resource, ResourceCentrePageContent, Tag, TeamMember, Testimonial } from '../models/editorial'
 import { escapeRegex } from '../http'
 import type { Block } from '@/lib/blocks'
 import { canonicalizeNavigationItems } from '@/lib/seo/about-url'
@@ -11,6 +11,7 @@ import { DEFAULT_ACCOMMODATION_PAGE_CONTENT } from '@/lib/accommodation/defaults
 import { DEFAULT_TRANSPORTATION_PAGE_CONTENT } from '@/lib/transportation/defaults'
 import { DEFAULT_FOOTPRINT_PAGE_CONTENT } from '@/lib/footprint/defaults'
 import { DEFAULT_INDUSTRY_PAGE_CONTENT } from '@/lib/industries/defaults'
+import { DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT } from '@/lib/why-choose-us/defaults'
 
 /** Converts lean Mongo docs into plain JSON-safe objects for Server → Client component props. */
 export function plain<T>(value: T): T {
@@ -289,6 +290,12 @@ export const getAboutPageContent = cache(async () => {
   await connectDb()
   const doc = await AboutPageContent.findOne({ key: 'about-us', status: 'published' }).lean<any>()
   return doc ? plain(doc) : null
+})
+
+export const getWhyChooseUsPageContent = cache(async () => {
+  await connectDb()
+  const doc = await WhyChooseUsPageContent.findOne({ key: 'why-choose-us-page', status: 'published' }).lean<any>()
+  return doc ? plain({ ...DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT, ...doc }) : plain(DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT)
 })
 
 export const listTeam = cache(async () => {

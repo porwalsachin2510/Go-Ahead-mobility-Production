@@ -6,6 +6,7 @@
 export const DEDICATED_PUBLIC_PATHS = [
   '/',
   '/about-us',
+  '/company/why-choose-us',
   '/company/about-us',
   '/global-accommodation',
   '/local-transportation',

@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto'
 import { RESOURCE_MAP, type ResourceConfig } from '@/lib/admin/resources'
 import { can } from '@/lib/rbac'
 import type { SessionUser } from '../auth/session'
-import { AboutPageContent, AccommodationPageContent, TransportationPageContent, FootprintPageContent, Author, CareersPageContent, CaseStudiesPageContent, HomePageContent, CaseStudy, Category, ClientLogo, ContactPageContent, Faq, FaqPageContent, Industry, Job, Location, Post, PostRevision, PostSeries, Resource, ResourceCentrePageContent, Tag, TeamMember, Testimonial } from '../models/editorial'
+import { AboutPageContent, WhyChooseUsPageContent, AccommodationPageContent, TransportationPageContent, FootprintPageContent, Author, CareersPageContent, CaseStudiesPageContent, HomePageContent, CaseStudy, Category, ClientLogo, ContactPageContent, Faq, FaqPageContent, Industry, Job, Location, Post, PostRevision, PostSeries, Resource, ResourceCentrePageContent, Tag, TeamMember, Testimonial } from '../models/editorial'
 import { Navigation, Redirect } from '../models/content'
 import { EmailTemplate, RoutingRule } from '../models/operations'
 import { User } from '../models/identity'
@@ -154,6 +154,16 @@ const HOOKS: Record<string, Hooks> = {
       data.updatedById = ctx.user.id
     },
     async afterSave() { revalidatePath('/resources'); revalidatePath('/learn') },
+  },
+  'why-choose-us-page': {
+    beforeSave(data, ctx) {
+      guardPublish(data, ctx)
+      data.key = 'why-choose-us-page'
+      data.updatedById = ctx.user.id
+    },
+    async afterSave() {
+      revalidatePath('/company/why-choose-us')
+    },
   },
   'about-page': {
     beforeSave(data, ctx) {
@@ -313,6 +323,7 @@ const MODELS: Record<string, Model<any>> = {
   'contact-page': ContactPageContent,
   'faq-page': FaqPageContent,
   'about-page': AboutPageContent,
+  'why-choose-us-page': WhyChooseUsPageContent,
   'resource-centre-page': ResourceCentrePageContent,
   'careers-page': CareersPageContent,
   'case-studies-page': CaseStudiesPageContent,
