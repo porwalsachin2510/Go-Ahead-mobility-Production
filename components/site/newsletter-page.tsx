@@ -10,6 +10,7 @@ import {
 import { NewsletterForm } from '@/components/site/newsletter-form'
 import { Parallax, ScrollReveal } from '@/components/motion/gsap-effects'
 import { DEFAULT_NEWSLETTER_PAGE } from '@/lib/newsletter/defaults'
+import { resolveNewsletterImagePath } from '@/lib/newsletter/images'
 
 type NewsletterPageRecord = {
   title: string
@@ -57,7 +58,7 @@ function CmsImage({
   if (!src) return <div aria-hidden="true" className={className} />
   return (
     <Image
-      src={src}
+      src={resolveNewsletterImagePath(src)}
       alt={alt || ''}
       fill
       unoptimized
