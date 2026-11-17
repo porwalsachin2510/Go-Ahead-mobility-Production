@@ -407,7 +407,7 @@ export function CookiesPolicyPage({ page }: { page: CookiePolicyPageRecord | nul
                 <span>{text(data, 'inventoryNotice')}</span>
               </div>
             </section>
-          </main>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-3 lg:grid-cols-[1.3fr_.72fr]">
