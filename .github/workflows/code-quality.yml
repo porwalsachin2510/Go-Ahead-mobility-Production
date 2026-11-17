@@ -38,6 +38,8 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: TypeScript check
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: pnpm typecheck
 
       - name: Unit tests
