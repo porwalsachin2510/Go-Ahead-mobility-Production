@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { DEFAULT_SAFETY_TRUST_PAGE, SAFETY_TRUST_PATH } from './defaults'
-import { isDedicatedPublicPath } from '@/lib/seo/route-ownership'
+import { isDedicatedPublicPath } from '../seo/route-ownership'
 
 describe('Safety & Trust CMS page defaults', () => {
   it('uses a custom CMS route that remains editable in the Page Builder', () => {
