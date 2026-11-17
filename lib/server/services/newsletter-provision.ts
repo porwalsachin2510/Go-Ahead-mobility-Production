@@ -53,19 +53,26 @@ export async function ensureNewsletterPage() {
     .lean<any>()
   if (page?._id) {
     const snapshot = page.published ?? page.draft ?? content
-    await PageVersion.updateOne(
-      { pageId: page._id, versionNumber: page.revision ?? 1 },
-      {
-        $setOnInsert: {
-          pageId: page._id,
-          versionNumber: page.revision ?? 1,
-          snapshot,
-          kind: page.published ? 'publish' : 'save',
-          changeNote: created ? 'Initial Newsletter page content' : 'Recovered missing Newsletter page version',
+    const versionFilter = { pageId: page._id, versionNumber: page.revision ?? 1 }
+    try {
+      await PageVersion.updateOne(
+        versionFilter,
+        {
+          $setOnInsert: {
+            ...versionFilter,
+            snapshot,
+            kind: page.published ? 'publish' : 'save',
+            changeNote: created ? 'Initial Newsletter page content' : 'Recovered missing Newsletter page version',
+          },
         },
-      },
-      { upsert: true, setDefaultsOnInsert: true },
-    )
+        { upsert: true, setDefaultsOnInsert: true },
+      )
+    } catch (error) {
+      // A parallel first request may have inserted the same initial version first.
+      if ((error as { code?: number })?.code !== 11000) throw error
+      const existingVersion = await PageVersion.exists(versionFilter)
+      if (!existingVersion) throw error
+    }
   }
 
   return { created }
