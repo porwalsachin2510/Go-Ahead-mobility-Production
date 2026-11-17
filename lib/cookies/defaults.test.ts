@@ -24,8 +24,10 @@ describe('Cookies Policy CMS page', () => {
 
   it('keeps strictly necessary cookies enabled and all optional categories off by default', () => {
     const categories = block!.data.categories
-    expect(categories[0]).toMatchObject({ key: 'necessary', locked: true, defaultEnabled: true })
-    expect(categories.slice(1).every((item) => item.locked === false && item.defaultEnabled === false)).toBe(true)
+    expect(categories[0]).toMatchObject({ key: 'necessary', locked: true })
+    expect(categories.slice(1).every((item) => item.locked === false)).toBe(true)
+    expect(block!.data.inventoryRows[0].provider).toContain('goahead_cookie_preferences')
+    expect(block!.data.inventoryRows[0].duration).toContain('180 days')
   })
 
   it('registers editable policy sections, categories, side cards and inventory rows', () => {
@@ -43,6 +45,7 @@ describe('Cookies Policy CMS page', () => {
     expect(categoriesField?.kind).toBe('list')
     if (categoriesField?.kind === 'list') {
       expect(categoriesField.itemFields.some((field) => field.key === 'locked' && field.kind === 'boolean')).toBe(true)
+      expect(categoriesField.itemFields.some((field) => field.key === 'defaultEnabled')).toBe(false)
     }
   })
 
