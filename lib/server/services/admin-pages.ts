@@ -10,6 +10,7 @@ import { audit } from '../security/guards'
 import { parseBlocks, parseFields } from '../validation/fields'
 import { DEDICATED_PUBLIC_PATHS, isDedicatedPublicPath } from '@/lib/seo/route-ownership'
 import { ensureSafetyTrustPage } from './safety-trust-provision'
+import { ensureNewsletterPage } from './newsletter-provision'
 
 const plain = <T>(v: unknown): T => JSON.parse(JSON.stringify(v))
 
@@ -48,7 +49,7 @@ export async function listPages(user: SessionUser, sp: URLSearchParams) {
   if (!can(user.role, 'content.read')) throw forbidden()
   // Ensure the system Safety & Trust page is visible in admin even if a deploy-time
   // migration was skipped or the production database was initially empty.
-  await ensureSafetyTrustPage()
+  await Promise.all([ensureSafetyTrustPage(), ensureNewsletterPage()])
   const q = sp.get('q')?.trim().slice(0, 100)
   const filter: Record<string, unknown> = {
     path: { $nin: [...DEDICATED_PUBLIC_PATHS] },
