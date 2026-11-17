@@ -3,7 +3,7 @@
  *
  * - Adds "Our Footprint" to the footer "Company" column when missing.
  * - Adds any missing legal links (Privacy, Terms, Cookies, Our Footprint) to the legal menu.
- * - Creates the /terms and /cookies CMS pages when they do not exist (never overwrites edits).
+ * - Creates the /privacy, /terms and /cookies CMS pages when they do not exist (never overwrites edits).
  *
  * Run with: pnpm migrate:footer-links
  */
