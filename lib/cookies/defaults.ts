@@ -42,7 +42,7 @@ export const DEFAULT_COOKIES_POLICY_PAGE = {
           { icon: 'headset', title: 'Need help?', body: 'If you have any questions about our use of cookies or this policy, our team is here to help.', linkLabel: 'Contact us', href: '/contact' },
         ],
         preferencesHeading: 'Manage your cookie preferences',
-        preferencesDescription: 'This is a design representation. No optional cookies are set unless you enable them.',
+        preferencesDescription: 'Your choices are saved on this device. Optional categories remain off until you choose to enable them.',
         cookieListLabel: 'View full cookie list',
         categories: [
           { key: 'necessary', icon: 'shield-check', title: 'Strictly necessary', description: 'Essential for core website functions and security. These cookies cannot be disabled.', alwaysActiveLabel: 'Always active', locked: true, details: 'Used for core website operation, security, session handling and load balancing.' },
