@@ -23,7 +23,7 @@ function parseSections(markdown: string) {
       heading,
       id: slugify(heading),
       body: chunk.replace(/^##\s+.+?(?:\r?\n|$)/, '').trim(),
-      number: String(index + 1).padStart(2, '0'),
+      number: cleanHeading(heading).toLowerCase() === 'important distinction' ? '' : String(index + 1).padStart(2, '0'),
     }
   })
 }
@@ -32,6 +32,7 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
   const block = page.blocks.find((item) => item.type === 'richText' && !item.hidden)
   const data = block?.data ?? {}
   const sections = parseSections(String(data.body ?? ''))
+  const navSections = sections.filter((section) => cleanHeading(section.heading).toLowerCase() !== 'important distinction')
   const title = String(data.heading || page.title)
   const intro = String(data.aside ?? '')
   const subtitle = String(data.eyebrow || 'Terms of Service')
@@ -71,7 +72,7 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
             <nav aria-label="On this page" className="rounded-xl bg-[#f7f9fc] p-4 sm:p-5">
               <h2 className="mb-4 text-[12px] font-bold">On this page</h2>
               <ol className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-3 lg:grid-cols-1">
-                {sections.map((section) => (
+                {navSections.map((section) => (
                   <li key={section.id}>
                     <a href={`#${section.id}`} className="group flex min-h-9 items-center gap-2 rounded-md px-1.5 py-1 text-[10px] leading-snug text-[#405071] transition-colors hover:bg-white hover:text-[#0864f7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0864f7]">
                       <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-[#c9d8f2] bg-white text-[9px] font-semibold text-[#0864f7]">{section.number}</span>
@@ -94,7 +95,7 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
                 <section id={section.id} key={section.id} className={`scroll-mt-28 py-4 first:pt-0 ${cleanHeading(section.heading).toLowerCase() === 'important distinction' ? 'my-4 rounded-lg border border-[#8fc5ff] bg-[#f5faff] px-4 sm:px-5' : ''}`}>
                   <Reveal y={14} delay={Math.min(index * 28, 220)}>
                     <div className="flex gap-3">
-                      <span className="pt-0.5 text-[13px] font-bold text-[#0864f7]">{section.number}.</span>
+                      {section.number ? <span className="pt-0.5 text-[13px] font-bold text-[#0864f7]">{section.number}.</span> : null}
                       <div className="min-w-0 flex-1">
                         <h2 className="text-[16px] font-semibold leading-snug tracking-[-.02em] text-[#14234b]">{cleanHeading(section.heading)}</h2>
                         <div className="terms-prose mt-2 text-[11px] leading-[1.7] text-[#354665]">
