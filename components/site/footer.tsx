@@ -8,6 +8,7 @@ const SOCIAL_LABELS: Record<string, string> = { linkedin: 'LinkedIn', x: 'X', in
 const SITE_PAGES = [
   { href: '/about-us', label: 'About Us' },
   { href: '/company/why-choose-us', label: 'Why Choose Us' },
+  { href: '/company/safety-trust', label: 'Safety & Trust' },
   { href: '/our-footprint', label: 'Our Footprint' },
   { href: '/global-accommodation', label: 'Global Accommodation' },
   { href: '/local-transportation', label: 'Local Transportation' },
