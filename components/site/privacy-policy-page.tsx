@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { ArrowRight, FileText, LockKeyhole, Mail, ShieldCheck, UserRound, Cookie, ChevronRight } from 'lucide-react'
 import { Reveal } from '@/components/motion/reveal'
+import { ScrollReveal } from '@/components/motion/gsap-effects'
 
 type PrivacyPage = {
   title: string
@@ -97,7 +98,7 @@ export function PrivacyPolicyPage({ page }: { page: PrivacyPage }) {
           </main>
         </div>
 
-        <section className="mt-8 grid gap-3 lg:grid-cols-[1.2fr_.9fr]">
+        <ScrollReveal className="mt-8"><section data-scroll-reveal className="grid gap-3 lg:grid-cols-[1.2fr_.9fr]">
           <div className="rounded-xl border border-[#cbdcff] bg-[#f4f8ff] p-5 sm:p-6">
             <div className="grid gap-4 sm:grid-cols-[1fr_1fr] sm:items-center">
               <div><h2 className="text-[17px] font-semibold">Privacy request or question?</h2><p className="mt-2 text-[11px] leading-relaxed text-[#405071]">If you have any question, request or concern about your personal information, please contact our privacy team.</p><span className="mt-3 inline-flex items-center gap-2 text-[11px] font-semibold text-[#0864f7]"><Mail className="size-4" aria-hidden />privacy contact email to be confirmed</span></div>
@@ -108,7 +109,7 @@ export function PrivacyPolicyPage({ page }: { page: PrivacyPage }) {
             <div className="absolute -right-8 -top-8 size-48 rounded-full border border-white/10" /><div className="absolute -right-2 -top-2 size-36 rounded-full border border-white/10" />
             <div className="relative flex items-center justify-between gap-4"><div><h2 className="max-w-[250px] text-[18px] font-semibold leading-snug">Need help with a privacy request? Contact GoAhead.</h2><Link href="/contact" className="mt-4 inline-flex min-h-9 items-center gap-2 rounded-md bg-[#0864f7] px-4 text-[10px] font-semibold text-white transition-colors hover:bg-[#2478ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Contact Us <ArrowRight className="size-3" aria-hidden /></Link></div><UserRound className="size-14 shrink-0 text-[#9fc4ff]" strokeWidth={1.1} aria-hidden /></div>
           </div>
-        </section>
+        </section></ScrollReveal>
         <div className="mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 rounded-lg bg-[#f5f8fd] px-4 py-3 text-[10px] text-[#405071]"><span className="font-semibold">Helpful links:</span><Link href="/cookies" className="text-[#0864f7] hover:underline">Cookie Preferences</Link><Link href="/contact" className="text-[#0864f7] hover:underline">Contact Us</Link><Link href="/terms" className="text-[#0864f7] hover:underline">Terms &amp; Conditions</Link></div>
       </div>
     </div>
