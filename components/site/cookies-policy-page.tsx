@@ -237,10 +237,13 @@ function CookiePreferencesPanel({ data }: { data: Data }) {
               </div>
               <div
                 id={detailId}
-                hidden={!isExpanded}
-                className="border-t border-[#edf0f5] bg-[#fafcff] px-4 py-3 pl-[68px] text-[10px] leading-relaxed text-[#52617d] sm:pl-[76px]"
+                role="region"
+                aria-label={`${String(category.title || key)} details`}
+                className={['grid overflow-hidden transition-[grid-template-rows,opacity] duration-200 motion-reduce:transition-none', isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'].join(' ')}
               >
-                {String(category.details || '')}
+                <div className="min-h-0 overflow-hidden">
+                  <p className="border-t border-[#edf0f5] bg-[#fafcff] px-4 py-3 pl-[68px] text-[10px] leading-relaxed text-[#52617d] sm:pl-[76px]">{String(category.details || '')}</p>
+                </div>
               </div>
             </div>
           )
@@ -292,7 +295,7 @@ export function CookiesPolicyPage({ page }: { page: CookiePolicyPageRecord | nul
   }
 
   return (
-    <div className="bg-white text-[#14234b]" data-page="cookies-policy">
+    <div className="scroll-smooth motion-reduce:scroll-auto bg-white text-[#14234b]" data-page="cookies-policy">
       <div className="mx-auto max-w-[1240px] px-4 pb-7 pt-4 sm:px-6 sm:pt-5 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-5 flex items-center gap-2 text-[11px] text-[#64708b]">
           <Link href="/" className="transition-colors hover:text-[#0864f7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0864f7]">Home</Link>
