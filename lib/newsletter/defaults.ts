@@ -24,7 +24,7 @@ export const DEFAULT_NEWSLETTER_PAGE = {
         heroIntro: 'Subscribe to our newsletter for practical insights on corporate accommodation, employee transportation, operations, safety and industry trends — curated for enterprise teams.',
         heroImage: '/images/site/transport-hero.png',
         heroImageAlt: 'GoAhead Mobility coach supporting business and employee transportation',
-        heroSecondaryImage: '/images/site/accommodation-hero.png',
+        heroSecondaryImage: '/images/site/acc-hero.png',
         heroSecondaryImageAlt: 'Modern accommodation for business travellers',
         heroDecorationImage: '/images/site/world-map.png',
         formLabel: 'Work email address',
