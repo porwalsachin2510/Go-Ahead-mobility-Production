@@ -100,7 +100,7 @@ export function PrivacyPolicyPage({ page }: { page: PrivacyPage }) {
         <section className="mt-8 grid gap-3 lg:grid-cols-[1.2fr_.9fr]">
           <div className="rounded-xl border border-[#cbdcff] bg-[#f4f8ff] p-5 sm:p-6">
             <div className="grid gap-4 sm:grid-cols-[1fr_1fr] sm:items-center">
-              <div><h2 className="text-[17px] font-semibold">Privacy request or question?</h2><p className="mt-2 text-[11px] leading-relaxed text-[#405071]">If you have any question, request or concern about your personal information, please contact our privacy team.</p><a href="mailto:privacy@goaheadmobility.com" className="mt-3 inline-flex items-center gap-2 text-[11px] font-semibold text-[#0864f7]"><Mail className="size-4" aria-hidden />privacy@goaheadmobility.com</a></div>
+              <div><h2 className="text-[17px] font-semibold">Privacy request or question?</h2><p className="mt-2 text-[11px] leading-relaxed text-[#405071]">If you have any question, request or concern about your personal information, please contact our privacy team.</p><span className="mt-3 inline-flex items-center gap-2 text-[11px] font-semibold text-[#0864f7]"><Mail className="size-4" aria-hidden />privacy contact email to be confirmed</span></div>
               <div className="border-t border-[#cbdcff] pt-4 text-[11px] leading-relaxed text-[#405071] sm:border-l sm:border-t-0 sm:pl-5 sm:pt-0">We will acknowledge your request and respond within a reasonable timeframe in accordance with applicable laws.</div>
             </div>
           </div>
