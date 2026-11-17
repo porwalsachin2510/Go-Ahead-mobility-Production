@@ -21,7 +21,7 @@ function hasCookiePolicy(content?: PageContent | null) {
 
 async function writeVersion(page: CookiesPageSnapshot, changeNote: string) {
   const versionNumber = page.revision ?? 1
-  const snapshot = page.published ?? page.draft
+  const snapshot = page.draft ?? page.published
   if (!snapshot) return
 
   const filter = { pageId: page._id, versionNumber }
@@ -32,7 +32,7 @@ async function writeVersion(page: CookiesPageSnapshot, changeNote: string) {
         $setOnInsert: {
           ...filter,
           snapshot,
-          kind: page.published ? 'publish' : 'save',
+          kind: page.published && JSON.stringify(page.published) === JSON.stringify(page.draft) ? 'publish' : 'save',
           changeNote,
         },
       },
@@ -131,6 +131,9 @@ export async function ensureCookiesPolicyPage() {
   }
 
   if (!page?._id) throw new Error('Cookies Policy CMS page is unavailable')
+  if (!hasCookiePolicy(page.draft) || (page.published && !hasCookiePolicy(page.published))) {
+    throw new Error('Cookies Policy structured block could not be provisioned after concurrent updates; retry the request')
+  }
 
   await writeVersion(
     page,
