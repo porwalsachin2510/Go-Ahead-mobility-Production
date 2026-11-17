@@ -16,6 +16,8 @@ import { SAFETY_TRUST_NAV_LINK, SAFETY_TRUST_PATH } from '@/lib/safety-trust/def
 import { ensureSafetyTrustPage } from './safety-trust-provision'
 import { NEWSLETTER_PATH } from '@/lib/newsletter/defaults'
 import { ensureNewsletterPage } from './newsletter-provision'
+import { COOKIES_POLICY_PATH } from '@/lib/cookies/defaults'
+import { ensureCookiesPolicyPage } from './cookies-policy-provision'
 
 /** Converts lean Mongo docs into plain JSON-safe objects for Server → Client component props. */
 export function plain<T>(value: T): T {
@@ -231,6 +233,7 @@ export const getPublishedPage = cache(async (rawPath: string): Promise<PublicPag
   // First public visit safely provisions the page if the deployment migration was not run.
   if (path === SAFETY_TRUST_PATH) await ensureSafetyTrustPage()
   if (path === NEWSLETTER_PATH) await ensureNewsletterPage()
+  if (path === COOKIES_POLICY_PATH) await ensureCookiesPolicyPage()
   const now = new Date()
   const doc = await Page.findOne({
     path,
