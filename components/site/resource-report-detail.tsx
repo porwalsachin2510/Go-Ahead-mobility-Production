@@ -97,13 +97,6 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
   const fileFormat = d.fileFormat ? String(d.fileFormat).toUpperCase() : 'PDF report'
   const fileSize = d.fileSizeLabel || (d.fileMediaId ? 'From uploaded file' : 'Managed in resource details')
   const published = formatDate(d.publishedAt || d.updatedAt) || 'CMS managed'
-  const details = [
-    { icon: FileText, label: 'Format', value: fileFormat },
-    { icon: FileCheck2, label: 'File size', value: fileSize },
-    { icon: ChartNoAxesCombined, label: 'Page count', value: d.pageCount ? String(d.pageCount) : 'CMS managed' },
-    { icon: BookOpen, label: 'Version', value: d.version ? 'v' + d.version : 'CMS managed' },
-    { icon: CalendarDays, label: 'Published / Updated', value: published },
-  ]
   const trail = [
     { name: 'Home', path: '/' },
     { name: 'Resources', path: '/resources' },
@@ -127,10 +120,10 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
   const ctaHref = typeof d.bottomCtaButtonHref === 'string' && d.bottomCtaButtonHref ? d.bottomCtaButtonHref : '/contact?topic=resource'
   const navItems = [
     { label: d.overviewTabLabel || 'Overview', href: '#overview', icon: Users },
-    { label: d.questionsTabLabel || 'Key Insights', href: '#key-insights', icon: Lightbulb },
-    { label: d.contentsTabLabel || 'Inside the Report', href: '#inside-report', icon: ClipboardList },
+    { label: d.keyInsightsTabLabel || 'Key Insights', href: '#key-insights', icon: Lightbulb },
+    { label: d.insideReportTabLabel || 'Inside the Report', href: '#inside-report', icon: ClipboardList },
     { label: d.previewTabLabel || 'Preview', href: '#report-preview', icon: BookOpen },
-    { label: d.detailsTabLabel || 'Report Details', href: '#report-details', icon: CalendarDays },
+    { label: d.reportDetailsTabLabel || 'Report Details', href: '#report-details', icon: CalendarDays },
   ]
 
   return (
@@ -164,11 +157,11 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
             </motion.div>
 
             <aside className="rounded-2xl border border-[#e1e8f2] bg-white p-5 shadow-[0_12px_35px_rgba(21,48,89,.08)] sm:p-6">
-              <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.downloadPanelTitle || 'Access the complete report'}</h2>
-              <p className="mt-1.5 text-xs leading-relaxed text-[#69758d]">{d.downloadPanelBody || 'Download the full report to explore the frameworks, insights and practical guidance.'}</p>
+              <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.reportDownloadPanelTitle || 'Access the complete report'}</h2>
+              <p className="mt-1.5 text-xs leading-relaxed text-[#69758d]">{d.reportDownloadPanelBody || 'Download the full report to explore the frameworks, insights and practical guidance.'}</p>
               <Link href={downloadHref} className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#0863f7] px-4 py-3 text-xs font-semibold text-white shadow-sm transition hover:bg-[#064fca] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ee] focus-visible:ring-offset-2">
                 <ArrowDownToLine className="size-4" aria-hidden/>
-                {d.gated ? 'Request access' : canDownload ? (d.downloadButtonLabel || 'Download Report') : 'Request this report'}
+                {d.gated ? 'Request access' : canDownload ? (d.reportDownloadButtonLabel || 'Download Report') : 'Request this report'}
               </Link>
               <div className="mt-5 space-y-3 border-t border-[#edf0f5] pt-4">
                 {metaRows.map((item) => <div key={item.label} className="flex items-center gap-3">
@@ -196,12 +189,12 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
         <section id="overview" className={'scroll-mt-24 grid gap-8 border-b border-[#e8edf4] py-9 lg:gap-10 lg:py-10 ' + (audienceItems.length ? 'lg:grid-cols-[.85fr_1.15fr]' : '')}>
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[.16em] text-[#167be7]">{d.aboutEyebrow || 'About this report'}</p>
-            <h2 className="mt-2 text-xl font-semibold tracking-tight text-[#142449]">{d.aboutHeading || 'About this report'}</h2>
+            <h2 className="mt-2 text-xl font-semibold tracking-tight text-[#142449]">{d.reportAboutHeading || 'About this report'}</h2>
             {d.body ? <div className="mt-4 text-[12px] leading-6 text-[#5e6a83]"><Markdown>{d.body}</Markdown></div> : <p className="mt-4 text-[12px] leading-6 text-[#5e6a83]">{d.summary || 'A practical report for mobility and operations teams.'}</p>}
           </div>
           {audienceItems.length ? <div>
             <p className="text-[10px] font-bold uppercase tracking-[.16em] text-[#167be7]">{d.audienceEyebrow || 'For your team'}</p>
-            <h2 className="mt-2 text-xl font-semibold tracking-tight text-[#142449]">{d.audienceHeading || 'Who should read this'}</h2>
+            <h2 className="mt-2 text-xl font-semibold tracking-tight text-[#142449]">{d.reportAudienceHeading || 'Who should read this'}</h2>
             <div className="mt-5 grid grid-cols-2 gap-4 md:grid-cols-4">
               {audienceItems.map((item: any, index: number) => <div key={item.title || index} className="flex flex-col items-center border-l border-[#e9eef5] px-2 text-center first:border-0">
                 <span className="flex size-11 items-center justify-center text-[#1678f2]"><AudienceIcon name={item.icon}/></span>
@@ -214,7 +207,7 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
 
         <section className="grid gap-4 py-7 lg:grid-cols-[.82fr_1.18fr] lg:py-8">
           <div className="rounded-2xl border border-[#edf1f6] bg-white p-5 shadow-[0_5px_20px_rgba(20,43,80,.035)] sm:p-6">
-            <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.questionsHeading || 'Questions this report explores'}</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.reportQuestionsHeading || 'Questions this report explores'}</h2>
             {questions.length ? <ol className="mt-4 divide-y divide-[#e7edf5]">
               {questions.map((item: any, index: number) => <li key={item.question || index} className="flex gap-3 py-3 first:pt-0 last:pb-0">
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-[#cfe0fa] text-[11px] font-semibold text-[#0863f7]">{String(index + 1).padStart(2, '0')}</span>
@@ -223,7 +216,7 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
             </ol> : <p className="mt-4 text-xs text-[#6b7891]">Add the report questions in Admin → Resources to show them here.</p>}
           </div>
           <div id="inside-report" className="scroll-mt-24 rounded-2xl border border-[#edf1f6] bg-white p-5 shadow-[0_5px_20px_rgba(20,43,80,.035)] sm:p-6">
-            <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.paperContentsHeading || 'Inside the report'}</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.reportContentsHeading || 'Inside the report'}</h2>
             {contents.length ? <ol className="mt-4 divide-y divide-[#e7edf5] border-t border-[#e7edf5]">
               {contents.map((item: any, index: number) => <li key={item.title || index} className="flex items-center gap-3 py-3">
                 <span className="flex size-8 shrink-0 items-center justify-center rounded-md border border-[#e0e9f7] text-[11px] font-semibold text-[#0863f7]">{String(index + 1).padStart(2, '0')}</span>
@@ -263,7 +256,7 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
 
         <section id="report-preview" className="scroll-mt-24 py-6">
           <div className="rounded-2xl border border-[#e8eef6] bg-white p-5 shadow-[0_6px_24px_rgba(20,43,80,.035)] sm:p-6">
-            <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.previewHeading || 'Preview the report'}</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.reportPreviewHeading || 'Preview the report'}</h2>
             <div className="mt-5"><ResourcePreviewCarousel slides={slides} title={d.previewHeading || 'Report preview'} variant="gallery"/></div>
             <p className="mt-4 text-[11px] leading-relaxed text-[#68748c]">{d.previewDescription || 'This is a preview. The full report includes complete frameworks, detailed guidance and reference materials.'}</p>
           </div>
@@ -271,7 +264,7 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
 
         <section id="report-details" className="scroll-mt-24 py-5">
           <div className="rounded-2xl border border-[#e8eef6] bg-white p-5 shadow-[0_6px_22px_rgba(20,43,80,.035)] sm:p-6">
-            <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.detailsHeading || 'Report details'}</h2>
+            <h2 className="text-lg font-semibold tracking-tight text-[#142449]">{d.reportDetailsHeading || 'Report details'}</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
               {details.map((item) => <div key={item.label} className="flex items-center gap-3 rounded-xl border border-[#e7edf6] bg-[#fbfdff] p-3">
                 <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-[#d8e7ff] bg-white text-[#1678ef]"><item.icon className="size-5" aria-hidden/></span>
@@ -285,7 +278,7 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
 
         <section className="pb-7 pt-2">
           <div className="mb-4 flex items-end justify-between gap-4">
-            <div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-[#167be7]">{d.relatedEyebrow || 'Keep exploring'}</p><h2 className="mt-1 text-xl font-semibold tracking-tight text-[#142449]">{d.relatedHeading || 'Related reports and insights'}</h2></div>
+            <div><p className="text-[10px] font-bold uppercase tracking-[.16em] text-[#167be7]">{d.relatedEyebrow || 'Keep exploring'}</p><h2 className="mt-1 text-xl font-semibold tracking-tight text-[#142449]">{d.reportRelatedHeading || 'Related reports and insights'}</h2></div>
             <Link href="/resources" className="hidden items-center gap-1 text-xs font-semibold text-[#0863f7] sm:inline-flex">All resources <ArrowRight className="size-4" aria-hidden/></Link>
           </div>
           {related.length ? <div className="grid gap-3 md:grid-cols-3">
@@ -303,8 +296,8 @@ export function ResourceReportDetailPage({ resource: d }: Props) {
 
         <section className="relative isolate mb-7 grid overflow-hidden rounded-2xl border border-[#dce9ff] bg-[linear-gradient(110deg,#f3f7ff,#f9fbff)] p-5 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-5 sm:p-7">
           <div className="flex size-16 items-center justify-center rounded-full border border-[#84b5ff] bg-white text-[#0863f7] sm:size-20"><Users className="size-9" aria-hidden/></div>
-          <div className="relative z-10 mt-4 sm:mt-0"><h2 className="max-w-xl text-xl font-semibold leading-tight tracking-tight text-[#142449]">{d.bottomCtaTitle || 'Turn mobility insights into an operating plan'}</h2><p className="mt-2 max-w-xl text-xs leading-relaxed text-[#64718a]">{d.bottomCtaBody || 'Let our mobility experts help you design, implement and operate programmes that are safe, reliable and people-centric.'}</p></div>
-          <Link href={ctaHref} className="relative z-10 mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-[#0863f7] px-5 py-3 text-[11px] font-semibold text-white transition hover:bg-[#064fca] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ee] focus-visible:ring-offset-2 sm:mt-0">{d.bottomCtaButtonLabel || 'Discuss your requirements'} <ArrowRight className="size-4" aria-hidden/></Link>
+          <div className="relative z-10 mt-4 sm:mt-0"><h2 className="max-w-xl text-xl font-semibold leading-tight tracking-tight text-[#142449]">{d.reportBottomCtaTitle || 'Turn mobility insights into an operating plan'}</h2><p className="mt-2 max-w-xl text-xs leading-relaxed text-[#64718a]">{d.reportBottomCtaBody || 'Let our mobility experts help you design, implement and operate programmes that are safe, reliable and people-centric.'}</p></div>
+          <Link href={ctaHref} className="relative z-10 mt-5 inline-flex items-center justify-center gap-2 rounded-lg bg-[#0863f7] px-5 py-3 text-[11px] font-semibold text-white transition hover:bg-[#064fca] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ee] focus-visible:ring-offset-2 sm:mt-0">{d.reportBottomCtaButtonLabel || 'Discuss your requirements'} <ArrowRight className="size-4" aria-hidden/></Link>
           <div className="pointer-events-none absolute -right-8 -bottom-20 size-64 rounded-full border-[24px] border-[#dce9ff]/65"/>
         </section>
 
