@@ -41,7 +41,7 @@ describe('dedicated public route ownership', () => {
   })
 
   it('leaves custom CMS page paths available', () => {
-    for (const path of ['/privacy', '/terms', '/campaign/autumn', '/services/custom']) {
+    for (const path of ['/privacy', '/terms', '/company/safety-trust', '/campaign/autumn', '/services/custom']) {
       expect(isDedicatedPublicPath(path), path).toBe(false)
     }
   })
