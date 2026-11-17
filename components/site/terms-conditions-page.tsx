@@ -133,9 +133,9 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
           <section data-scroll-reveal className="flex flex-col gap-4 rounded-xl border border-[#d5e3fa] bg-[#f5f8ff] p-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
             <div className="flex items-center gap-4">
               <MessageCircle className="size-10 shrink-0 text-[#14234b]" strokeWidth={1.3} aria-hidden />
-              <div><h2 className="text-[14px] font-semibold text-[#14234b]">Questions about these Terms?</h2><p className="mt-1 text-[11px] text-[#52617d]">Our team is here to help. Get in touch with us for any questions or clarifications.</p></div>
+              <div><h2 className="text-[14px] font-semibold text-[#14234b]">{String(data.ctaTitle || 'Questions about these Terms?')}</h2><p className="mt-1 text-[11px] text-[#52617d]">{String(data.ctaDescription || 'Our team is here to help. Get in touch with us for any questions or clarifications.')}</p></div>
             </div>
-            <Link href="/contact" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[#0864f7] px-5 text-[11px] font-semibold text-white transition-colors hover:bg-[#2478ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0864f7]">Contact Us <ArrowRight className="size-3.5" aria-hidden /></Link>
+            <Link href={String(data.ctaButtonHref || '/contact')} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[#0864f7] px-5 text-[11px] font-semibold text-white transition-colors hover:bg-[#2478ff] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0864f7]">{String(data.ctaButtonLabel || 'Contact Us')} <ArrowRight className="size-3.5" aria-hidden /></Link>
           </section>
         </ScrollReveal>
       </div>
