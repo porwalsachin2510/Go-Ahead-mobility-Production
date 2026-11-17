@@ -1,9 +1,11 @@
+'use client'
+
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { ArrowRight, ChevronRight, FileCheck2, Scale, Info, CheckCircle2, MessageCircle } from 'lucide-react'
-import { Reveal } from '@/components/motion/reveal'
 import { ScrollReveal } from '@/components/motion/gsap-effects'
+import { motion, useReducedMotion } from 'motion/react'
 
 type TermsPage = {
   title: string
@@ -29,6 +31,7 @@ function parseSections(markdown: string) {
 }
 
 export function TermsConditionsPage({ page }: { page: TermsPage }) {
+  const reduceMotion = useReducedMotion()
   const block = page.blocks.find((item) => item.type === 'richText' && !item.hidden)
   const data = block?.data ?? {}
   const sections = parseSections(String(data.body ?? ''))
@@ -54,12 +57,12 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
             <Scale className="-mt-8 ml-10 size-9 bg-white text-[#0864f7]" strokeWidth={1.2} />
           </div>
           <div className="max-w-[790px]">
-            <Reveal y={18}>
+            <motion.div initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={reduceMotion ? undefined : { opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#0864f7]">Legal · {subtitle}</p>
               <h1 className="text-[clamp(2rem,4vw,2.8rem)] font-semibold leading-tight tracking-[-.045em]">{title}</h1>
               <p className="mt-3 max-w-[760px] text-[13px] leading-[1.75] text-[#405071]">{intro}</p>
               <p className="mt-3 text-[11px] font-semibold text-[#14234b]">Last updated: <span className="font-medium text-[#0864f7]">{String(data.lastUpdated || '[Date to be confirmed]')}</span></p>
-            </Reveal>
+            </motion.div>
             <div className="mt-5 flex items-center gap-3 rounded-md border border-[#dce8ff] bg-[#eff5ff] px-4 py-3 text-[11px] text-[#263c67]">
               <Info className="size-4 shrink-0 text-[#0864f7]" aria-hidden />
               <span>{String(data.notice || 'Phase 1 website enquiries are not confirmed bookings or service orders.')}</span>
@@ -92,8 +95,8 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
           <main className="min-w-0">
             <div className="divide-y divide-[#e5eaf2]">
               {sections.map((section, index) => (
-                <section id={section.id} key={section.id} className={`scroll-mt-28 py-4 first:pt-0 ${cleanHeading(section.heading).toLowerCase() === 'important distinction' ? 'my-4 rounded-lg border border-[#8fc5ff] bg-[#f5faff] px-4 sm:px-5' : ''}`}>
-                  <Reveal y={14} delay={Math.min(index * 28, 220)}>
+                <motion.section id={section.id} key={section.id} initial={reduceMotion ? false : { opacity: 0, y: 14 }} whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.12 }} transition={{ duration: 0.65, delay: Math.min(index * 0.025, 0.18), ease: 'easeOut' }} className={`scroll-mt-28 py-4 first:pt-0 ${cleanHeading(section.heading).toLowerCase() === 'important distinction' ? 'my-4 rounded-lg border border-[#8fc5ff] bg-[#f5faff] px-4 sm:px-5' : ''}`}>
+
                     <div className="flex gap-3">
                       {section.number ? <span className="pt-0.5 text-[13px] font-bold text-[#0864f7]">{section.number}.</span> : null}
                       <div className="min-w-0 flex-1">
@@ -114,8 +117,7 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
                         </div>
                       </div>
                     </div>
-                  </Reveal>
-                </section>
+                </motion.section>
               ))}
             </div>
 
