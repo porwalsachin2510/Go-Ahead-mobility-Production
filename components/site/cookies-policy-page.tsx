@@ -121,7 +121,7 @@ function CookieToggle({ checked, label, onChange }: { checked: boolean; label: s
       onClick={() => onChange(!checked)}
       className={[
         'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition-colors duration-200',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0864f7] focus-visible:ring-offset-2',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0864f7] focus-visible:ring-offset-2 motion-reduce:transition-none',
         checked ? 'border-[#0864f7] bg-[#0864f7]' : 'border-[#aebbd0] bg-[#e7edf5]',
       ].join(' ')}
     >
@@ -239,6 +239,7 @@ function CookiePreferencesPanel({ data }: { data: Data }) {
                 id={detailId}
                 role="region"
                 aria-label={`${String(category.title || key)} details`}
+                aria-hidden={!isExpanded}
                 className={['grid overflow-hidden transition-[grid-template-rows,opacity] duration-200 motion-reduce:transition-none', isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'].join(' ')}
               >
                 <div className="min-h-0 overflow-hidden">
@@ -371,7 +372,7 @@ export function CookiesPolicyPage({ page }: { page: CookiePolicyPageRecord | nul
                         <div className="mt-1.5">
                           <Markdown>{String(section.body || '')}</Markdown>
                         </div>
-                        {index === 7 ? <CookiePreferencesPanel data={data} /> : null}
+                        {section.anchor === 'consent-preferences' ? <CookiePreferencesPanel data={data} /> : null}
                       </div>
                     </div>
                   </motion.div>
