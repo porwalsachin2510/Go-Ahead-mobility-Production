@@ -75,6 +75,46 @@ function withMissingLinks(footer: NavItem[], legal: NavItem[]) {
   }
   company.children = companyLinks
 
+  // Put Newsletter in the Resources column rather than a generic fallback column.
+  let resources = groups.find((group) =>
+    group.label.trim().toLowerCase() === 'resources' ||
+    normalize(group.href) === '/resources',
+  )
+  if (!resources) {
+    resources = { id: 'fb-resources', label: 'Resources', href: '/resources', children: [] }
+    groups.push(resources)
+  }
+  const newsletterCandidates = [
+    ...groups.filter((group) => normalize(group.href) === '/newsletter' || group.label.trim().toLowerCase() === 'newsletter'),
+    ...groups.flatMap((group) => group.children ?? []).filter((item) =>
+      normalize(item.href) === '/newsletter' || item.label.trim().toLowerCase() === 'newsletter',
+    ),
+  ]
+  const newsletterExisting = newsletterCandidates[0]
+  for (const group of groups) {
+    group.children = (group.children ?? []).filter((item) =>
+      normalize(item.href) !== '/newsletter' &&
+      item.label.trim().toLowerCase() !== 'newsletter',
+    )
+  }
+  for (let i = groups.length - 1; i >= 0; i -= 1) {
+    if (normalize(groups[i].href) === '/newsletter' || groups[i].label.trim().toLowerCase() === 'newsletter') {
+      groups.splice(i, 1)
+    }
+  }
+  const resourceLinks = resources.children ?? []
+  if (!resourceLinks.some((item) => normalize(item.href) === '/resources' || item.label.trim().toLowerCase() === 'resource centre')) {
+    resourceLinks.push({ id: 'fb-resource-centre', label: 'Resource Centre', href: '/resources' })
+  }
+  resourceLinks.push({
+    ...(newsletterExisting ?? {}),
+    id: newsletterExisting?.id || 'fb-resources-newsletter',
+    label: 'Newsletter',
+    href: '/newsletter',
+    visible: true,
+  })
+  resources.children = resourceLinks
+
   const linked = new Set<string>()
   for (const group of [...groups, ...legal]) {
     linked.add(normalize(group.href))
