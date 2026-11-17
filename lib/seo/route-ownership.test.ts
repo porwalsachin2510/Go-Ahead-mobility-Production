@@ -15,10 +15,13 @@ describe('dedicated public route ownership', () => {
       '/faq',
       '/careers',
       '/blog',
-      '/newsletter',
     ]) {
       expect(isDedicatedPublicPath(path), path).toBe(true)
     }
+  })
+
+  it('leaves the Newsletter landing page editable through the CMS', () => {
+    expect(isDedicatedPublicPath('/newsletter')).toBe(false)
   })
 
   it('recognises dynamic route families', () => {
