@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { ArrowRight, ChevronRight, FileCheck2, Scale, ShieldAlert, Mail, Info, CheckCircle2, MessageCircle } from 'lucide-react'
+import { ArrowRight, ChevronRight, FileCheck2, Scale, Info, CheckCircle2, MessageCircle } from 'lucide-react'
 import { Reveal } from '@/components/motion/reveal'
 import { ScrollReveal } from '@/components/motion/gsap-effects'
 
@@ -57,11 +57,11 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[.18em] text-[#0864f7]">Legal · {subtitle}</p>
               <h1 className="text-[clamp(2rem,4vw,2.8rem)] font-semibold leading-tight tracking-[-.045em]">{title}</h1>
               <p className="mt-3 max-w-[760px] text-[13px] leading-[1.75] text-[#405071]">{intro}</p>
-              <p className="mt-3 text-[11px] font-semibold text-[#14234b]">Last updated: <span className="font-medium text-[#0864f7]">[Date to be confirmed]</span></p>
+              <p className="mt-3 text-[11px] font-semibold text-[#14234b]">Last updated: <span className="font-medium text-[#0864f7]">{String(data.lastUpdated || '[Date to be confirmed]')}</span></p>
             </Reveal>
             <div className="mt-5 flex items-center gap-3 rounded-md border border-[#dce8ff] bg-[#eff5ff] px-4 py-3 text-[11px] text-[#263c67]">
               <Info className="size-4 shrink-0 text-[#0864f7]" aria-hidden />
-              <span>Phase 1 website enquiries are not confirmed bookings or service orders.</span>
+              <span>{String(data.notice || 'Phase 1 website enquiries are not confirmed bookings or service orders.')}</span>
             </div>
           </div>
         </header>
@@ -84,14 +84,14 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
             <div className="mt-4 hidden rounded-xl border border-[#dce3ef] p-4 lg:block">
               <Scale className="mb-2 size-5 text-[#0864f7]" aria-hidden />
               <h3 className="text-[11px] font-bold">Important note</h3>
-              <p className="mt-2 text-[10px] leading-[1.7] text-[#52617d]">This website is intended for business use by organisations and corporate decision makers. For individual transport services, please contact the relevant operator directly.</p>
+              <p className="mt-2 text-[10px] leading-[1.7] text-[#52617d]">{String(data.sideNote || 'This website is intended for business use by organisations and corporate decision makers. For individual transport services, please contact the relevant operator directly.')}</p>
             </div>
           </aside>
 
           <main className="min-w-0">
             <div className="divide-y divide-[#e5eaf2]">
               {sections.map((section, index) => (
-                <section id={section.id} key={section.id} className="scroll-mt-28 py-4 first:pt-0">
+                <section id={section.id} key={section.id} className={`scroll-mt-28 py-4 first:pt-0 ${cleanHeading(section.heading).toLowerCase() === 'important distinction' ? 'my-4 rounded-lg border border-[#8fc5ff] bg-[#f5faff] px-4 sm:px-5' : ''}`}>
                   <Reveal y={14} delay={Math.min(index * 28, 220)}>
                     <div className="flex gap-3">
                       <span className="pt-0.5 text-[13px] font-bold text-[#0864f7]">{section.number}.</span>
@@ -118,33 +118,7 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
               ))}
             </div>
 
-            <ScrollReveal className="mt-5">
-              <section data-scroll-reveal className="rounded-lg border border-[#8fc5ff] bg-[#f5faff] p-4 sm:p-5" aria-labelledby="terms-distinction">
-                <h2 id="terms-distinction" className="text-[13px] font-bold text-[#14234b]">Important distinction</h2>
-                <p className="mt-1 text-[10px] text-[#52617d]">Understanding the difference between an enquiry and a confirmed agreement.</p>
-                <div className="mt-3 grid gap-3 md:grid-cols-[1fr_auto_1fr] md:items-center">
-                  <div className="rounded-lg border border-[#dce5f3] bg-white p-4">
-                    <div className="flex items-center gap-3"><span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-[#dce8ff] text-[#0864f7]"><MessageCircle className="size-6" /></span><h3 className="text-[11px] font-bold">Website enquiry</h3></div>
-                    <ul className="mt-3 space-y-2 text-[10px] text-[#405071]">
-                      <li className="flex gap-2"><CheckCircle2 className="size-3.5 shrink-0 text-[#16a6a1]" />You submit an enquiry through our website.</li>
-                      <li className="flex gap-2"><CheckCircle2 className="size-3.5 shrink-0 text-[#16a6a1]" />We contact you to understand your requirements.</li>
-                      <li className="flex gap-2"><CheckCircle2 className="size-3.5 shrink-0 text-[#16a6a1]" />We may share a proposal or indicative information.</li>
-                      <li className="flex gap-2"><CheckCircle2 className="size-3.5 shrink-0 text-[#16a6a1]" />No booking or commitment is created.</li>
-                    </ul>
-                  </div>
-                  <span className="mx-auto flex size-9 items-center justify-center rounded-full border border-[#dce5f3] bg-white text-[11px] font-bold text-[#0864f7]">VS</span>
-                  <div className="rounded-lg border border-[#dce5f3] bg-white p-4">
-                    <div className="flex items-center gap-3"><span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-[#dce8ff] text-[#0864f7]"><FileCheck2 className="size-6" /></span><h3 className="text-[11px] font-bold">Confirmed service agreement</h3></div>
-                    <ul className="mt-3 space-y-2 text-[10px] text-[#405071]">
-                      <li className="flex gap-2"><CheckCircle2 className="size-3.5 shrink-0 text-[#16a6a1]" />You receive and accept a written proposal or contract.</li>
-                      <li className="flex gap-2"><CheckCircle2 className="size-3.5 shrink-0 text-[#16a6a1]" />Both parties agree to the terms and scope of service.</li>
-                      <li className="flex gap-2"><CheckCircle2 className="size-3.5 shrink-0 text-[#16a6a1]" />A formal service agreement or purchase order is issued.</li>
-                      <li className="flex gap-2"><CheckCircle2 className="size-3.5 shrink-0 text-[#16a6a1]" />The agreed terms set out the rights and obligations.</li>
-                    </ul>
-                  </div>
-                </div>
-              </section>
-            </ScrollReveal>
+crollReveal>
           </main>
         </div>
 
