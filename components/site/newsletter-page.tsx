@@ -167,7 +167,7 @@ export function NewsletterPage({ page, status }: { page: NewsletterPageRecord | 
                 <span className="text-xs font-semibold text-ink">{value(data, 'previewEdition', 'Newsletter')}</span>
               </div>
               <p className="mt-3 text-[9px] font-semibold uppercase tracking-[.12em] text-azure">Insights for business mobility leaders</p>
-              <div className="mt-3 h-[57%] overflow-hidden rounded-lg bg-[#edf3fb]">
+              <div className="relative mt-3 h-[57%] overflow-hidden rounded-lg bg-[#edf3fb]">
                 <CmsImage src={value(data, 'heroSecondaryImage')} alt={value(data, 'heroSecondaryImageAlt')} className="object-cover" />
               </div>
               <div className="mt-3 flex items-center justify-between gap-2">
