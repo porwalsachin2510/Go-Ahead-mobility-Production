@@ -232,7 +232,6 @@ export const BLOCKS: BlockDef[] = [
           { key: 'description', label: 'Short description', kind: 'textarea', max: 300 },
           { key: 'alwaysActiveLabel', label: 'Always active label', kind: 'text', max: 60 },
           { key: 'locked', label: 'Cannot be disabled', kind: 'boolean' },
-          { key: 'defaultEnabled', label: 'Enabled by default', kind: 'boolean' },
           { key: 'details', label: 'Expanded details', kind: 'textarea', max: 600 },
         ],
       },
