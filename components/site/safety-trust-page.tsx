@@ -96,7 +96,7 @@ export function SafetyTrustPage({ page }: { page: SafetyTrustPageData }) {
   const quickLinks = records(data.quickLinks)
 
   return (
-    <main id="main" className="overflow-hidden bg-white text-[#14234b]" data-page="safety-trust">
+    <div id="safety-trust-content" className="overflow-hidden bg-white text-[#14234b]" data-page="safety-trust" aria-label="Safety & Trust">
       <div className="mx-auto max-w-[1320px] px-4 pb-8 pt-4 sm:px-6 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-2 text-[11px] text-[#64708b]">
           <Link href="/" className="transition-colors hover:text-[#0864f7]">Home</Link>
@@ -289,6 +289,6 @@ export function SafetyTrustPage({ page }: { page: SafetyTrustPageData }) {
           </nav>
         ) : null}
       </div>
-    </main>
+    </div>
   )
 }
