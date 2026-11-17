@@ -118,7 +118,6 @@ export function TermsConditionsPage({ page }: { page: TermsPage }) {
               ))}
             </div>
 
-crollReveal>
           </main>
         </div>
 
