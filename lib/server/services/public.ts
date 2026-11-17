@@ -12,6 +12,8 @@ import { DEFAULT_TRANSPORTATION_PAGE_CONTENT } from '@/lib/transportation/defaul
 import { DEFAULT_FOOTPRINT_PAGE_CONTENT } from '@/lib/footprint/defaults'
 import { DEFAULT_INDUSTRY_PAGE_CONTENT } from '@/lib/industries/defaults'
 import { DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT } from '@/lib/why-choose-us/defaults'
+import { SAFETY_TRUST_NAV_LINK, SAFETY_TRUST_PATH } from '@/lib/safety-trust/defaults'
+import { ensureSafetyTrustPage } from './safety-trust-provision'
 
 /** Converts lean Mongo docs into plain JSON-safe objects for Server → Client component props. */
 export function plain<T>(value: T): T {
@@ -104,6 +106,30 @@ function withWhyChooseUsCompanyLink(items: NavItem[], menuKey: 'primary' | 'foot
     company.children = children
   }
 
+  // Render Safety & Trust in Company menus even before the one-time menu migration runs.
+  const currentChildren = [...(company.children ?? [])]
+  const safetyMatches = currentChildren
+    .map((child, index) => ({ child, index }))
+    .filter(({ child }) =>
+      normalize(child.href) === SAFETY_TRUST_PATH ||
+      child.label.trim().toLowerCase() === 'safety & trust',
+    )
+  const safetyCanonical: NavItem = {
+    ...(safetyMatches[0]?.child ?? {}),
+    ...SAFETY_TRUST_NAV_LINK,
+    id: safetyMatches[0]?.child.id || (menuKey === 'primary' ? 'company-safety-trust-primary' : 'company-safety-trust-footer'),
+  }
+  if (safetyMatches.length) {
+    const keepIndex = safetyMatches[0].index
+    company.children = currentChildren
+      .map((child, index) => index === keepIndex ? safetyCanonical : child)
+      .filter((_child, index) => index === keepIndex || !safetyMatches.some((match) => match.index === index))
+  } else {
+    const whyIndex = currentChildren.findIndex((child) => normalize(child.href) === WHY_CHOOSE_US_PATH || child.label.trim().toLowerCase() === 'why choose us')
+    currentChildren.splice(whyIndex >= 0 ? whyIndex + 1 : currentChildren.length, 0, safetyCanonical)
+    company.children = currentChildren
+  }
+
   return next
 }
 
@@ -153,6 +179,8 @@ function normalizePath(path: string) {
 export const getPublishedPage = cache(async (rawPath: string): Promise<PublicPage | null> => {
   await connectDb()
   const path = normalizePath(rawPath)
+  // First public visit safely provisions the page if the deployment migration was not run.
+  if (path === SAFETY_TRUST_PATH) await ensureSafetyTrustPage()
   const now = new Date()
   const doc = await Page.findOne({
     path,
