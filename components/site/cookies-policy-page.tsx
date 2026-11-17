@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { motion, useReducedMotion } from 'motion/react'
@@ -271,20 +271,18 @@ export function CookiesPolicyPage({ page }: { page: CookiePolicyPageRecord | nul
   const sections = records(data.sections)
   const sidebarCards = records(data.sidebarCards)
   const inventoryRows = records(data.inventoryRows)
-  const columns: string[] = Array.isArray(data.inventoryColumns)
-    ? data.inventoryColumns.map((entry: unknown) => String(entry))
-    : [
-      text(data, 'inventoryCategoryLabel', 'Category'),
-      text(data, 'inventoryPurposeLabel', 'Purpose'),
-      text(data, 'inventoryProviderLabel', 'Provider / cookie name'),
-      text(data, 'inventoryDurationLabel', 'Duration'),
-    ]
+  const columns = [
+    text(data, 'inventoryCategoryLabel', 'Category'),
+    text(data, 'inventoryPurposeLabel', 'Purpose'),
+    text(data, 'inventoryProviderLabel', 'Provider / cookie name'),
+    text(data, 'inventoryDurationLabel', 'Duration'),
+  ]
 
-  const sectionIds = useMemo(() => sections.map((section, index) => ({
+  const sectionIds = sections.map((section, index) => ({
     ...section,
     anchor: slug(String(section.id || section.heading || ''), `cookie-section-${index + 1}`),
     number: String(index + 1).padStart(2, '0'),
-  })), [sections])
+  }))
 
   const jumpToPreferences = () => {
     document.getElementById('consent-preferences')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' })
@@ -333,7 +331,7 @@ export function CookiesPolicyPage({ page }: { page: CookiePolicyPageRecord | nul
             })}
           </aside>
 
-          <main className="order-1 min-w-0 lg:order-2">
+          <div className="order-1 min-w-0 lg:order-2">
             <header className="border-b border-[#e5eaf2] pb-4">
               <motion.div
                 initial={reduceMotion ? false : { opacity: 0, y: 12 }}
