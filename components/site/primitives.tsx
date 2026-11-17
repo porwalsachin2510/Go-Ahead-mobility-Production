@@ -8,13 +8,13 @@ import { createSlugger } from '@/lib/blog/toc'
 
 const OPTIMIZABLE = /^(\/images\/|\/brand\/|\/api\/v1\/media\/|https:\/\/res\.cloudinary\.com\/)/
 
-export function SmartImage({ src, alt, className, sizes = '100vw', priority }: { src: string; alt: string; className?: string; sizes?: string; priority?: boolean }) {
+export function SmartImage({ src, alt, className, sizes = '100vw', priority, objectPosition }: { src: string; alt: string; className?: string; sizes?: string; priority?: boolean; objectPosition?: string }) {
   if (!src) return null
   if (OPTIMIZABLE.test(src)) {
-    return <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className={cn('object-cover', className)} />
+    return <Image src={src} alt={alt} fill sizes={sizes} priority={priority} style={objectPosition ? { objectPosition } : undefined} className={cn('object-cover', className)} />
   }
   // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} loading={priority ? 'eager' : 'lazy'} className={cn('absolute inset-0 h-full w-full object-cover', className)} />
+  return <img src={src} alt={alt} loading={priority ? 'eager' : 'lazy'} style={objectPosition ? { objectPosition } : undefined} className={cn('absolute inset-0 h-full w-full object-cover', className)} />
 }
 
 function nodeText(node: React.ReactNode): string {

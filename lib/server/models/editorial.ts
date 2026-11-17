@@ -874,6 +874,7 @@ const whyChooseUsPageContentSchema = new Schema(
     heroDescription: { type: String, default: '', maxlength: 700 },
     heroImage: { type: String, default: '/images/site/transport-hero.png', maxlength: 500 },
     heroImageAlt: { type: String, default: '', maxlength: 240 },
+    heroImagePosition: { type: String, default: '50% 50%', maxlength: 40 },
     heroPrimaryLabel: { type: String, default: 'Discuss Your Requirements', maxlength: 80 },
     heroPrimaryHref: { type: String, default: '/contact', maxlength: 500 },
     heroSecondaryLabel: { type: String, default: 'Explore Our Approach', maxlength: 80 },

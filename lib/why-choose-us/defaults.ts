@@ -14,6 +14,7 @@ export const DEFAULT_WHY_CHOOSE_US_PAGE_CONTENT = {
   heroDescription: 'GoAhead Mobility brings accommodation and local transportation requirements into a coordinated service relationship so your people can focus on what matters while we manage the complexity.',
   heroImage: '/images/site/transport-hero.png',
   heroImageAlt: 'GoAhead Mobility employee transport coach outside a modern business campus',
+  heroImagePosition: '50% 50%',
   heroPrimaryLabel: 'Discuss Your Requirements',
   heroPrimaryHref: '/contact',
   heroSecondaryLabel: 'Explore Our Approach',

@@ -45,34 +45,97 @@ export function WhyChooseUsPage({ content: c }: Props) {
   return (
     <article data-page="why-choose-us" className="overflow-hidden bg-white text-[#101d42]">
       {c.showHero !== false ? (
-        <section className="relative isolate overflow-hidden border-b border-[#e8edf5] bg-[linear-gradient(115deg,#ffffff_0%,#f8fbff_53%,#edf5ff_100%)]">
-          <div className="mx-auto max-w-[1240px] px-5 pb-8 pt-5 sm:px-7 lg:px-10 lg:pb-10">
-            <Breadcrumbs trail={[
-              { name: 'Home', path: '/' },
-              { name: 'Company', path: '/company/why-choose-us' },
-              { name: 'Why Choose Us', path: '/company/why-choose-us' },
-            ]} />
-            <div className="relative mt-6 grid min-h-[330px] items-center gap-7 lg:grid-cols-[.88fr_1.12fr] lg:gap-10">
-              <div className="relative z-10 max-w-[560px] py-5 lg:py-9">
+        <section className="relative isolate overflow-hidden bg-white">
+          <div className="relative mx-auto max-w-[1240px]">
+            <div className="relative z-20 px-5 pt-4 sm:px-7 md:absolute md:left-0 md:top-3 md:px-7 md:pt-0 lg:px-10">
+              <Breadcrumbs trail={[
+                { name: 'Home', path: '/' },
+                { name: 'Company', path: '/company/why-choose-us' },
+                { name: 'Why Choose Us', path: '/company/why-choose-us' },
+              ]} />
+            </div>
+
+            <div className="grid grid-cols-1 items-center gap-0 md:grid-cols-[41%_59%] md:pl-7 lg:pl-10">
+              <div className="relative z-10 px-5 pb-7 pt-7 sm:px-7 md:px-0 md:pr-2 md:pt-14 md:pb-0">
                 {c.heroEyebrow ? <p className="mb-3 text-[10px] font-bold uppercase tracking-[.2em] text-[#167be7]">{c.heroEyebrow}</p> : null}
-                <motion.h1 {...reveal} className="max-w-[570px] text-balance text-[clamp(2rem,4.4vw,3.25rem)] font-semibold leading-[1.05] tracking-[-.045em] text-[#101d42]">
+                <motion.h1
+                  initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.62, ease: 'easeOut' }}
+                  className="max-w-[560px] text-balance text-[clamp(1.9rem,3.55vw,2.65rem)] font-semibold leading-[1.12] tracking-[-.045em] text-[#101d42]"
+                >
                   <span className="block">{c.heroTitle || 'A clearer way to'}</span>
                   {c.heroHighlight ? <span className="text-[#0863f7]">{c.heroHighlight}</span> : null}
                 </motion.h1>
-                {c.heroDescription ? <motion.p {...reveal} transition={reduceMotion ? { duration: 0 } : { duration: .55, delay: .08, ease: 'easeOut' }} className="mt-4 max-w-[500px] text-[12px] leading-6 text-[#4d5a75] sm:text-[13px]">{c.heroDescription}</motion.p> : null}
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  {c.heroPrimaryLabel ? <Link href={c.heroPrimaryHref || '/contact'} className="group inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[#0863f7] px-4 py-2.5 text-[10px] font-semibold text-white shadow-[0_7px_20px_rgba(8,99,247,.18)] transition hover:-translate-y-0.5 hover:bg-[#064fca] hover:shadow-[0_10px_24px_rgba(8,99,247,.24)] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef] focus-visible:ring-offset-2">{c.heroPrimaryLabel}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" /></Link> : null}
-                  {c.heroSecondaryLabel ? <Link href={c.heroSecondaryHref || '#how-we-work'} className="group inline-flex min-h-10 items-center gap-2 rounded-md px-3 py-2.5 text-[10px] font-semibold text-[#0863f7] transition hover:bg-[#edf5ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef]">{c.heroSecondaryLabel}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" aria-hidden="true" /></Link> : null}
-                </div>
+                {c.heroDescription ? (
+                  <motion.p
+                    initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: reduceMotion ? 0 : 0.58, delay: reduceMotion ? 0 : 0.1, ease: 'easeOut' }}
+                    className="mt-4 max-w-[500px] text-[11px] leading-[1.7] text-[#4d5a75] sm:text-[12px]"
+                  >
+                    {c.heroDescription}
+                  </motion.p>
+                ) : null}
+                <motion.div
+                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduceMotion ? 0 : 0.52, delay: reduceMotion ? 0 : 0.18, ease: 'easeOut' }}
+                  className="mt-5 flex flex-wrap items-center gap-3"
+                >
+                  {c.heroPrimaryLabel ? (
+                    <Link href={c.heroPrimaryHref || '/contact'} className="group inline-flex min-h-9 items-center justify-center gap-2 rounded-md bg-[#0863f7] px-3.5 py-2.5 text-[9px] font-semibold text-white shadow-[0_7px_20px_rgba(8,99,247,.18)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#064fca] hover:shadow-[0_10px_24px_rgba(8,99,247,.24)] motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef] focus-visible:ring-offset-2">
+                      {c.heroPrimaryLabel}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
+                    </Link>
+                  ) : null}
+                  {c.heroSecondaryLabel ? (
+                    <Link href={c.heroSecondaryHref || '#how-we-work'} className="group inline-flex min-h-9 items-center gap-2 rounded-md px-3 py-2.5 text-[9px] font-semibold text-[#0863f7] transition-colors hover:bg-[#edf5ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1677ef]">
+                      {c.heroSecondaryLabel}<ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1 motion-reduce:transition-none" aria-hidden="true" />
+                    </Link>
+                  ) : null}
+                </motion.div>
               </div>
-              <motion.div {...reveal} className="relative min-h-[240px] overflow-hidden rounded-l-[42px] border-l-2 border-[#24a9ef] bg-[#dce8f4] shadow-[0_14px_38px_rgba(16,36,72,.12)] sm:min-h-[300px] lg:min-h-[370px]">
-                <Parallax amount={3} className="absolute inset-0">
-                  {c.heroImage ? <SmartImage src={c.heroImage} alt={c.heroImageAlt || ''} sizes="(min-width: 1024px) 58vw, 100vw" priority className="object-cover object-center" /> : null}
+
+              <motion.div
+                initial={reduceMotion ? false : { opacity: 0, x: 22 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.78, delay: reduceMotion ? 0 : 0.04, ease: 'easeOut' }}
+                className="group relative mx-5 aspect-[1.86/1] overflow-hidden rounded-l-[26px] border-l-2 border-[#24a9ef] bg-[#dce8f4] shadow-[0_12px_32px_rgba(16,36,72,.11)] sm:mx-7 md:-ml-6 md:mr-0 md:aspect-[1.86/1] md:w-[calc(100%_+_1.5rem)] md:rounded-none md:border-l-0 md:shadow-none"
+              >
+                <Parallax amount={4} className="absolute inset-0">
+                  {c.heroImage ? (
+                    <SmartImage
+                      src={c.heroImage}
+                      alt={c.heroImageAlt || ''}
+                      sizes="(min-width: 1024px) 59vw, (min-width: 768px) 59vw, 100vw"
+                      priority
+                      objectPosition={c.heroImagePosition || '50% 50%'}
+                      className="object-cover"
+                    />
+                  ) : null}
                 </Parallax>
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#06152b]/10 via-transparent to-[#06152b]/10" />
-                <svg aria-hidden="true" className="pointer-events-none absolute -left-1 top-0 h-full w-16 text-[#24a9ef]" viewBox="0 0 64 400" fill="none" preserveAspectRatio="none">
-                  <path d="M63 0H36L10 22V170C10 196 4 204 0 211V400" stroke="currentColor" strokeWidth="2" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#06152b]/5 via-transparent to-[#06152b]/10 md:hidden" />
+                <svg
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 hidden size-full md:block"
+                  viewBox="0 0 1000 535"
+                  fill="none"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M0 0H375C292 48 170 76 170 144V274C170 318 146 343 99 370C46 399 24 422 24 474V535H0V0Z"
+                    fill="#fff"
+                  />
+                  <path
+                    d="M375 0C292 48 170 76 170 144V274C170 318 146 343 99 370C46 399 24 422 24 474V535"
+                    stroke="#24a9ef"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    vectorEffect="non-scaling-stroke"
+                  />
                 </svg>
+                <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 hidden w-[2px] bg-gradient-to-b from-transparent via-[#24a9ef] to-[#24a9ef]/80 md:hidden" />
               </motion.div>
             </div>
           </div>

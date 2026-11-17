@@ -1279,6 +1279,7 @@ export const RESOURCES: ResourceConfig[] = [
       { key: 'heroDescription', label: 'Hero — description', kind: 'textarea', max: 700 },
       { key: 'heroImage', label: 'Hero — background image', kind: 'image' },
       { key: 'heroImageAlt', label: 'Hero — image alternative text', kind: 'text', max: 240 },
+      { key: 'heroImagePosition', label: 'Hero — image focal point (CSS object-position)', kind: 'text', max: 40, help: 'Adjust the photo crop, e.g. 50% 50%, 55% 45% or center center.' },
       { key: 'heroPrimaryLabel', label: 'Hero — primary button label', kind: 'text', max: 60 },
       { key: 'heroPrimaryHref', label: 'Hero — primary button URL', kind: 'url', max: 300 },
       { key: 'heroSecondaryLabel', label: 'Hero — secondary button label', kind: 'text', max: 60 },
