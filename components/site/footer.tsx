@@ -183,6 +183,11 @@ export function SiteFooter({ settings, footer: footerMenu, legal: legalMenu }: {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/cookies#consent-preferences" className="hover:text-primary-foreground">
+                Cookie Preferences
+              </Link>
+            </li>
             {socials.map(([key, url]) => (
               <li key={key}>
                 <a href={url} target="_blank" rel="noopener noreferrer" className="hover:text-primary-foreground">
