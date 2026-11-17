@@ -7,6 +7,7 @@ const SOCIAL_LABELS: Record<string, string> = { linkedin: 'LinkedIn', x: 'X', in
 
 const SITE_PAGES = [
   { href: '/about-us', label: 'About Us' },
+  { href: '/company/why-choose-us', label: 'Why Choose Us' },
   { href: '/our-footprint', label: 'Our Footprint' },
   { href: '/global-accommodation', label: 'Global Accommodation' },
   { href: '/local-transportation', label: 'Local Transportation' },
@@ -29,18 +30,41 @@ const LEGAL_PAGES = [
 const normalize = (href: string) => href.replace(/\/+$/, '') || '/'
 
 function withMissingLinks(footer: NavItem[], legal: NavItem[]) {
-  const linked = new Set<string>()
-  for (const g of [...footer, ...legal]) {
-    linked.add(normalize(g.href))
-    g.children?.forEach((c) => linked.add(normalize(c.href)))
+  const groups = footer.map((group) => ({ ...group, children: [...(group.children ?? [])] }))
+  let company = groups.find((group) => group.label.trim().toLowerCase() === 'company')
+  if (!company) {
+    company = { id: 'company-fallback', label: 'Company', href: '', children: [] }
+    groups.push(company)
   }
-  const missingPages = SITE_PAGES.filter((p) => !linked.has(p.href))
-  const missingLegal = LEGAL_PAGES.filter((p) => !linked.has(p.href))
-  const groups = missingPages.length
-    ? [...footer, { id: 'explore-fallback', label: 'Explore', href: '#', children: missingPages.map((p) => ({ id: `fb-${p.href}`, label: p.label, href: p.href })) } as NavItem]
-    : footer
-  const legalLinks = [...legal, ...missingLegal.map((p) => ({ id: `fb-${p.href}`, label: p.label, href: p.href }) as NavItem)]
-  return { groups, legalLinks }
+
+  const companyLinks = company.children ?? []
+  const whyChooseUs = companyLinks.find((item) =>
+    normalize(item.href) === '/company/why-choose-us' ||
+    item.label.trim().toLowerCase() === 'why choose us',
+  )
+  if (whyChooseUs) {
+    whyChooseUs.href = '/company/why-choose-us'
+    whyChooseUs.label = 'Why Choose Us'
+  } else {
+    const careersIndex = companyLinks.findIndex((item) => item.label.trim().toLowerCase() === 'careers')
+    const entry = { id: 'fb-company-why-choose-us', label: 'Why Choose Us', href: '/company/why-choose-us' }
+    if (careersIndex >= 0) companyLinks.splice(careersIndex, 0, entry)
+    else companyLinks.push(entry)
+  }
+  company.children = companyLinks
+
+  const linked = new Set<string>()
+  for (const group of [...groups, ...legal]) {
+    linked.add(normalize(group.href))
+    group.children?.forEach((child) => linked.add(normalize(child.href)))
+  }
+  const missingPages = SITE_PAGES.filter((page) => !linked.has(normalize(page.href)))
+  const missingLegal = LEGAL_PAGES.filter((page) => !linked.has(normalize(page.href)))
+  const footerGroups = missingPages.length
+    ? [...groups, { id: 'explore-fallback', label: 'Explore', href: '#', children: missingPages.map((page) => ({ id: 'fb-' + page.href, label: page.label, href: page.href })) } as NavItem]
+    : groups
+  const legalLinks = [...legal, ...missingLegal.map((page) => ({ id: 'fb-' + page.href, label: page.label, href: page.href }) as NavItem)]
+  return { groups: footerGroups, legalLinks }
 }
 
 export function SiteFooter({ settings, footer: footerMenu, legal: legalMenu }: { settings: Settings; footer: NavItem[]; legal: NavItem[] }) {

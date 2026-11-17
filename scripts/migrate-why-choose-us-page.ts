@@ -1,6 +1,6 @@
 /**
- * One-time, idempotent migration for the Company > Why Choose Us navigation link.
- * Preserves existing menu items and adds the link to primary/footer Company menus.
+ * Idempotently adds the Why Choose Us link to both live Company navigation menus.
+ * Preserves existing items and repairs stale hrefs or duplicate entries.
  *
  * Run with: pnpm migrate:why-choose-us-page
  */
@@ -9,44 +9,75 @@ import { connectDb } from '../lib/server/db'
 import { Navigation } from '../lib/server/models/content'
 
 const ROUTE = '/company/why-choose-us'
+type MenuKey = 'primary' | 'footer'
 
-function ensureWhyChooseUs(items: any[], menuKey: string) {
-  const next = Array.isArray(items) ? items.map((item) => ({ ...item })) : []
-  const company = next.find((item) => String(item.label || '').trim().toLowerCase() === 'company')
-  if (!company) return { items: next, changed: false }
-
-  const children = Array.isArray(company.children) ? company.children.map((child: any) => ({ ...child })) : []
-  if (children.some((child: any) => child.href === ROUTE || String(child.label || '').trim().toLowerCase() === 'why choose us')) {
-    return { items: next, changed: false }
+function ensureWhyChooseUs(items: any[], menuKey: MenuKey) {
+  const next = Array.isArray(items) ? items.map((item) => ({ ...item, children: [...(item.children ?? [])] })) : []
+  let company = next.find((item) => String(item.label || '').trim().toLowerCase() === 'company')
+  if (!company) {
+    company = {
+      id: menuKey === 'primary' ? 'company-primary' : 'company-footer',
+      label: 'Company',
+      href: menuKey === 'primary' ? '/about-us' : '',
+      children: [],
+    }
+    next.push(company)
   }
+  company.visible = true
 
-  const entry = {
-    id: menuKey === 'primary' ? 'n5d' : 'f3d',
+  const children = Array.isArray(company.children) ? [...company.children] : []
+  const normalize = (href: string) => String(href || '').split(/[?#]/, 1)[0].replace(/\/+$/, '').toLowerCase() || '/'
+  const matches = children
+    .map((child: any, index: number) => ({ child, index }))
+    .filter(({ child }: { child: any }) =>
+      normalize(child.href) === ROUTE ||
+      String(child.label || '').trim().toLowerCase() === 'why choose us',
+    )
+
+  const canonical = {
+    ...(matches[0]?.child ?? {}),
+    id: matches[0]?.child?.id || (menuKey === 'primary' ? 'n5d' : 'f3d'),
     label: 'Why Choose Us',
     href: ROUTE,
+    visible: true,
   }
-  const careersIndex = children.findIndex((child: any) => String(child.label || '').trim().toLowerCase() === 'careers')
-  if (careersIndex >= 0) children.splice(careersIndex, 0, entry)
-  else children.push(entry)
-  company.children = children
-  return { items: next, changed: true }
+
+  if (matches.length) {
+    const keepIndex = matches[0].index
+    company.children = children
+      .map((child: any, index: number) => index === keepIndex ? canonical : child)
+      .filter((_child: any, index: number) => index === keepIndex || !matches.some((match: { index: number }) => match.index === index))
+  } else {
+    const careersIndex = children.findIndex((child) => String(child.label || '').trim().toLowerCase() === 'careers')
+    if (careersIndex >= 0) children.splice(careersIndex, 0, canonical)
+    else children.push(canonical)
+    company.children = children
+  }
+
+  return { items: next, changed: JSON.stringify(next) !== JSON.stringify(items ?? []) }
 }
 
 async function main() {
   await connectDb()
-  const menus = await Navigation.find({ menuKey: { $in: ['primary', 'footer'] } }).lean<any[]>()
-  let updated = 0
-  for (const menu of menus) {
-    const result = ensureWhyChooseUs(menu.items, String(menu.menuKey))
+
+  for (const menuKey of ['primary', 'footer'] as const) {
+    const menu = await Navigation.findOneAndUpdate(
+      { menuKey },
+      { $setOnInsert: { menuKey, items: [] } },
+      { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true },
+    ).lean<any>()
+    if (!menu) throw new Error('Unable to initialize the ' + menuKey + ' navigation menu')
+
+    const result = ensureWhyChooseUs(menu.items, menuKey)
     if (!result.changed) continue
-    const write = await Navigation.updateOne(
+    await Navigation.updateOne(
       { _id: menu._id, ...(menu.updatedAt ? { updatedAt: menu.updatedAt } : {}) },
       { $set: { items: result.items } },
       { runValidators: true },
     )
-    updated += write.modifiedCount
   }
-  console.log('[why-choose-us-page-migration] updated Company menus: ' + updated)
+
+  console.log('[why-choose-us-page-migration] primary and footer Company links are present')
 }
 
 main()

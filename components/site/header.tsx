@@ -24,7 +24,7 @@ export function SiteHeader({ items, ctaLabel, ctaHref, brandName }: { items: Nav
     setOpen(false)
   }, [pathname])
 
-  const isMarketingPath = ['/', '/global-accommodation', '/local-transportation', '/about-us', '/company/about-us', '/industries', '/blog', '/resources', '/learn', '/faq', '/contact', '/case-studies'].includes(pathname) || pathname.startsWith('/industries/') || pathname.startsWith('/blog/') || pathname.startsWith('/case-studies/')
+  const isMarketingPath = ['/', '/global-accommodation', '/local-transportation', '/about-us', '/company/about-us', '/company/why-choose-us', '/industries', '/blog', '/resources', '/learn', '/faq', '/contact', '/case-studies'].includes(pathname) || pathname.startsWith('/industries/') || pathname.startsWith('/blog/') || pathname.startsWith('/case-studies/')
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href))
   const shell = isMarketingPath ? 'bg-night/90 text-white' : 'bg-background/90 text-foreground'
   const border = scrolled ? (isMarketingPath ? 'border-white/10' : 'border-line') : 'border-transparent'
@@ -46,7 +46,7 @@ export function SiteHeader({ items, ctaLabel, ctaHref, brandName }: { items: Nav
               <li key={item.id} className="group relative">
                 {item.children && item.children.length > 0 ? (
                   <>
-                    <Link href={item.href || '#'} className={cn('flex items-center gap-1 rounded-full px-3 py-2 text-xs font-medium transition-colors', muted, isActive(item.href) && 'text-azure')} aria-haspopup="true">
+                    <Link href={item.href || '#'} className={cn('flex items-center gap-1 rounded-full px-3 py-2 text-xs font-medium transition-colors', muted, (isActive(item.href) || item.children?.some((child) => isActive(child.href))) && 'text-azure')} aria-haspopup="true">
                       {item.label}
                       <ChevronDown aria-hidden className="size-3.5 transition-transform group-hover:rotate-180" />
                     </Link>

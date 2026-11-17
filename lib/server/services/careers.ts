@@ -162,7 +162,7 @@ export async function subscribeJobAlert(input: { email: string; departments: str
   await JobAlert.findOneAndUpdate(
     { emailNormalized },
     { $set: { email: input.email, departments: input.departments, locations: input.locations, status, tokenHash: sha256(token) } },
-    { upsert: true, new: true },
+    { upsert: true, returnDocument: 'after' },
   )
   if (status === 'confirmed') return { message: 'Your job alert preferences were updated.' }
   const criteria = [...input.departments, ...input.locations].length ? ` for ${[...input.departments, ...input.locations].join(', ')}` : ''

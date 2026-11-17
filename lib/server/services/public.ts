@@ -59,15 +59,66 @@ export const getSettings = cache(async (): Promise<Settings> => {
   }
 })
 
+const WHY_CHOOSE_US_PATH = '/company/why-choose-us'
+
+function withWhyChooseUsCompanyLink(items: NavItem[], menuKey: 'primary' | 'footer'): NavItem[] {
+  const next = items.map((item) => ({ ...item, children: [...(item.children ?? [])] }))
+  let company = next.find((item) => item.label.trim().toLowerCase() === 'company')
+
+  if (!company) {
+    company = {
+      id: menuKey === 'primary' ? 'company-primary' : 'company-footer',
+      label: 'Company',
+      href: menuKey === 'primary' ? '/about-us' : '',
+      children: [],
+    }
+    next.push(company)
+  }
+  company.visible = true
+
+  const children = [...(company.children ?? [])]
+  const normalize = (href: string) => String(href || '').split(/[?#]/, 1)[0].replace(/\/+$/, '').toLowerCase() || '/'
+  const matches = children
+    .map((child, index) => ({ child, index }))
+    .filter(({ child }) =>
+      normalize(child.href) === WHY_CHOOSE_US_PATH ||
+      child.label.trim().toLowerCase() === 'why choose us',
+    )
+  const canonical = {
+    ...(matches[0]?.child ?? {}),
+    id: matches[0]?.child.id || (menuKey === 'primary' ? 'n5d' : 'f3d'),
+    label: 'Why Choose Us',
+    href: WHY_CHOOSE_US_PATH,
+    visible: true,
+  }
+
+  if (matches.length) {
+    const keepIndex = matches[0].index
+    company.children = children
+      .map((child, index) => index === keepIndex ? canonical : child)
+      .filter((_child, index) => index === keepIndex || !matches.some((match) => match.index === index))
+  } else {
+    const careersIndex = children.findIndex((child) => child.label.trim().toLowerCase() === 'careers')
+    if (careersIndex >= 0) children.splice(careersIndex, 0, canonical)
+    else children.push(canonical)
+    company.children = children
+  }
+
+  return next
+}
+
 export const getMenu = cache(async (menuKey: 'primary' | 'footer' | 'utility' | 'legal'): Promise<NavItem[]> => {
   try {
     await connectDb()
     const doc = await Navigation.findOne({ menuKey }).lean<{ _id?: unknown; updatedAt?: Date; items: NavItem[] }>()
     const sourceItems = doc?.items ?? []
-    const normalizedItems = canonicalizeNavigationItems(sourceItems) as NavItem[]
+    const canonicalItems = canonicalizeNavigationItems(sourceItems) as NavItem[]
+    const normalizedItems = menuKey === 'primary' || menuKey === 'footer'
+      ? withWhyChooseUsCompanyLink(canonicalItems, menuKey)
+      : canonicalItems
 
-    // Repair legacy hrefs in MongoDB as well as in the rendered response. This is
-    // idempotent and conditional on updatedAt so a concurrent admin edit is not lost.
+    // Repair legacy hrefs and ensure Why Choose Us is reachable from Company menus.
+    // The write is idempotent and conditional on updatedAt so concurrent admin edits are not lost.
     if (doc?._id && JSON.stringify(normalizedItems) !== JSON.stringify(sourceItems)) {
       try {
         await Navigation.updateOne(
@@ -78,7 +129,7 @@ export const getMenu = cache(async (menuKey: 'primary' | 'footer' | 'utility' | 
       } catch (writeError) {
         // Keep the public navigation usable with canonical hrefs even if the
         // application DB role is temporarily read-only.
-        console.error('[nav] failed to persist canonical About Us hrefs; rendered normalized menu', writeError)
+        console.error('[nav] failed to persist canonical navigation links; rendered repaired menu', writeError)
       }
     }
 
