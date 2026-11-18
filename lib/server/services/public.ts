@@ -18,6 +18,8 @@ import { NEWSLETTER_PATH } from '@/lib/newsletter/defaults'
 import { ensureNewsletterPage } from './newsletter-provision'
 import { COOKIES_POLICY_PATH } from '@/lib/cookies/defaults'
 import { ensureCookiesPolicyPage } from './cookies-policy-provision'
+import { MARKET_CHALLENGES_NAV_LINK, MARKET_CHALLENGES_PATH } from '@/lib/market-challenges/defaults'
+import { ensureMarketChallengesPage } from './market-challenges-provision'
 
 /** Converts lean Mongo docs into plain JSON-safe objects for Server → Client component props. */
 export function plain<T>(value: T): T {
@@ -134,6 +136,28 @@ function withWhyChooseUsCompanyLink(items: NavItem[], menuKey: 'primary' | 'foot
     company.children = currentChildren
   }
 
+  // Make Market Challenges reachable from both the primary and footer Company menus.
+  const currentCompanyChildren = [...(company.children ?? [])]
+  const marketMatches = currentCompanyChildren
+    .map((child, index) => ({ child, index }))
+    .filter(({ child }) =>
+      normalize(child.href) === MARKET_CHALLENGES_PATH ||
+      child.label.trim().toLowerCase() === 'market challenges',
+    )
+  const marketCanonical: NavItem = {
+    ...(marketMatches[0]?.child ?? {}),
+    ...MARKET_CHALLENGES_NAV_LINK,
+    id: marketMatches[0]?.child.id || (menuKey === 'primary' ? 'company-market-challenges-primary' : 'company-market-challenges-footer'),
+  }
+  if (marketMatches.length) {
+    const keepIndex = marketMatches[0].index
+    company.children = currentCompanyChildren
+      .map((child, index) => index === keepIndex ? marketCanonical : child)
+      .filter((_child, index) => index === keepIndex || !marketMatches.some((match) => match.index === index))
+  } else {
+    company.children = [...currentCompanyChildren, marketCanonical]
+  }
+
   return next
 }
 
@@ -234,6 +258,7 @@ export const getPublishedPage = cache(async (rawPath: string): Promise<PublicPag
   if (path === SAFETY_TRUST_PATH) await ensureSafetyTrustPage()
   if (path === NEWSLETTER_PATH) await ensureNewsletterPage()
   if (path === COOKIES_POLICY_PATH) await ensureCookiesPolicyPage()
+  if (path === MARKET_CHALLENGES_PATH) await ensureMarketChallengesPage()
   const now = new Date()
   const doc = await Page.findOne({
     path,
