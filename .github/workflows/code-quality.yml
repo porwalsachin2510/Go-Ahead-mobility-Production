@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   newsletter-typecheck:
-    name: Newsletter TypeScript check
+    name: CMS TypeScript check
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: TypeScript check for Newsletter CMS
+      - name: TypeScript check for Newsletter and Market Challenges CMS
         env:
           NODE_OPTIONS: --max-old-space-size=7168
         run: pnpm exec tsc --noEmit --project tsconfig.newsletter.json
