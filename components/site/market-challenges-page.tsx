@@ -89,7 +89,7 @@ function MotionSection({ children, className = '' }: { children: React.ReactNode
 
 function HeroImage({ src, alt, className = '', sizes }: { src: string; alt: string; className?: string; sizes: string }) {
   return (
-    <div className={['relative h-full min-h-[210px] overflow-hidden bg-[#e8eef7]', className].join(' ')}>
+    <div className={['relative h-full min-h-[210px] overflow-hidden bg-[#e8eef7] lg:min-h-[275px]', className].join(' ')}>
       <Parallax amount={5} scale={1.045} className="absolute inset-0">
         <Image src={src} alt={alt} fill sizes={sizes} unoptimized className="object-cover" priority />
       </Parallax>
@@ -381,8 +381,8 @@ export function MarketChallengesPage({ page }: { page: PageRecord | null }) {
 
           <MotionSection className="relative min-w-0">
             <div className="relative grid grid-cols-[.88fr_1.12fr] gap-1.5 overflow-visible rounded-xl">
-              <HeroImage src={str(data, 'heroAccommodationImage', '/images/site/acc-hero.png')} alt={str(data, 'heroAccommodationImageAlt')} sizes="(max-width: 1024px) 44vw, 25vw" className="rounded-l-xl" />
-              <HeroImage src={str(data, 'heroTransportationImage', '/images/site/transport-hero.png')} alt={str(data, 'heroTransportationImageAlt')} sizes="(max-width: 1024px) 55vw, 32vw" className="rounded-r-xl" />
+              <HeroImage src={str(data, 'heroAccommodationImage') || '/images/site/acc-hero.png'} alt={str(data, 'heroAccommodationImageAlt')} sizes="(max-width: 1024px) 44vw, 25vw" className="rounded-l-xl" />
+              <HeroImage src={str(data, 'heroTransportationImage') || '/images/site/transport-hero.png'} alt={str(data, 'heroTransportationImageAlt')} sizes="(max-width: 1024px) 55vw, 32vw" className="rounded-r-xl" />
               <div aria-hidden className="pointer-events-none absolute -inset-x-2 bottom-[-12px] h-5 rounded-full border-b-2 border-[#8fc8ff]/75" />
               <span className="absolute -bottom-5 left-[8%] z-10 flex size-12 items-center justify-center rounded-full border-[4px] border-white bg-[#0864f7] text-white shadow-lg">
                 <BedDouble aria-hidden className="size-5" />
