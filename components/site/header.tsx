@@ -24,9 +24,9 @@ export function SiteHeader({ items, ctaLabel, ctaHref, brandName }: { items: Nav
     setOpen(false)
   }, [pathname])
 
-  const isMarketingPath = ['/', '/global-accommodation', '/local-transportation', '/about-us', '/company/about-us', '/company/why-choose-us', '/company/safety-trust', '/industries', '/blog', '/resources', '/learn', '/faq', '/contact', '/case-studies'].includes(pathname) || pathname.startsWith('/industries/') || pathname.startsWith('/blog/') || pathname.startsWith('/case-studies/')
+  const isMarketingPath = ['/', '/global-accommodation', '/local-transportation', '/about-us', '/company/about-us', '/company/why-choose-us', '/company/safety-trust', '/company/market-challenges', '/industries', '/blog', '/resources', '/learn', '/faq', '/contact', '/case-studies'].includes(pathname) || pathname.startsWith('/industries/') || pathname.startsWith('/blog/') || pathname.startsWith('/case-studies/')
   const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href))
-  const useDarkHeader = isMarketingPath && pathname !== '/company/why-choose-us' && pathname !== '/company/safety-trust'
+  const useDarkHeader = isMarketingPath && pathname !== '/company/why-choose-us' && pathname !== '/company/safety-trust' && pathname !== '/company/market-challenges'
   const shell = useDarkHeader ? 'bg-night/90 text-white' : 'bg-background/95 text-foreground'
   const border = scrolled ? (useDarkHeader ? 'border-white/10' : 'border-line') : 'border-transparent'
   const muted = useDarkHeader ? 'text-white/80 hover:text-white' : 'text-foreground hover:text-royal'
