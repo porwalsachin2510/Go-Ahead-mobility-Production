@@ -3,7 +3,9 @@
   "compilerOptions": {
     "incremental": false,
     "plugins": [],
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "skipLibCheck": true
   },
   "include": [
@@ -12,7 +14,18 @@
     "lib/blocks.ts",
     "lib/fields.ts",
     "lib/seo/route-ownership.ts",
-    "lib/server/services/newsletter-provision.ts"
+    "lib/server/services/newsletter-provision.ts",
+    "lib/market-challenges/defaults.ts",
+    "lib/server/services/market-challenges-provision.ts",
+    "components/site/market-challenges-page.tsx",
+    "app/(site)/[[...path]]/page.tsx",
+    "lib/server/services/public.ts",
+    "lib/server/services/admin-pages.ts",
+    "components/site/header.tsx",
+    "components/site/footer.tsx"
   ],
-  "exclude": ["node_modules", ".next"]
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
 }
